@@ -7,6 +7,7 @@
 #include "afxpropertygridctrl.h"
 #include "io.hpp"
 #include <string>
+#include <hash_map>
 
 // CRVAFGUIDlg dialog
 class CRVAFGUIDlg : public CDialogEx
@@ -21,9 +22,24 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
+	template<typename T>
+	struct _Node{
+		T		name;
+		_Node*	next;
+		_Node() : name(""), next(NULL){}
+		_Node(T nm) : name(nm), next(NULL){}
+	};
+
+	using Node = _Node<std::string>;
+	Node dummy;
+
+	bool ready_proto;
 	svaf::SvafTask m_svaftask;
+	hash_map<std::string, svaf::LayerParameter> layers;
 	bool ReadCheckProtoFile(std::string filename);
 	void OpenProtoFile(std::string filename);
+	void ShowProperties();
+
 
 // Implementation
 protected:
