@@ -3,7 +3,10 @@
 //
 
 #pragma once
-
+#include "afxwin.h"
+#include "afxpropertygridctrl.h"
+#include "io.hpp"
+#include <string>
 
 // CRVAFGUIDlg dialog
 class CRVAFGUIDlg : public CDialogEx
@@ -18,6 +21,9 @@ public:
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
+	svaf::SvafTask m_svaftask;
+	bool ReadCheckProtoFile(std::string filename);
+	void OpenProtoFile(std::string filename);
 
 // Implementation
 protected:
@@ -29,4 +35,8 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	CButton m_selectAlgorithm;
+	CMFCPropertyGridCtrl m_properaty;
+	afx_msg void OnSelectAlgorithm();
 };

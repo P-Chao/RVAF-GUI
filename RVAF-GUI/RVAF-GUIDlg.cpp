@@ -56,12 +56,15 @@ CRVAFGUIDlg::CRVAFGUIDlg(CWnd* pParent /*=NULL*/)
 void CRVAFGUIDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_BUTTON_SETALG, m_selectAlgorithm);
+	DDX_Control(pDX, IDC_MFCPROPERTYGRID1, m_properaty);
 }
 
 BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON_SETALG, &CRVAFGUIDlg::OnSelectAlgorithm)
 END_MESSAGE_MAP()
 
 
@@ -148,5 +151,41 @@ void CRVAFGUIDlg::OnPaint()
 HCURSOR CRVAFGUIDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+#define REC_VERSION "v_1.22"
+bool CRVAFGUIDlg::ReadCheckProtoFile(std::string filename){
+
+	if (!svaf::ReadProtoFromTextFile(filename, &m_svaftask)){
+		if (!svaf::ReadProtoFromBinaryFile(filename, &m_svaftask)){
+			MessageBoxW(L"File Open Failed!", L"Tips", 0);
+			return false;
+		}
+	}
+
+	if (m_svaftask.version() != REC_VERSION){
+		MessageBoxW(L"File version error, file will be recreate!", L"Tips", 0);
+		return false;
+	}
+	return true;
+}
+
+void CRVAFGUIDlg::OpenProtoFile(std::string filename){
+	if (!ReadCheckProtoFile(filename)){
+		return;
+	}
+	m_selectAlgorithm.SetWindowTextW(CString(m_svaftask.name().c_str()));
+	
+}
+
+void CRVAFGUIDlg::OnSelectAlgorithm()
+{
+	// TODO: Add your control notification handler code here
+	CFileDialog opendlg(TRUE, _T("*"), NULL, OFN_OVERWRITEPROMPT, _T("Proto files(*.pbf; *.pbt)|*.pbf*;*.pbt|All files(*.*)|*.*||"), NULL);
+	if (opendlg.DoModal() == IDOK){
+		CString filename = opendlg.GetPathName();
+		OpenProtoFile((LPCSTR)CStringA(filename));
+	}
+
 }
 

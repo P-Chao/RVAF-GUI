@@ -184,13 +184,16 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="io.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RVAF-GUI.h" />
     <ClInclude Include="RVAF-GUIDlg.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="svaf.pb.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="io.cpp" />
     <ClCompile Include="RVAF-GUI.cpp" />
     <ClCompile Include="RVAF-GUIDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -199,12 +202,14 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="svaf.pb.cc" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RVAF-GUI.rc" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\RVAFGUI.rc2" />
+    <None Include="svaf.proto" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\RVAF-GUI.ico" />
@@ -212,4 +217,9 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="RVAF-GUI.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
