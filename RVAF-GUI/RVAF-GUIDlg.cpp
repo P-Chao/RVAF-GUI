@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 	ON_BN_CLICKED(IDC_BUTTON_SETALG, &CRVAFGUIDlg::OnSelectAlgorithm)
 END_MESSAGE_MAP()
 
@@ -238,8 +239,10 @@ void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 	ready_proto = true;
 }
 
-void CRVAFGUIDlg::ShowProperties(){
+void CRVAFGUIDlg::GenerateProperties(){
 	m_properaty.RemoveAll();
+	idtable.clear();
+	int id = 0;
 
 	if (!ready_proto){
 		return;
@@ -250,7 +253,7 @@ void CRVAFGUIDlg::ShowProperties(){
 		CMFCPropertyGridProperty * group = NULL;
 		CMFCPropertyGridProperty * pProp = NULL;
 		
-
+		
 		node = node->next;
 		auto type = layers[node->name].type();
 		auto layer = layers[node->name];
@@ -263,10 +266,21 @@ void CRVAFGUIDlg::ShowProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR:
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
+
 			pProp = new CMFCPropertyGridFileProperty(_T("Left Image"), TRUE, _T("value"));
+			pProp->SetData(++id);
+			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).left().c_str()));
+			pProp->ResetOriginalValue();
+			idtable[id] = node->name;
 			group->AddSubItem(pProp);
+
 			pProp = new CMFCPropertyGridFileProperty(_T("Right Image"), TRUE, _T("value"));
+			pProp->SetData(++id);
+			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).right().c_str()));
+			pProp->ResetOriginalValue();
+			idtable[id] = node->name;
 			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO:
 			group = new CMFCPropertyGridProperty(_T("Video"));
@@ -427,8 +441,19 @@ void CRVAFGUIDlg::OnSelectAlgorithm()
 	if (opendlg.DoModal() == IDOK){
 		CString filename = opendlg.GetPathName();
 		OpenProtoFile((LPCSTR)CStringA(filename));
-		ShowProperties();
+		GenerateProperties();
 	}
 
+}
+
+LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
+	CMFCPropertyGridProperty* pProp = (CMFCPropertyGridProperty*)lParam;
+	auto id = pProp->GetData();
+	CString s = pProp->GetName();
+	COleVariant t = pProp->GetValue();
+	t = pProp->GetOriginalValue();
+	CString d;
+	d = t.bstrVal;
+	return 0;
 }
 

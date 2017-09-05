@@ -36,9 +36,10 @@ public:
 	bool ready_proto;
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter> layers;
+	hash_map<int, std::string> idtable;
 	bool ReadCheckProtoFile(std::string filename);
 	void OpenProtoFile(std::string filename);
-	void ShowProperties();
+	void GenerateProperties();
 
 
 // Implementation
@@ -50,6 +51,7 @@ protected:
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
+	afx_msg LRESULT OnPropertyChanged(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
 public:
 	CButton m_selectAlgorithm;
