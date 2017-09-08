@@ -268,21 +268,22 @@ void CRVAFGUIDlg::GenerateProperties(){
 	hash_map<int, ReflectPackage> pack;
 	Node *node = &dummy;
 	while (node->next){
-		CMFCPropertyGridProperty * group = NULL;
+		CMFCPropertyGridProperty * group = NULL, * group2 = NULL;
 		CMFCPropertyGridProperty * pProp = NULL;
+		CString cs_temp;
 		
 		node = node->next;
 		auto type = layers[node->name].type();
 		auto layer = layers[node->name];
 		switch (type)
 		{
-		case svaf::LayerParameter_LayerType_NONE://01
+		case svaf::LayerParameter_LayerType_NONE://00
 			break;
-		case svaf::LayerParameter_LayerType_IMAGE://02
+		case svaf::LayerParameter_LayerType_IMAGE://01
 			group = new CMFCPropertyGridProperty(_T("Image"));
 
-			// 0201 bool
-			id = 0201;
+			// 0102 bool
+			id = 0102;
 			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
 			pProp->SetData(id);
 			idtable[id] = node->name;
@@ -292,7 +293,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField);
-			SET_0201;
+			SET_0102;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -302,27 +303,29 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group->AddSubItem(pProp);
 
 			break;
-		case svaf::LayerParameter_LayerType_IMAGE_PAIR://03
+		case svaf::LayerParameter_LayerType_IMAGE_PAIR://02
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
-			// 0301 string
+			// 0201 string
+			id = 0301;
 			pProp = new CMFCPropertyGridFileProperty(_T("Left Image"), TRUE, _T("value"));
-			pProp->SetData(++id); 
+			pProp->SetData(id); 
 			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).left().c_str()));
 			pProp->ResetOriginalValue();
 			idtable[id] = node->name;
 			group->AddSubItem(pProp);
 
-			// 0302 string
+			// 0202 string
+			id = 0302;
 			pProp = new CMFCPropertyGridFileProperty(_T("Right Image"), TRUE, _T("value"));
-			pProp->SetData(++id);
+			pProp->SetData(id);
 			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).right().c_str()));
 			pProp->ResetOriginalValue();
 			idtable[id] = node->name;
 			group->AddSubItem(pProp);
 
-			// 0303 bool
-			id = 0303;
+			// 0203 bool
+			id = 0203;
 			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
 			pProp->SetData(id);
 			idtable[id] = node->name;
@@ -332,7 +335,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField);
-			SET_0303;
+			SET_0203;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -342,25 +345,25 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group->AddSubItem(pProp);
 
 			break;
-		case svaf::LayerParameter_LayerType_VIDEO://04
+		case svaf::LayerParameter_LayerType_VIDEO://03
 			group = new CMFCPropertyGridProperty(_T("Video"));
 			break;
-		case svaf::LayerParameter_LayerType_VIDEO_PAIR://05
+		case svaf::LayerParameter_LayerType_VIDEO_PAIR://04
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_CAMERA://06
+		case svaf::LayerParameter_LayerType_CAMERA://05
 			group = new CMFCPropertyGridProperty(_T("Camera"));
 			break;
-		case svaf::LayerParameter_LayerType_CAMERA_PAIR://07
+		case svaf::LayerParameter_LayerType_CAMERA_PAIR://06
 			group = new CMFCPropertyGridProperty(_T("Camera Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_DSP://08
+		case svaf::LayerParameter_LayerType_DSP://07
 			group = new CMFCPropertyGridProperty(_T("DSP Camera"));
 			break;
-		case svaf::LayerParameter_LayerType_DSP_PAIR://09
+		case svaf::LayerParameter_LayerType_DSP_PAIR://08
 			group = new CMFCPropertyGridProperty(_T("DSP Camera Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_KINECT://10
+		case svaf::LayerParameter_LayerType_KINECT://09
 			group = new CMFCPropertyGridProperty(_T("Kinect"));
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_FOLDER://11
@@ -369,119 +372,703 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_ADABOOST://13
+		case svaf::LayerParameter_LayerType_ADABOOST://21
 			group = new CMFCPropertyGridProperty(_T("Adaboost"));
+
+			// 2101 string
+			id = 2101;
+			pProp = new CMFCPropertyGridFileProperty(_T("Detector"), TRUE, _T(""));
+			pProp->SetDescription(_T("detector file trained by piotr dollar toolbox"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.adaboost_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("detector");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_2101;
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 2102 bool
+			id = 2102;
+			pProp = new CMFCPropertyGridProperty(_T("SyncFrame"), _T(""), _T("keep scale of two(or more) images not change in the same moment"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.adaboost_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("sync_frame");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_2102;
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 2103 bool
+			id = 2103;
+			pProp = new CMFCPropertyGridProperty(_T("SyncVideo"), _T(""), _T("keep scale not change or make epipolar restriction in the hole sequence"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.adaboost_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("sync_video");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_2103;
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 2104 bool
+			id = 2104;
+			pProp = new CMFCPropertyGridProperty(_T("SyncEpipolar"), _T(""), _T("apply epipolar restriction and keep scale not change in a moment"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.adaboost_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("sync_epipolar");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_2104;
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 2105 float
+			id = 2105;
+			pProp = new CMFCPropertyGridProperty(_T("Thresh"), _T(""), _T("adaboost positive sample decition threshold"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.adaboost_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("thresh");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_2105;
+			
+			cs_temp.Format(_T("%.2f"), (pReflection->GetFloat(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 2106 float
+			id = 2106;
+			pProp = new CMFCPropertyGridProperty(_T("NMS"), _T(""), _T("non-maximum suppression, result rectangles that overlap area percentage lower than this value will be merged"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.adaboost_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("nms");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_2106;
+
+			cs_temp.Format(_T("%.2f"), (pReflection->GetFloat(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
 			break;
-		case svaf::LayerParameter_LayerType_MILTRACK://14
+		case svaf::LayerParameter_LayerType_MILTRACK://31
 			group = new CMFCPropertyGridProperty(_T("MILTrack"));
 			break;
-		case svaf::LayerParameter_LayerType_BITTRACK://15
+		case svaf::LayerParameter_LayerType_BITTRACK://32
 			group = new CMFCPropertyGridProperty(_T("Bino MILTrack"));
 			break;
-		case svaf::LayerParameter_LayerType_SIFT_POINT:
+		case svaf::LayerParameter_LayerType_SIFT_POINT://41
 			group = new CMFCPropertyGridProperty(_T("SIFT Point"));
 			break;
-		case svaf::LayerParameter_LayerType_SURF_POINT:
+		case svaf::LayerParameter_LayerType_SURF_POINT://42
 			group = new CMFCPropertyGridProperty(_T("SURF Point"));
 			break;
-		case svaf::LayerParameter_LayerType_STAR_POINT:
+		case svaf::LayerParameter_LayerType_STAR_POINT://43
 			group = new CMFCPropertyGridProperty(_T("STAR Point"));
 			break;
-		case svaf::LayerParameter_LayerType_BRISK_POINT:
+		case svaf::LayerParameter_LayerType_BRISK_POINT://44
 			group = new CMFCPropertyGridProperty(_T("Brisk Point"));
 			break;
-		case svaf::LayerParameter_LayerType_FAST_POINT:
+		case svaf::LayerParameter_LayerType_FAST_POINT://45
 			group = new CMFCPropertyGridProperty(_T("FAST Point"));
 			break;
-		case svaf::LayerParameter_LayerType_ORB_POINT:
+		case svaf::LayerParameter_LayerType_ORB_POINT://46
 			group = new CMFCPropertyGridProperty(_T("ORB Point"));
 			break;
-		case svaf::LayerParameter_LayerType_KAZE_POINT:
+		case svaf::LayerParameter_LayerType_KAZE_POINT://47
 			group = new CMFCPropertyGridProperty(_T("KAZE Point"));
 			break;
-		case svaf::LayerParameter_LayerType_HARRIS_POINT:
+		case svaf::LayerParameter_LayerType_HARRIS_POINT://48
 			group = new CMFCPropertyGridProperty(_T("Harris Point"));
 			break;
-		case svaf::LayerParameter_LayerType_CV_POINT:
+		case svaf::LayerParameter_LayerType_CV_POINT://49
 			group = new CMFCPropertyGridProperty(_T("CV Point"));
 			break;
-		case svaf::LayerParameter_LayerType_SIFT_DESP:
+		case svaf::LayerParameter_LayerType_SIFT_DESP://51
 			group = new CMFCPropertyGridProperty(_T("SIFT Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_SURF_DESP:
+		case svaf::LayerParameter_LayerType_SURF_DESP://52
 			group = new CMFCPropertyGridProperty(_T("SURF Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_STAR_DESP:
+		case svaf::LayerParameter_LayerType_STAR_DESP://53
 			group = new CMFCPropertyGridProperty(_T("STAR Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_BRIEF_DESP:
+		case svaf::LayerParameter_LayerType_BRIEF_DESP://54
 			group = new CMFCPropertyGridProperty(_T("BRIEF Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_BRISK_DESP:
+		case svaf::LayerParameter_LayerType_BRISK_DESP://55
 			group = new CMFCPropertyGridProperty(_T("Brisk Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_FAST_DESP:
+		case svaf::LayerParameter_LayerType_FAST_DESP://56
 			group = new CMFCPropertyGridProperty(_T("FAST Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_ORB_DESP:
+		case svaf::LayerParameter_LayerType_ORB_DESP://57
 			group = new CMFCPropertyGridProperty(_T("ORB Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_KAZE_DESP:
+		case svaf::LayerParameter_LayerType_KAZE_DESP://58
 			group = new CMFCPropertyGridProperty(_T("KAZE Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_CV_DESP:
+		case svaf::LayerParameter_LayerType_CV_DESP://59
 			group = new CMFCPropertyGridProperty(_T("CV Descriptor"));
 			break;
-		case svaf::LayerParameter_LayerType_KDTREE_MATCH:
+		case svaf::LayerParameter_LayerType_KDTREE_MATCH://61
 			group = new CMFCPropertyGridProperty(_T("KDtree Match"));
 			break;
-		case svaf::LayerParameter_LayerType_EULAR_MATCH:
+		case svaf::LayerParameter_LayerType_EULAR_MATCH://62
 			group = new CMFCPropertyGridProperty(_T("Eular Match"));
 			break;
-		case svaf::LayerParameter_LayerType_RANSAC:
+		case svaf::LayerParameter_LayerType_RANSAC://63
 			group = new CMFCPropertyGridProperty(_T("Ransac"));
 			break;
-		case svaf::LayerParameter_LayerType_BF_MATCH:
+		case svaf::LayerParameter_LayerType_BF_MATCH://64
 			group = new CMFCPropertyGridProperty(_T("BF Match"));
 			break;
-		case svaf::LayerParameter_LayerType_FLANN_MATCH:
+		case svaf::LayerParameter_LayerType_FLANN_MATCH://65
 			group = new CMFCPropertyGridProperty(_T("Flann Match"));
 			break;
-		case svaf::LayerParameter_LayerType_EC_MATCH:
+		case svaf::LayerParameter_LayerType_EC_MATCH://68
 			group = new CMFCPropertyGridProperty(_T("EC Match"));
 			break;
-		case svaf::LayerParameter_LayerType_CV_MATCH:
+		case svaf::LayerParameter_LayerType_CV_MATCH://69
 			group = new CMFCPropertyGridProperty(_T("CV Match"));
 			break;
-		case svaf::LayerParameter_LayerType_SGM_MATCH:
+		case svaf::LayerParameter_LayerType_SGM_MATCH://71
 			group = new CMFCPropertyGridProperty(_T("SGM Stereo Match"));
 			break;
-		case svaf::LayerParameter_LayerType_EADP_MATCH:
+		case svaf::LayerParameter_LayerType_EADP_MATCH://72
 			group = new CMFCPropertyGridProperty(_T("Eadp Stereo Match"));
+			
+			// 7201 int32
+			id = 7201;
+			pProp = new CMFCPropertyGridProperty(_T("Max Disparity"), _T(""), _T("maximum disparity of stereo matching"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("max_disp");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7201;
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7202 int32
+			id = 7202;
+			pProp = new CMFCPropertyGridProperty(_T("Factor"), _T(""), _T("multiply factor used to disparity map visualization"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("factor");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7202;
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7203 int32
+			id = 7203;
+			pProp = new CMFCPropertyGridProperty(_T("Guildmr"), _T(""), _T("radius of median filter for guild image"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("guidmr");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7203;
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7204 int32
+			id = 7204;
+			pProp = new CMFCPropertyGridProperty(_T("Dispmr"), _T(""), _T("radius of median filter for labeled disparity map"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("dispmr");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7204;
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7205 float
+			id = 7205;
+			pProp = new CMFCPropertyGridProperty(_T("Sg"), _T(""), _T("inverse proportion factor used to compute weight table that map gradient to cost value"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("sg");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7205;
+
+			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7206 float
+			id = 7206;
+			pProp = new CMFCPropertyGridProperty(_T("Sc"), _T(""), _T("sigma factor used to compute weight table that map gradient to cost value"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("sc");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7206;
+
+			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7207 float
+			id = 7207;
+			pProp = new CMFCPropertyGridProperty(_T("R1"), _T(""), _T("penny factor of continue disparity"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("r1");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7207;
+
+			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 7208 float
+			id = 7208;
+			pProp = new CMFCPropertyGridProperty(_T("R2"), _T(""), _T("penny factor of uncontinue disparity"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.eadp_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("r2");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_7208;
+
+			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
 			break;
-		case svaf::LayerParameter_LayerType_TRIANG:
+		case svaf::LayerParameter_LayerType_TRIANG://81
 			group = new CMFCPropertyGridProperty(_T("Triangle"));
+
+			// 8102 string
+			id = 8102;
+			pProp = new CMFCPropertyGridProperty(_T("Toolbox Dir"), _T(""), _T("matlab calibration toolbox directory"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.triang_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("toolbox_dir");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_8102;
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 8103 string
+			id = 8103;
+			pProp = new CMFCPropertyGridProperty(_T("Calibmat Dir"), _T(""), _T("matlab calibration toolbox directory"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.triang_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("calibmat_dir");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_8103;
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 8104 bool
+			id = 8104;
+			pProp = new CMFCPropertyGridProperty(_T("SavePCD"), _T(""), _T("whether to save 3d result pcd file"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.triang_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("savepc");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_8104;
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
-		case svaf::LayerParameter_LayerType_MXMUL:
+		case svaf::LayerParameter_LayerType_MXMUL://82
 			group = new CMFCPropertyGridProperty(_T("Matrix Mul"));
 			break;
-		case svaf::LayerParameter_LayerType_CENTER_POS:
+		case svaf::LayerParameter_LayerType_CENTER_POS://91
 			group = new CMFCPropertyGridProperty(_T("Center Position"));
 			break;
-		case svaf::LayerParameter_LayerType_IA_EST:
+		case svaf::LayerParameter_LayerType_IA_EST://94
 			group = new CMFCPropertyGridProperty(_T("SAC-IA"));
+
+			// 9401 string
+			id = 9401;
+			pProp = new CMFCPropertyGridFileProperty(_T("Referance Model"), TRUE, _T(""));
+			pProp->SetDescription(_T("referance pcd file"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.sacia_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("pcd_filename");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_9401;
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			{
+				group2 = new CMFCPropertyGridProperty(_T("SAC-IA Registration"));
+
+				// 94201 int32
+				id = 94201;
+				pProp = new CMFCPropertyGridProperty(_T("Max Iteration"), _T(""), _T("maximum iteration of sac-ia ransac algorithm"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().ia_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("max_iter");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94201;
+
+				cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94202 float
+				id = 94202;
+				pProp = new CMFCPropertyGridProperty(_T("Min Corresponse"), _T(""), _T("minimum response of sac-ia algorithm"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().ia_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("min_cors");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94202;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94203 float
+				id = 94203;
+				pProp = new CMFCPropertyGridProperty(_T("Min Corresponse"), _T(""), _T("maximum response of sac-ia algorithm"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().ia_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("max_cors");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94203;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94204 float
+				id = 94204;
+				pProp = new CMFCPropertyGridProperty(_T("Voxel Grid"), _T(""), _T("grid size of grid filter"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().ia_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("voxel_grid");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94204;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94205 float
+				id = 94205;
+				pProp = new CMFCPropertyGridProperty(_T("Normal Radius"), _T(""), _T("radius used to computer pointcloud normals"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().ia_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("norm_rad");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94205;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94206 float
+				id = 94206;
+				pProp = new CMFCPropertyGridProperty(_T("Feature Radius"), _T(""), _T("radius used to compute fast point feature histogram feature"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().ia_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("feat_rad");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94206;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				group->AddSubItem(group2);
+			}
+
+			{
+				group2 = new CMFCPropertyGridProperty(_T("Referance Position"));
+
+				// 94301 float
+				id = 94301;
+				pProp = new CMFCPropertyGridProperty(_T("X"), _T(""), _T("x position of module"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().coor_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("x");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94301;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94302 float
+				id = 94302;
+				pProp = new CMFCPropertyGridProperty(_T("Y"), _T(""), _T("y position of module"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().coor_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("y");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94302;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94303 float
+				id = 94303;
+				pProp = new CMFCPropertyGridProperty(_T("Z"), _T(""), _T("z position of module"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().coor_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("z");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94303;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94304 float
+				id = 94304;
+				pProp = new CMFCPropertyGridProperty(_T("A"), _T(""), _T("alpha angle(deg) of module"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().coor_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("a");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94304;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94305 float
+				id = 94305;
+				pProp = new CMFCPropertyGridProperty(_T("B"), _T(""), _T("beta angle(deg) of module"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().coor_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("b");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94305;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				// 94306 float
+				id = 94306;
+				pProp = new CMFCPropertyGridProperty(_T("C"), _T(""), _T("gama angle(deg) of module"));
+				pProp->SetData(id);
+				idtable[id] = node->name;
+
+				pMessage = &layer.sacia_param().coor_param();
+				pDescriptor = pMessage->GetDescriptor();
+				pReflection = pMessage->GetReflection();
+				pField = pDescriptor->FindFieldByName("c");
+				pack[id] = ReflectPackage(pMessage, pReflection, pField);
+				SET_94306;
+
+				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
+				pProp->SetOriginalValue(cs_temp);
+				pProp->ResetOriginalValue();
+				group2->AddSubItem(pProp);
+
+				group->AddSubItem(group2);
+			}
+
 			break;
-		case svaf::LayerParameter_LayerType_IAICP_EST:
+		case svaf::LayerParameter_LayerType_IAICP_EST://95
 			group = new CMFCPropertyGridProperty(_T("SAC-IA ICP"));
 			break;
-		case svaf::LayerParameter_LayerType_IANDT_EST:
+		case svaf::LayerParameter_LayerType_IANDT_EST://96
 			group = new CMFCPropertyGridProperty(_T("SAC-IA NDP"));
 			break;
-		case svaf::LayerParameter_LayerType_SUPIX_SEG:
+		case svaf::LayerParameter_LayerType_SUPIX_SEG://101
 			group = new CMFCPropertyGridProperty(_T("Superpixel Segment"));
 			break;
-		case svaf::LayerParameter_LayerType_RECTIFY:
+		case svaf::LayerParameter_LayerType_RECTIFY://141
 			group = new CMFCPropertyGridProperty(_T("Stereo Rectify"));
+
+			// 14101 string
+			id = 14101;
+			pProp = new CMFCPropertyGridFileProperty(_T("Camera Param"), TRUE, _T(""));
+			pProp->SetDescription(_T("calibration file of binocular camera"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.rectify_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("filename");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_14101;
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		default:
 			break;
