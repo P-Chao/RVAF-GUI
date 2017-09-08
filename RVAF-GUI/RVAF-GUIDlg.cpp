@@ -7,6 +7,8 @@
 #include "RVAF-GUIDlg.h"
 #include "afxdialogex.h"
 
+#include "protoid.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -242,38 +244,76 @@ void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 void CRVAFGUIDlg::GenerateProperties(){
 	m_properaty.RemoveAll();
 	idtable.clear();
+	
 	int id = 0;
-
+	
 	if (!ready_proto){
 		return;
 	}
 
+	const google::protobuf::Message* pMessage = NULL;
+	const google::protobuf::Descriptor* pDescriptor = NULL;
+	const google::protobuf::Reflection* pReflection = NULL;
+	const google::protobuf::FieldDescriptor* pField = NULL;
+	string type_name;
+
+	struct ReflectPackage{
+		google::protobuf::Message* pM;
+		google::protobuf::Reflection* pR;
+		google::protobuf::FieldDescriptor* pF;
+		ReflectPackage() : pM(NULL), pR(NULL), pF(NULL){}
+		ReflectPackage(const google::protobuf::Message* pMessage, const google::protobuf::Reflection* pReflection, const google::protobuf::FieldDescriptor* pField) :
+			pM(const_cast<google::protobuf::Message*>(pMessage)), pR(const_cast<google::protobuf::Reflection*>(pReflection)), pF(const_cast<google::protobuf::FieldDescriptor*>(pField)){}
+	};
+	hash_map<int, ReflectPackage> pack;
 	Node *node = &dummy;
 	while (node->next){
 		CMFCPropertyGridProperty * group = NULL;
 		CMFCPropertyGridProperty * pProp = NULL;
-		
 		
 		node = node->next;
 		auto type = layers[node->name].type();
 		auto layer = layers[node->name];
 		switch (type)
 		{
-		case svaf::LayerParameter_LayerType_NONE:
+		case svaf::LayerParameter_LayerType_NONE://01
 			break;
-		case svaf::LayerParameter_LayerType_IMAGE:
+		case svaf::LayerParameter_LayerType_IMAGE://02
 			group = new CMFCPropertyGridProperty(_T("Image"));
+
+			// 0201 bool
+			id = 0201;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+			
+			pMessage = &layer.data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_0201;
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
-		case svaf::LayerParameter_LayerType_IMAGE_PAIR:
+		case svaf::LayerParameter_LayerType_IMAGE_PAIR://03
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
+			// 0301 string
 			pProp = new CMFCPropertyGridFileProperty(_T("Left Image"), TRUE, _T("value"));
-			pProp->SetData(++id);
+			pProp->SetData(++id); 
 			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).left().c_str()));
 			pProp->ResetOriginalValue();
 			idtable[id] = node->name;
 			group->AddSubItem(pProp);
 
+			// 0302 string
 			pProp = new CMFCPropertyGridFileProperty(_T("Right Image"), TRUE, _T("value"));
 			pProp->SetData(++id);
 			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).right().c_str()));
@@ -281,41 +321,61 @@ void CRVAFGUIDlg::GenerateProperties(){
 			idtable[id] = node->name;
 			group->AddSubItem(pProp);
 
+			// 0303 bool
+			id = 0303;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layer.data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField);
+			SET_0303;
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
-		case svaf::LayerParameter_LayerType_VIDEO:
+		case svaf::LayerParameter_LayerType_VIDEO://04
 			group = new CMFCPropertyGridProperty(_T("Video"));
 			break;
-		case svaf::LayerParameter_LayerType_VIDEO_PAIR:
+		case svaf::LayerParameter_LayerType_VIDEO_PAIR://05
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_CAMERA:
+		case svaf::LayerParameter_LayerType_CAMERA://06
 			group = new CMFCPropertyGridProperty(_T("Camera"));
 			break;
-		case svaf::LayerParameter_LayerType_CAMERA_PAIR:
+		case svaf::LayerParameter_LayerType_CAMERA_PAIR://07
 			group = new CMFCPropertyGridProperty(_T("Camera Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_DSP:
+		case svaf::LayerParameter_LayerType_DSP://08
 			group = new CMFCPropertyGridProperty(_T("DSP Camera"));
 			break;
-		case svaf::LayerParameter_LayerType_DSP_PAIR:
+		case svaf::LayerParameter_LayerType_DSP_PAIR://09
 			group = new CMFCPropertyGridProperty(_T("DSP Camera Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_KINECT:
+		case svaf::LayerParameter_LayerType_KINECT://10
 			group = new CMFCPropertyGridProperty(_T("Kinect"));
 			break;
-		case svaf::LayerParameter_LayerType_IMAGE_FOLDER:
+		case svaf::LayerParameter_LayerType_IMAGE_FOLDER://11
 			group = new CMFCPropertyGridProperty(_T("Image Folder"));
 			break;
-		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER:
+		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
 			break;
-		case svaf::LayerParameter_LayerType_ADABOOST:
+		case svaf::LayerParameter_LayerType_ADABOOST://13
 			group = new CMFCPropertyGridProperty(_T("Adaboost"));
 			break;
-		case svaf::LayerParameter_LayerType_MILTRACK:
+		case svaf::LayerParameter_LayerType_MILTRACK://14
 			group = new CMFCPropertyGridProperty(_T("MILTrack"));
 			break;
-		case svaf::LayerParameter_LayerType_BITTRACK:
+		case svaf::LayerParameter_LayerType_BITTRACK://15
 			group = new CMFCPropertyGridProperty(_T("Bino MILTrack"));
 			break;
 		case svaf::LayerParameter_LayerType_SIFT_POINT:
