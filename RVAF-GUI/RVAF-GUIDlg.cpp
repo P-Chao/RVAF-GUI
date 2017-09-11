@@ -1071,7 +1071,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			m_properaty.AddProperty(group);
 		}
 	}
-
+	
 }
 
 void CRVAFGUIDlg::OnSelectAlgorithm()
@@ -1112,6 +1112,9 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		SET_0203;
 		break;
 	case 2101://string
+		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0); 
+		pProp->ResetOriginalValue();
+		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
 		SET_2101;
 		break;
@@ -1180,10 +1183,16 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		SET_7208;
 		break;
 	case 8102://string
+		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
+		pProp->ResetOriginalValue();
+		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
 		SET_8102;
 		break;
 	case 8103://string
+		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
+		pProp->ResetOriginalValue();
+		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
 		SET_8103;
 		break;
@@ -1196,6 +1205,9 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		SET_8104;
 		break;
 	case 9401://string
+		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
+		pProp->ResetOriginalValue();
+		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
 		SET_9401;
 		break;
@@ -1248,6 +1260,9 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		SET_94306;
 		break;
 	case 14101://string
+		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
+		pProp->ResetOriginalValue();
+		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
 		SET_14101;
 		break;
