@@ -41,6 +41,16 @@ public:
 	void OpenProtoFile(std::string filename);
 	void GenerateProperties();
 
+	struct ReflectPackage{
+		std::string layer_name;
+		google::protobuf::Message* pM;
+		google::protobuf::Reflection* pR;
+		google::protobuf::FieldDescriptor* pF;
+		ReflectPackage() : pM(NULL), pR(NULL), pF(NULL){}
+		ReflectPackage(const google::protobuf::Message* pMessage, const google::protobuf::Reflection* pReflection, const google::protobuf::FieldDescriptor* pField, std::string node_name) :
+			pM(const_cast<google::protobuf::Message*>(pMessage)), pR(const_cast<google::protobuf::Reflection*>(pReflection)), pF(const_cast<google::protobuf::FieldDescriptor*>(pField)), layer_name(node_name){}
+	};
+	hash_map<int, ReflectPackage> pack;
 
 // Implementation
 protected:
