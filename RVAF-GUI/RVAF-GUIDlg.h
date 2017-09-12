@@ -68,4 +68,6 @@ public:
 	CMFCPropertyGridCtrl m_properaty;
 	afx_msg void OnSelectAlgorithm();
 	afx_msg void OnShowMoreClicked();
+	afx_msg void OnSize(UINT nType, int cx, int cy);
+	CButton m_showMore;
 };

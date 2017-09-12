@@ -29,7 +29,7 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnSize(UINT nType, int cx, int cy);
+//	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
@@ -42,7 +42,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-	ON_WM_SIZE()
+//	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -61,6 +61,7 @@ void CRVAFGUIDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_BUTTON_SETALG, m_selectAlgorithm);
 	DDX_Control(pDX, IDC_MFCPROPERTYGRID1, m_properaty);
+	DDX_Control(pDX, IDC_BUTTON_MORE, m_showMore);
 }
 
 BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
@@ -70,6 +71,7 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 	ON_BN_CLICKED(IDC_BUTTON_SETALG, &CRVAFGUIDlg::OnSelectAlgorithm)
 	ON_BN_CLICKED(IDC_BUTTON_MORE, &CRVAFGUIDlg::OnShowMoreClicked)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -111,6 +113,12 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	item.cxy = 130;
 	item.mask = HDI_WIDTH;
 	m_properaty.GetHeaderCtrl().SetItem(0, new HDITEM(item));
+
+	//
+	CRect rc(0+300, 0+30, 393+300, 697+30);
+	//ClientToScreen(rc);
+	ScreenToClient(rc);
+	MoveWindow(rc);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -1201,13 +1209,30 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 void CRVAFGUIDlg::OnShowMoreClicked()
 {
 	// TODO: Add your control notification handler code here
-
+	CRect rc;
+	GetWindowRect(rc);
+	if (rc.right - rc.left == 393){
+		rc.right += 735;
+		m_showMore.SetWindowTextW(_T("<"));
+	} else{
+		rc.right -= 735;
+		m_showMore.SetWindowTextW(_T(">"));
+	}
+	MoveWindow(rc);
 }
 
 
-void CAboutDlg::OnSize(UINT nType, int cx, int cy)
+void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 {
 	CDialogEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
+	/*CRect	rc;
+	GetWindowRect(rc);
+	rc.right = 393;
+	rc.left = 0;
+	rc.bottom = 697;
+	rc.top = 0;
+	ScreenToClient(rc);
+	MoveWindow(rc);*/
 }
