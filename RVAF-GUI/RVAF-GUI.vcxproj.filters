@@ -42,9 +42,6 @@
     <ClInclude Include="svaf.pb.h">
       <Filter>Protobuf Files</Filter>
     </ClInclude>
-    <ClInclude Include="protoid.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RVAF-GUI.cpp">

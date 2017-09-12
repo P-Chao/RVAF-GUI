@@ -185,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="io.hpp" />
-    <ClInclude Include="protoid.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RVAF-GUI.h" />
     <ClInclude Include="RVAF-GUIDlg.h" />

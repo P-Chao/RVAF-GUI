@@ -7,8 +7,6 @@
 #include "RVAF-GUIDlg.h"
 #include "afxdialogex.h"
 
-#include "protoid.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -30,6 +28,8 @@ public:
 // Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
@@ -42,6 +42,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -68,6 +69,7 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, OnPropertyChanged)
 	ON_BN_CLICKED(IDC_BUTTON_SETALG, &CRVAFGUIDlg::OnSelectAlgorithm)
+	ON_BN_CLICKED(IDC_BUTTON_MORE, &CRVAFGUIDlg::OnShowMoreClicked)
 END_MESSAGE_MAP()
 
 
@@ -267,7 +269,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 		
 		node = node->next;
 		auto type = layers[node->name].type();
-		auto layer = layers[node->name];
+		//auto layer = layers[node->name];
 		switch (type)
 		{
 		case svaf::LayerParameter_LayerType_NONE://00
@@ -281,12 +283,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 			
-			pMessage = &layer.data_param();
+			pMessage = &layers[node->name].data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_0102;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -323,12 +324,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.data_param();
+			pMessage = &layers[node->name].data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_0203;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -375,12 +375,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.adaboost_param();
+			pMessage = &layers[node->name].adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("detector");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_2101;
 
 			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
 			pProp->ResetOriginalValue();
@@ -393,12 +392,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.adaboost_param();
+			pMessage = &layers[node->name].adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sync_frame");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_2102;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -413,12 +411,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.adaboost_param();
+			pMessage = &layers[node->name].adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sync_video");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_2103;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -433,12 +430,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.adaboost_param();
+			pMessage = &layers[node->name].adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sync_epipolar");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_2104;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -453,12 +449,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.adaboost_param();
+			pMessage = &layers[node->name].adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("thresh");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_2105;
 			
 			cs_temp.Format(_T("%.2f"), (pReflection->GetFloat(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -471,12 +466,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.adaboost_param();
+			pMessage = &layers[node->name].adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("nms");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_2106;
 
 			cs_temp.Format(_T("%.2f"), (pReflection->GetFloat(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -577,12 +571,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("max_disp");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7201;
 
 			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -595,12 +588,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("factor");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7202;
 
 			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -613,12 +605,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("guidmr");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7203;
 
 			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -631,12 +622,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("dispmr");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7204;
 
 			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -649,12 +639,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sg");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7205;
 
 			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -667,12 +656,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sc");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7206;
 
 			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -685,12 +673,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("r1");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7207;
 
 			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -703,12 +690,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.eadp_param();
+			pMessage = &layers[node->name].eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("r2");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_7208;
 
 			cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 			pProp->SetOriginalValue(cs_temp);
@@ -725,12 +711,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.triang_param();
+			pMessage = &layers[node->name].triang_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("toolbox_dir");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_8102;
 
 			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
 			pProp->ResetOriginalValue();
@@ -742,12 +727,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.triang_param();
+			pMessage = &layers[node->name].triang_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("calibmat_dir");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_8103;
 
 			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
 			pProp->ResetOriginalValue();
@@ -759,12 +743,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.triang_param();
+			pMessage = &layers[node->name].triang_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("savepc");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_8104;
 
 			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
 			pProp->ResetOriginalValue();
@@ -790,12 +773,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.sacia_param();
+			pMessage = &layers[node->name].sacia_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("pcd_filename");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_9401;
 
 			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
 			pProp->ResetOriginalValue();
@@ -811,12 +793,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().ia_param();
+				pMessage = &layers[node->name].sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("max_iter");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94201;
 
 				cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -829,12 +810,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().ia_param();
+				pMessage = &layers[node->name].sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("min_cors");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94202;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -847,12 +827,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().ia_param();
+				pMessage = &layers[node->name].sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("max_cors");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94203;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -865,12 +844,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().ia_param();
+				pMessage = &layers[node->name].sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("voxel_grid");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94204;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -883,12 +861,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().ia_param();
+				pMessage = &layers[node->name].sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("norm_rad");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94205;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -901,12 +878,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().ia_param();
+				pMessage = &layers[node->name].sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("feat_rad");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94206;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -925,12 +901,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().coor_param();
+				pMessage = &layers[node->name].sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("x");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94301;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -943,12 +918,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().coor_param();
+				pMessage = &layers[node->name].sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("y");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94302;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -961,12 +935,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().coor_param();
+				pMessage = &layers[node->name].sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("z");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94303;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -979,12 +952,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().coor_param();
+				pMessage = &layers[node->name].sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("a");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94304;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -997,12 +969,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().coor_param();
+				pMessage = &layers[node->name].sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("b");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94305;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -1015,12 +986,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layer.sacia_param().coor_param();
+				pMessage = &layers[node->name].sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("c");
 				pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-				SET_94306;
 
 				cs_temp.Format(_T("%.1f"), (pReflection->GetFloat(*pMessage, pField)));
 				pProp->SetOriginalValue(cs_temp);
@@ -1050,12 +1020,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layer.rectify_param();
+			pMessage = &layers[node->name].rectify_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("filename");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
-			SET_14101;
 
 			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
 			pProp->ResetOriginalValue();
@@ -1101,7 +1070,6 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
-		SET_0102;
 		break;
 	case 0203://bool
 		if (d == "TRUE"){
@@ -1109,14 +1077,9 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
-		SET_0203;
 		break;
 	case 2101://string
-		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0); 
-		pProp->ResetOriginalValue();
-		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
-		SET_2101;
 		break;
 	case 2102://bool
 		if (d == "TRUE"){
@@ -1124,7 +1087,6 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
-		SET_2102;
 		break;
 	case 2103://bool
 		if (d == "TRUE"){
@@ -1132,7 +1094,6 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
-		SET_2103;
 		break;
 	case 2104://bool
 		if (d == "TRUE"){
@@ -1140,61 +1101,42 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
-		SET_2104;
 		break;
 	case 2105://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_2105;
 		break;
 	case 2106://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_2106;
 		break;
 	case 7201://int32
 		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7201;
 		break;
 	case 7202://int32
 		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7202;
 		break;
 	case 7203://int32
 		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7203;
 		break;
 	case 7204://int32
 		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7204;
 		break;
 	case 7205://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7205;
 		break;
 	case 7206://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7206;
 		break;
 	case 7207://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7207;
 		break;
 	case 7208://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_7208;
 		break;
 	case 8102://string
-		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
-		pProp->ResetOriginalValue();
-		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
-		SET_8102;
 		break;
 	case 8103://string
-		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
-		pProp->ResetOriginalValue();
-		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
-		SET_8103;
 		break;
 	case 8104://bool
 		if (d == "TRUE"){
@@ -1202,75 +1144,70 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
-		SET_8104;
 		break;
 	case 9401://string
-		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
-		pProp->ResetOriginalValue();
-		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
-		SET_9401;
 		break;
 	case 94201://int32
 		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94201;
 		break;
 	case 94202://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94202;
 		break;
 	case 94203://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94203;
 		break;
 	case 94204://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94204;
 		break;
 	case 94205://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94205;
 		break;
 	case 94206://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94206;
 		break;
 	case 94301://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94301;
 		break;
 	case 94302://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94302;
 		break;
 	case 94303://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94303;
 		break;
 	case 94304://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94304;
 		break;
 	case 94305://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94305;
 		break;
 	case 94306://float
 		pack[id].pR->SetFloat(pack[id].pM, pack[id].pF, atof(std::string((LPCSTR)CStringA(d)).c_str()));
-		SET_94306;
 		break;
 	case 14101://string
-		MessageBoxW(L"Item Not Allow To Edit", L"Tips", 0);
-		pProp->ResetOriginalValue();
-		break;
 		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
-		SET_14101;
 		break;
 	default:
 		break;
 	}
-
 	
 	return 0;
 }
 
+/*
+	展开界面
+*/
+
+void CRVAFGUIDlg::OnShowMoreClicked()
+{
+	// TODO: Add your control notification handler code here
+
+}
+
+
+void CAboutDlg::OnSize(UINT nType, int cx, int cy)
+{
+	CDialogEx::OnSize(nType, cx, cy);
+
+	// TODO: Add your message handler code here
+}

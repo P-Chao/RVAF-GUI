@@ -67,4 +67,5 @@ public:
 	CButton m_selectAlgorithm;
 	CMFCPropertyGridCtrl m_properaty;
 	afx_msg void OnSelectAlgorithm();
+	afx_msg void OnShowMoreClicked();
 };
