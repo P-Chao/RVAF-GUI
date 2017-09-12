@@ -11,6 +11,13 @@
 #define new DEBUG_NEW
 #endif
 
+#define GUI_NRM_W 393
+#define GUI_NRM_H 697
+#define GUI_EXP_W 1128
+#define GUI_EXP_H GUI_NRM_H
+#define GUI_OFF_X 300
+#define GUI_OFF_Y 200
+
 
 // CAboutDlg dialog used for App About
 
@@ -109,16 +116,35 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	// TODO: Add extra initialization here
 	ready_proto = false;
 
+	isExpan = false;
+
 	HDITEM item;
 	item.cxy = 130;
 	item.mask = HDI_WIDTH;
 	m_properaty.GetHeaderCtrl().SetItem(0, new HDITEM(item));
 
 	//
-	CRect rc(0+300, 0+30, 393+300, 697+30);
-	//ClientToScreen(rc);
+	gui_nrm_w = GUI_NRM_W;
+	gui_nrm_h = GUI_NRM_H;
+	gui_exp_w = GUI_EXP_W;
+	gui_exp_h = GUI_EXP_H;
+	CRect rc(0 + GUI_OFF_X, 0 + GUI_OFF_Y, gui_nrm_w + GUI_OFF_X, gui_nrm_h + GUI_OFF_Y);
 	ScreenToClient(rc);
 	MoveWindow(rc);
+
+	
+	
+	UILayout();
+	
+	
+
+	CRect rc_btn;
+	m_selectAlgorithm.GetWindowRect(rc_btn);
+	
+
+	ScreenToClient(rc_btn);
+
+
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -203,9 +229,11 @@ void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 		node = node->next;
 		delete temp;
 	}
+	dummy.next = NULL;
 
 	// Read Proto Files
 	if (!ReadCheckProtoFile(filename)){
+		m_selectAlgorithm.SetWindowTextW(CString("Select Algorithm"));
 		return;
 	}
 	m_selectAlgorithm.SetWindowTextW(CString(m_svaftask.name().c_str()));
@@ -259,6 +287,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 	int id = 0;
 	
 	if (!ready_proto){
+		m_properaty.RedrawWindow();
 		return;
 	}
 
@@ -1048,7 +1077,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			m_properaty.AddProperty(group);
 		}
 	}
-	
+	m_properaty.RedrawWindow();
 }
 
 void CRVAFGUIDlg::OnSelectAlgorithm()
@@ -1059,7 +1088,10 @@ void CRVAFGUIDlg::OnSelectAlgorithm()
 		CString filename = opendlg.GetPathName();
 		OpenProtoFile((LPCSTR)CStringA(filename));
 		GenerateProperties();
+		
 	}
+
+	UILayout();
 
 }
 
@@ -1211,16 +1243,47 @@ void CRVAFGUIDlg::OnShowMoreClicked()
 	// TODO: Add your control notification handler code here
 	CRect rc;
 	GetWindowRect(rc);
-	if (rc.right - rc.left == 393){
-		rc.right += 735;
-		m_showMore.SetWindowTextW(_T("<"));
-	} else{
-		rc.right -= 735;
+
+	if (isExpan){
+		rc.right -= (GUI_EXP_W - GUI_NRM_W);
+		rc.bottom -= (GUI_EXP_H - GUI_NRM_H);
 		m_showMore.SetWindowTextW(_T(">"));
+		isExpan = false;
+	} else{
+		rc.right += (GUI_EXP_W - GUI_NRM_W);
+		rc.bottom += (GUI_EXP_H - GUI_NRM_H);
+		m_showMore.SetWindowTextW(_T("<"));
+		isExpan = true;
 	}
+
 	MoveWindow(rc);
+	ScreenToClient(rc);
+
+	CRect rc2;
+	m_properaty.GetWindowRect(rc2);
+	ScreenToClient(rc2);
+
+	CRect rc3;
+	m_selectAlgorithm.GetWindowRect(rc3);
+	ScreenToClient(rc3);
+
+	CRect rc4;
+	m_showMore.GetWindowRect(rc4);
+	ScreenToClient(rc4);
+	m_showMore.MoveWindow(rc4);
+
 }
 
+void CRVAFGUIDlg::UILayout(){
+	m_showMore.MoveWindow(CRect(354, 0, gui_nrm_w - 16, 23));
+	if (ready_proto){
+		m_showMore.ShowWindow(SW_SHOW);
+		m_selectAlgorithm.MoveWindow(CRect(0, 0, 354, 23));
+	} else{
+		m_showMore.ShowWindow(SW_HIDE);
+		m_selectAlgorithm.MoveWindow(CRect(0, 0, gui_nrm_w - 16, 23));
+	}
+}
 
 void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 {

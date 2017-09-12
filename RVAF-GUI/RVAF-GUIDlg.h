@@ -33,13 +33,21 @@ public:
 	using Node = _Node<std::string>;
 	Node dummy;
 
+	bool isExpan;
 	bool ready_proto;
+
+	int gui_nrm_w;
+	int gui_nrm_h;
+	int gui_exp_w;
+	int gui_exp_h;
+
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter> layers;
 	hash_map<int, std::string> idtable;
 	bool ReadCheckProtoFile(std::string filename);
 	void OpenProtoFile(std::string filename);
 	void GenerateProperties();
+	void UILayout();
 
 	struct ReflectPackage{
 		std::string layer_name;
