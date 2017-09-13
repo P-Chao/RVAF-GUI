@@ -494,7 +494,7 @@ void protobuf_AssignDesc_svaf_2eproto() {
       sizeof(VideoPairParameter));
   CameraDataParameter_descriptor_ = file->message_type(13);
   static const int CameraDataParameter_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraDataParameter, camere_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CameraDataParameter, camera_),
   };
   CameraDataParameter_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -2144,9 +2144,9 @@ void protobuf_AddDesc_svaf_2eproto() {
     "aParameter\022\014\n\004name\030\001 \003(\t\"\\\n\022VideoPairPar"
     "ameter\022!\n\004pair\030\001 \003(\0132\023.svaf.BinocularPai"
     "r\022#\n\005_pair\030\377\001 \003(\0132\023.svaf.BinocularPair\"%"
-    "\n\023CameraDataParameter\022\016\n\006camere\030\001 \001(\003\">\n"
-    "\023CameraPairParameter\022\022\n\nleftcamera\030\001 \001(\003"
-    "\022\023\n\013rightcamera\030\002 \001(\003\"&\n\026DSPCameraDataPa"
+    "\n\023CameraDataParameter\022\016\n\006camera\030\001 \001(\005\">\n"
+    "\023CameraPairParameter\022\022\n\nleftcamera\030\001 \001(\005"
+    "\022\023\n\013rightcamera\030\002 \001(\005\"&\n\026DSPCameraDataPa"
     "rameter\022\014\n\004chns\030\001 \001(\005\"&\n\026DSPCameraPairPa"
     "rameter\022\014\n\004chns\030\001 \001(\005\"\025\n\023KinectDataParam"
     "eter\"$\n\024ImageFolderParameter\022\014\n\004name\030\001 \003"
@@ -5841,7 +5841,7 @@ void VideoPairParameter::Swap(VideoPairParameter* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int CameraDataParameter::kCamereFieldNumber;
+const int CameraDataParameter::kCameraFieldNumber;
 #endif  // !_MSC_VER
 
 CameraDataParameter::CameraDataParameter()
@@ -5862,7 +5862,7 @@ CameraDataParameter::CameraDataParameter(const CameraDataParameter& from)
 
 void CameraDataParameter::SharedCtor() {
   _cached_size_ = 0;
-  camere_ = GOOGLE_LONGLONG(0);
+  camera_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -5898,7 +5898,7 @@ CameraDataParameter* CameraDataParameter::New() const {
 }
 
 void CameraDataParameter::Clear() {
-  camere_ = GOOGLE_LONGLONG(0);
+  camera_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
@@ -5913,13 +5913,13 @@ bool CameraDataParameter::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int64 camere = 1;
+      // optional int32 camera = 1;
       case 1: {
         if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &camere_)));
-          set_has_camere();
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &camera_)));
+          set_has_camera();
         } else {
           goto handle_unusual;
         }
@@ -5952,9 +5952,9 @@ failure:
 void CameraDataParameter::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:svaf.CameraDataParameter)
-  // optional int64 camere = 1;
-  if (has_camere()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->camere(), output);
+  // optional int32 camera = 1;
+  if (has_camera()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->camera(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -5967,9 +5967,9 @@ void CameraDataParameter::SerializeWithCachedSizes(
 ::google::protobuf::uint8* CameraDataParameter::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:svaf.CameraDataParameter)
-  // optional int64 camere = 1;
-  if (has_camere()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->camere(), target);
+  // optional int32 camera = 1;
+  if (has_camera()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->camera(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -5984,11 +5984,11 @@ int CameraDataParameter::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional int64 camere = 1;
-    if (has_camere()) {
+    // optional int32 camera = 1;
+    if (has_camera()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->camere());
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->camera());
     }
 
   }
@@ -6018,8 +6018,8 @@ void CameraDataParameter::MergeFrom(const ::google::protobuf::Message& from) {
 void CameraDataParameter::MergeFrom(const CameraDataParameter& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_camere()) {
-      set_camere(from.camere());
+    if (from.has_camera()) {
+      set_camera(from.camera());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -6044,7 +6044,7 @@ bool CameraDataParameter::IsInitialized() const {
 
 void CameraDataParameter::Swap(CameraDataParameter* other) {
   if (other != this) {
-    std::swap(camere_, other->camere_);
+    std::swap(camera_, other->camera_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -6085,8 +6085,8 @@ CameraPairParameter::CameraPairParameter(const CameraPairParameter& from)
 
 void CameraPairParameter::SharedCtor() {
   _cached_size_ = 0;
-  leftcamera_ = GOOGLE_LONGLONG(0);
-  rightcamera_ = GOOGLE_LONGLONG(0);
+  leftcamera_ = 0;
+  rightcamera_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -6151,11 +6151,11 @@ bool CameraPairParameter::MergePartialFromCodedStream(
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // optional int64 leftcamera = 1;
+      // optional int32 leftcamera = 1;
       case 1: {
         if (tag == 8) {
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &leftcamera_)));
           set_has_leftcamera();
         } else {
@@ -6165,12 +6165,12 @@ bool CameraPairParameter::MergePartialFromCodedStream(
         break;
       }
 
-      // optional int64 rightcamera = 2;
+      // optional int32 rightcamera = 2;
       case 2: {
         if (tag == 16) {
          parse_rightcamera:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
                  input, &rightcamera_)));
           set_has_rightcamera();
         } else {
@@ -6205,14 +6205,14 @@ failure:
 void CameraPairParameter::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
   // @@protoc_insertion_point(serialize_start:svaf.CameraPairParameter)
-  // optional int64 leftcamera = 1;
+  // optional int32 leftcamera = 1;
   if (has_leftcamera()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(1, this->leftcamera(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->leftcamera(), output);
   }
 
-  // optional int64 rightcamera = 2;
+  // optional int32 rightcamera = 2;
   if (has_rightcamera()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(2, this->rightcamera(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->rightcamera(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -6225,14 +6225,14 @@ void CameraPairParameter::SerializeWithCachedSizes(
 ::google::protobuf::uint8* CameraPairParameter::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
   // @@protoc_insertion_point(serialize_to_array_start:svaf.CameraPairParameter)
-  // optional int64 leftcamera = 1;
+  // optional int32 leftcamera = 1;
   if (has_leftcamera()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(1, this->leftcamera(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->leftcamera(), target);
   }
 
-  // optional int64 rightcamera = 2;
+  // optional int32 rightcamera = 2;
   if (has_rightcamera()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(2, this->rightcamera(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->rightcamera(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -6247,17 +6247,17 @@ int CameraPairParameter::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // optional int64 leftcamera = 1;
+    // optional int32 leftcamera = 1;
     if (has_leftcamera()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->leftcamera());
     }
 
-    // optional int64 rightcamera = 2;
+    // optional int32 rightcamera = 2;
     if (has_rightcamera()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->rightcamera());
     }
 

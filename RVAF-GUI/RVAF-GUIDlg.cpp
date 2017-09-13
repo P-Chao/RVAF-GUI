@@ -132,19 +132,8 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	ScreenToClient(rc);
 	MoveWindow(rc);
 
-	
-	
+	m_properaty.MoveWindow(CRect(0, 23, gui_nrm_w - 16, gui_exp_h - 31 - 8));
 	UILayout();
-	
-	
-
-	CRect rc_btn;
-	m_selectAlgorithm.GetWindowRect(rc_btn);
-	
-
-	ScreenToClient(rc_btn);
-
-
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -314,8 +303,26 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE://01
 			group = new CMFCPropertyGridProperty(_T("Image"));
 
+			// 0101 repeated string
+			id = 101;
+			pProp = new CMFCPropertyGridFileProperty(_T("Image File"), TRUE, _T(""));
+			pProp->SetDescription(_T("input image file"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].imagedata_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("name");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetRepeatedString(*pMessage, pField, 0).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			// 0102 bool
-			id = 0102;
+			id = 102;
 			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
 			pProp->SetData(id);
 			idtable[id] = node->name;
@@ -338,25 +345,43 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
 			// 0201 string
-			id = 0301;
-			pProp = new CMFCPropertyGridFileProperty(_T("Left Image"), TRUE, _T("value"));
-			pProp->SetData(id); 
-			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).left().c_str()));
-			pProp->ResetOriginalValue();
+			id = 201;
+			pProp = new CMFCPropertyGridFileProperty(_T("Left Image"), TRUE, _T(""));
+			pProp->SetDescription(_T("input left image"));
+			pProp->SetData(id);
 			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].imagepair_param().pair(0);
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("left");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
 			group->AddSubItem(pProp);
 
 			// 0202 string
-			id = 0302;
-			pProp = new CMFCPropertyGridFileProperty(_T("Right Image"), TRUE, _T("value"));
+			id = 202;
+			pProp = new CMFCPropertyGridFileProperty(_T("Right Image"), TRUE, _T(""));
+			pProp->SetDescription(_T("input right image"));
 			pProp->SetData(id);
-			pProp->SetOriginalValue(CString(layers[node->name].imagepair_param().pair(0).right().c_str()));
-			pProp->ResetOriginalValue();
 			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].imagepair_param().pair(0);
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("right");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
 			group->AddSubItem(pProp);
 
 			// 0203 bool
-			id = 0203;
+			id = 203;
 			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
 			pProp->SetData(id);
 			idtable[id] = node->name;
@@ -377,30 +402,363 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO://03
 			group = new CMFCPropertyGridProperty(_T("Video"));
+
+			// 0301 repeated string
+			id = 301;
+			pProp = new CMFCPropertyGridFileProperty(_T("Video File"), TRUE, _T(""));
+			pProp->SetDescription(_T("input video image"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].videodata_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("name");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetRepeatedString(*pMessage, pField, 0).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 0303 bool
+			id = 303;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO_PAIR://04
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
+
+			// 0401 string
+			id = 401;
+			pProp = new CMFCPropertyGridFileProperty(_T("Left Video"), TRUE, _T(""));
+			pProp->SetDescription(_T("input left video"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].videopair_param().pair(0);
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("left");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 0402 string
+			id = 402;
+			pProp = new CMFCPropertyGridFileProperty(_T("Right Video"), TRUE, _T(""));
+			pProp->SetDescription(_T("input right video"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].videopair_param().pair(0);
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("right");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
+			// 0403 bool
+			id = 403;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_CAMERA://05
 			group = new CMFCPropertyGridProperty(_T("Camera"));
+
+			// 0501 int32
+			id = 501;
+			pProp = new CMFCPropertyGridProperty(_T("Camera ID"), _T(""), _T("open usb camera"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].cameradata_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("camera");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 0503 bool
+			id = 503;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_CAMERA_PAIR://06
 			group = new CMFCPropertyGridProperty(_T("Camera Pair"));
+
+			// 0601 int32
+			id = 601;
+			pProp = new CMFCPropertyGridProperty(_T("Left Camera"), _T(""), _T("left usb camera id"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].camerapair_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("left");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 0602 int32
+			id = 602;
+			pProp = new CMFCPropertyGridProperty(_T("Right Camera"), _T(""), _T("right usb camera id"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].camerapair_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("camera");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
+			pProp->SetOriginalValue(cs_temp);
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 0603 bool
+			id = 603;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_DSP://07
 			group = new CMFCPropertyGridProperty(_T("DSP Camera"));
+
+			// 0703 bool
+			id = 703;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_DSP_PAIR://08
 			group = new CMFCPropertyGridProperty(_T("DSP Camera Pair"));
+
+			// 0803 bool
+			id = 803;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_KINECT://09
 			group = new CMFCPropertyGridProperty(_T("Kinect"));
+
+			// 0903 bool
+			id = 903;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_FOLDER://11
 			group = new CMFCPropertyGridProperty(_T("Image Folder"));
+
+			// 1101 repeated string
+			id = 1101;
+			pProp = new CMFCPropertyGridProperty(_T("Folder Dir"), _T(""), _T("image folder dir"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].folder_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("name");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetRepeatedString(*pMessage, pField, 0).c_str()));
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 1103 bool
+			id = 1103;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
+
+			// 1201 string
+			id = 1201;
+			pProp = new CMFCPropertyGridProperty(_T("Folder Dir"), _T(""), _T("image folder dir"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].pairfolder_param().pair(0);
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("left");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 1202 string
+			id = 1202;
+			pProp = new CMFCPropertyGridProperty(_T("Folder Dir"), _T(""), _T("image folder dir"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].pairfolder_param().pair(0);
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("right");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(CString(pReflection->GetString(*pMessage, pField).c_str()));
+			pProp->ResetOriginalValue();
+			group->AddSubItem(pProp);
+
+			// 1203 bool
+			id = 1203;
+			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pMessage = &layers[node->name].data_param();
+			pDescriptor = pMessage->GetDescriptor();
+			pReflection = pMessage->GetReflection();
+			pField = pDescriptor->FindFieldByName("color");
+			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
+
+			pProp->SetOriginalValue(pReflection->GetBool(*pMessage, pField) ? CString("TRUE") : CString("FALSE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(CString("TRUE"));
+			pProp->AddOption(CString("FALSE"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			break;
 		case svaf::LayerParameter_LayerType_ADABOOST://21
 			group = new CMFCPropertyGridProperty(_T("Adaboost"));
@@ -1257,20 +1615,6 @@ void CRVAFGUIDlg::OnShowMoreClicked()
 	}
 
 	MoveWindow(rc);
-	ScreenToClient(rc);
-
-	CRect rc2;
-	m_properaty.GetWindowRect(rc2);
-	ScreenToClient(rc2);
-
-	CRect rc3;
-	m_selectAlgorithm.GetWindowRect(rc3);
-	ScreenToClient(rc3);
-
-	CRect rc4;
-	m_showMore.GetWindowRect(rc4);
-	ScreenToClient(rc4);
-	m_showMore.MoveWindow(rc4);
 
 }
 
