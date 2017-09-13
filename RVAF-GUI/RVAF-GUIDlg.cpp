@@ -118,11 +118,6 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	isExpan = false;
 
-	HDITEM item;
-	item.cxy = 130;
-	item.mask = HDI_WIDTH;
-	m_properaty.GetHeaderCtrl().SetItem(0, new HDITEM(item));
-
 	//
 	gui_nrm_w = GUI_NRM_W;
 	gui_nrm_h = GUI_NRM_H;
@@ -133,6 +128,11 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	MoveWindow(rc);
 
 	m_properaty.MoveWindow(CRect(0, 23, gui_nrm_w - 16, gui_exp_h - 31 - 8));
+	HDITEM item;
+	item.cxy = 140;
+	item.mask = HDI_WIDTH;
+	m_properaty.GetHeaderCtrl().SetItem(0, new HDITEM(item));
+
 	UILayout();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -310,6 +310,13 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
+			if (layers[node->name].imagedata_param().name_size() == 0){
+				const_cast<::svaf::ImageDataParameter&>(layers[node->name].imagedata_param()).add_name((const char*)"");
+			} else{
+				std::string tempstr = layers[node->name].imagedata_param().name(0);
+				const_cast<::svaf::ImageDataParameter&>(layers[node->name].imagedata_param()).clear_name();
+				const_cast<::svaf::ImageDataParameter&>(layers[node->name].imagedata_param()).add_name(tempstr);
+			}
 			pMessage = &layers[node->name].imagedata_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
@@ -344,13 +351,22 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR://02
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
+			if (layers[node->name].imagepair_param().pair_size() == 0){
+				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).add_pair();
+			} else{
+				auto temppair = layers[node->name].imagepair_param().pair(0);
+				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).clear_pair();
+				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).add_pair();
+				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_left(temppair.left());
+				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_left(temppair.right());
+			}
 			// 0201 string
 			id = 201;
 			pProp = new CMFCPropertyGridFileProperty(_T("Left Image"), TRUE, _T(""));
 			pProp->SetDescription(_T("input left image"));
 			pProp->SetData(id);
 			idtable[id] = node->name;
-
+			
 			pMessage = &layers[node->name].imagepair_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
@@ -410,6 +426,13 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
+			if (layers[node->name].videodata_param().name_size() == 0){
+				const_cast<::svaf::VideoDataParameter&>(layers[node->name].videodata_param()).add_name((const char*)"");
+			} else{
+				std::string tempstr = layers[node->name].videodata_param().name(0);
+				const_cast<::svaf::VideoDataParameter&>(layers[node->name].videodata_param()).clear_name();
+				const_cast<::svaf::VideoDataParameter&>(layers[node->name].videodata_param()).add_name(tempstr);
+			}
 			pMessage = &layers[node->name].videodata_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
@@ -444,6 +467,15 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_VIDEO_PAIR://04
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
 
+			if (layers[node->name].videopair_param().pair_size() == 0){
+				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).add_pair();
+			} else{
+				auto temppair = layers[node->name].videopair_param().pair(0);
+				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).clear_pair();
+				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).add_pair();
+				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_left(temppair.left());
+				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_left(temppair.right());
+			}
 			// 0401 string
 			id = 401;
 			pProp = new CMFCPropertyGridFileProperty(_T("Left Video"), TRUE, _T(""));
@@ -675,6 +707,13 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
+			if (layers[node->name].folder_param().name_size() == 0){
+				const_cast<::svaf::ImageFolderParameter&>(layers[node->name].folder_param()).add_name((const char*)"");
+			} else{
+				std::string tempstr = layers[node->name].folder_param().name(0);
+				const_cast<::svaf::ImageFolderParameter&>(layers[node->name].folder_param()).clear_name();
+				const_cast<::svaf::ImageFolderParameter&>(layers[node->name].folder_param()).add_name(tempstr);
+			}
 			pMessage = &layers[node->name].folder_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
@@ -708,6 +747,15 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
 
+			if (layers[node->name].pairfolder_param().pair_size() == 0){
+				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).add_pair();
+			} else{
+				auto temppair = layers[node->name].pairfolder_param().pair(0);
+				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).clear_pair();
+				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).add_pair();
+				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_left(temppair.left());
+				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_left(temppair.right());
+			}
 			// 1201 string
 			id = 1201;
 			pProp = new CMFCPropertyGridProperty(_T("Folder Dir"), _T(""), _T("image folder dir"));
@@ -1462,14 +1510,113 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 	d = t.bstrVal;
 	int id = pProp->GetData();
 	switch (id){
-	case 0102://bool
+	case 101://repeated string
+		pack[id].pR->SetRepeatedString(pack[id].pM, pack[id].pF, 0, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 102://bool
 		if (d == "TRUE"){
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
 		} else{
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
 		}
 		break;
-	case 0203://bool
+	case 201://string
+		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 202:
+		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 203://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 301://reapeated string
+		pack[id].pR->SetRepeatedString(pack[id].pM, pack[id].pF, 0, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 303://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 401://string
+		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 402://string
+		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 403://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 501://int32
+		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
+		break;
+	case 503://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 601://int32
+		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
+		break;
+	case 602://int32
+		pack[id].pR->SetInt32(pack[id].pM, pack[id].pF, atoi(std::string((LPCSTR)CStringA(d)).c_str()));
+		break;
+	case 603://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 703://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 803://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 903://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 1101://repeated string
+		pack[id].pR->SetRepeatedString(pack[id].pM, pack[id].pF, 0, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 1103://bool
+		if (d == "TRUE"){
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
+		} else{
+			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, false);
+		}
+		break;
+	case 1201://string
+		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 1202://string
+		pack[id].pR->SetString(pack[id].pM, pack[id].pF, std::string((LPCSTR)CStringA(d)));
+		break;
+	case 1203://bool
 		if (d == "TRUE"){
 			pack[id].pR->SetBool(pack[id].pM, pack[id].pF, true);
 		} else{
