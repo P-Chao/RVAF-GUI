@@ -15,8 +15,10 @@
 #define GUI_NRM_H 697
 #define GUI_EXP_W 1128
 #define GUI_EXP_H GUI_NRM_H
-#define GUI_OFF_X 300
+#define GUI_OFF_X 300 // 出口相对屏幕初始位置
 #define GUI_OFF_Y 200
+#define TOOL_MARGN 1 // 工具与左侧间隔
+#define TOOL_WIDTH 45 // 工具与左侧宽度
 
 
 // CAboutDlg dialog used for App About
@@ -69,6 +71,8 @@ void CRVAFGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_SETALG, m_selectAlgorithm);
 	DDX_Control(pDX, IDC_MFCPROPERTYGRID1, m_properaty);
 	DDX_Control(pDX, IDC_BUTTON_MORE, m_showMore);
+	DDX_Control(pDX, IDC_ZOON_TOOL, m_zoonTool);
+	DDX_Control(pDX, IDC_ZOON_DISP, m_zoonDisplay);
 }
 
 BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
@@ -133,7 +137,26 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	item.mask = HDI_WIDTH;
 	m_properaty.GetHeaderCtrl().SetItem(0, new HDITEM(item));
 
-	UILayout();
+	m_zoonTool.MoveWindow(CRect(gui_nrm_w - 16 + TOOL_MARGN, 0, gui_nrm_w - 16 + TOOL_MARGN + TOOL_WIDTH, gui_exp_h - 31 - 8));
+	toolid = vector<int>{IDC_BUTTON3, IDC_BUTTON4, IDC_BUTTON5, IDC_BUTTON6, IDC_BUTTON7, IDC_BUTTON8, IDC_BUTTON9, 
+		IDC_BUTTON10, IDC_BUTTON11, IDC_BUTTON12, IDC_BUTTON13, IDC_BUTTON14, IDC_BUTTON15, IDC_BUTTON16};
+	
+	m_zoonTool.GetWindowRect(rc);
+	ScreenToClient(rc);
+	int toolbtnsize = rc.right - rc.left;
+	int totallength = rc.bottom - rc.top;
+	int steplength = totallength / toolid.size();
+	while (steplength <= toolbtnsize){
+		toolbtnsize--;
+	}
+
+	for (int i = 0; i < toolid.size(); ++i){
+		CWnd* pWnd = GetDlgItem(toolid[i]);
+		pWnd->MoveWindow(CRect(rc.left, i*steplength, rc.left + toolbtnsize, i*steplength + toolbtnsize));
+	}
+	m_zoonTool.ShowWindow(SW_HIDE);
+
+	SetTopButtonLayout();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -1737,10 +1760,12 @@ void CRVAFGUIDlg::OnSelectAlgorithm()
 		CString filename = opendlg.GetPathName();
 		OpenProtoFile((LPCSTR)CStringA(filename));
 		GenerateProperties();
-		
+		if (!ready_proto){
+			SetMainUILayout(0);
+		}
 	}
 
-	UILayout();
+	SetTopButtonLayout();
 
 }
 
@@ -2028,26 +2053,31 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 void CRVAFGUIDlg::OnShowMoreClicked()
 {
 	// TODO: Add your control notification handler code here
-	CRect rc;
+	/*CRect rc;
 	GetWindowRect(rc);
 
 	if (isExpan){
-		rc.right -= (GUI_EXP_W - GUI_NRM_W);
-		rc.bottom -= (GUI_EXP_H - GUI_NRM_H);
+		rc.right -= (gui_exp_w - gui_nrm_w);
+		rc.bottom -= (gui_exp_h - gui_nrm_h);
 		m_showMore.SetWindowTextW(_T(">"));
 		isExpan = false;
 	} else{
-		rc.right += (GUI_EXP_W - GUI_NRM_W);
-		rc.bottom += (GUI_EXP_H - GUI_NRM_H);
+		rc.right += (gui_exp_w - gui_nrm_w);
+		rc.bottom += (gui_exp_h - gui_nrm_h);
 		m_showMore.SetWindowTextW(_T("<"));
 		isExpan = true;
 	}
 
-	MoveWindow(rc);
+	MoveWindow(rc);*/
+	if (isExpan){
+		SetMainUILayout(0);
+	} else{
+		SetMainUILayout(1);
+	}
 
 }
 
-void CRVAFGUIDlg::UILayout(){
+void CRVAFGUIDlg::SetTopButtonLayout(){
 	m_showMore.MoveWindow(CRect(354, 0, gui_nrm_w - 16, 23));
 	if (ready_proto){
 		m_showMore.ShowWindow(SW_SHOW);
@@ -2056,6 +2086,35 @@ void CRVAFGUIDlg::UILayout(){
 		m_showMore.ShowWindow(SW_HIDE);
 		m_selectAlgorithm.MoveWindow(CRect(0, 0, gui_nrm_w - 16, 23));
 	}
+}
+
+void CRVAFGUIDlg::SetMainUILayout(int type){
+	CRect rc;
+	GetWindowRect(rc);
+	switch (type)
+	{
+	case 0: // 最小面板
+		isExpan = false;
+		m_showMore.SetWindowTextW(_T(">"));
+		rc.right = rc.left + gui_nrm_w;
+		rc.bottom = rc.top + gui_nrm_h;
+		break;
+	case 1: //
+		isExpan = true;
+		m_showMore.SetWindowTextW(_T("<"));
+		rc.right = rc.left + gui_exp_w;
+		rc.bottom = rc.top + gui_exp_h;
+		break;
+	case 2:
+		isExpan = true;
+		m_showMore.SetWindowTextW(_T("<"));
+	case 3:
+		isExpan = true;
+		m_showMore.SetWindowTextW(_T("<"));
+	default:
+		break;
+	}
+	MoveWindow(rc);
 }
 
 void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)

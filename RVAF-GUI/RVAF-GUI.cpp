@@ -50,7 +50,7 @@ BOOL CRVAFGUIApp::InitInstance()
 	InitCommonControlsEx(&InitCtrls);
 
 	CWinApp::InitInstance();
-
+	AfxInitRichEdit2();
 
 	AfxEnableControlContainer();
 

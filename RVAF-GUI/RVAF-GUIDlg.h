@@ -33,6 +33,8 @@ public:
 	using Node = _Node<std::string>;
 	Node dummy;
 
+	vector<int> toolid;
+
 	bool isExpan;
 	bool ready_proto;
 
@@ -47,7 +49,8 @@ public:
 	bool ReadCheckProtoFile(std::string filename);
 	void OpenProtoFile(std::string filename);
 	void GenerateProperties();
-	void UILayout();
+	void SetMainUILayout(int type = 0);
+	void SetTopButtonLayout();
 
 	struct ReflectPackage{
 		std::string layer_name;
@@ -78,4 +81,6 @@ public:
 	afx_msg void OnShowMoreClicked();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	CButton m_showMore;
+	CStatic m_zoonTool;
+	CStatic m_zoonDisplay;
 };
