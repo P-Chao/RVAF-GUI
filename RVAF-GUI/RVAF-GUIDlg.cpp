@@ -303,6 +303,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE://01
 			group = new CMFCPropertyGridProperty(_T("Image"));
 
+			// 0100 enum
+			id = 100;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("IMAGE"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			// 0101 repeated string
 			id = 101;
 			pProp = new CMFCPropertyGridFileProperty(_T("Image File"), TRUE, _T(""));
@@ -351,6 +373,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR://02
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
+			// 0200 enum
+			id = 200;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("IMAGE PAIR"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			if (layers[node->name].imagepair_param().pair_size() == 0){
 				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).add_pair();
 			} else{
@@ -358,7 +402,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).clear_pair();
 				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).add_pair();
 				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_left(temppair.left());
-				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_left(temppair.right());
+				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_right(temppair.right());
 			}
 			// 0201 string
 			id = 201;
@@ -395,6 +439,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->ResetOriginalValue();
 			pProp->AllowEdit(FALSE);
 			group->AddSubItem(pProp);
+			
 
 			// 0203 bool
 			id = 203;
@@ -418,6 +463,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO://03
 			group = new CMFCPropertyGridProperty(_T("Video"));
+
+			// 0300 enum
+			id = 300;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("VIDEO"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
 
 			// 0301 repeated string
 			id = 301;
@@ -467,6 +534,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_VIDEO_PAIR://04
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
 
+			// 0400 enum
+			id = 400;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("VIDEO PAIR"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			if (layers[node->name].videopair_param().pair_size() == 0){
 				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).add_pair();
 			} else{
@@ -474,7 +563,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).clear_pair();
 				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).add_pair();
 				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_left(temppair.left());
-				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_left(temppair.right());
+				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_right(temppair.right());
 			}
 			// 0401 string
 			id = 401;
@@ -535,6 +624,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_CAMERA://05
 			group = new CMFCPropertyGridProperty(_T("Camera"));
 
+			// 0500 enum
+			id = 500;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("CAMERA"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			// 0501 int32
 			id = 501;
 			pProp = new CMFCPropertyGridProperty(_T("Camera ID"), _T(""), _T("open usb camera"));
@@ -575,6 +686,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_CAMERA_PAIR://06
 			group = new CMFCPropertyGridProperty(_T("Camera Pair"));
 
+			// 0600 enum
+			id = 600;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("CAMERA PAIR"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			// 0601 int32
 			id = 601;
 			pProp = new CMFCPropertyGridProperty(_T("Left Camera"), _T(""), _T("left usb camera id"));
@@ -584,7 +717,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pMessage = &layers[node->name].camerapair_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
-			pField = pDescriptor->FindFieldByName("left");
+			pField = pDescriptor->FindFieldByName("leftcamera");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
 
 			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
@@ -601,7 +734,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pMessage = &layers[node->name].camerapair_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
-			pField = pDescriptor->FindFieldByName("camera");
+			pField = pDescriptor->FindFieldByName("rightcamera");
 			pack[id] = ReflectPackage(pMessage, pReflection, pField, node->name);
 
 			cs_temp.Format(_T("%d"), (pReflection->GetInt32(*pMessage, pField)));
@@ -632,6 +765,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_DSP://07
 			group = new CMFCPropertyGridProperty(_T("DSP Camera"));
 
+			// 0700 enum
+			id = 700;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("DSP CAMERA"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			// 0703 bool
 			id = 703;
 			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
@@ -654,6 +809,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_DSP_PAIR://08
 			group = new CMFCPropertyGridProperty(_T("DSP Camera Pair"));
+
+			// 0800 enum
+			id = 800;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("DSP CAMERA PAIR"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
 
 			// 0803 bool
 			id = 803;
@@ -678,6 +855,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_KINECT://09
 			group = new CMFCPropertyGridProperty(_T("Kinect"));
 
+			// 0900 enum
+			id = 900;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("KINECT"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			// 0903 bool
 			id = 903;
 			pProp = new CMFCPropertyGridProperty(_T("Color"), _T(""), _T("choose output image of color or gray"));
@@ -700,6 +899,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_FOLDER://11
 			group = new CMFCPropertyGridProperty(_T("Image Folder"));
+
+			// 1100 enum
+			id = 1100;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("IMAGE FOLDER"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
 
 			// 1101 repeated string
 			id = 1101;
@@ -747,6 +968,28 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
 
+			// 1200 enum
+			id = 1200;
+			pProp = new CMFCPropertyGridProperty(_T("Data Stream"), _T(""), _T("select input data type"));
+			pProp->SetData(id);
+			idtable[id] = node->name;
+
+			pProp->SetOriginalValue(_T("IMAGE FOLDER PAIR"));
+			pProp->ResetOriginalValue();
+			pProp->AddOption(_T("IMAGE"));
+			pProp->AddOption(_T("IMAGE PAIR"));
+			pProp->AddOption(_T("VIDEO"));
+			pProp->AddOption(_T("VIDEO PAIR"));
+			pProp->AddOption(_T("CAMERA"));
+			pProp->AddOption(_T("CAMERA PAIR"));
+			pProp->AddOption(_T("DSP CAMERA"));
+			pProp->AddOption(_T("DSP CAMERA PAIR"));
+			pProp->AddOption(_T("KINECT"));
+			pProp->AddOption(_T("IMAGE FOLDER"));
+			pProp->AddOption(_T("IMAGE FOLDER PAIR"));
+			pProp->AllowEdit(FALSE);
+			group->AddSubItem(pProp);
+
 			if (layers[node->name].pairfolder_param().pair_size() == 0){
 				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).add_pair();
 			} else{
@@ -754,7 +997,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).clear_pair();
 				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).add_pair();
 				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_left(temppair.left());
-				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_left(temppair.right());
+				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_right(temppair.right());
 			}
 			// 1201 string
 			id = 1201;
@@ -1510,6 +1753,44 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 	d = t.bstrVal;
 	int id = pProp->GetData();
 	switch (id){
+	case 100://process data source
+	case 200:
+	case 300:
+	case 400:
+	case 500:
+	case 600:
+	case 700:
+	case 800:
+	case 900:
+	case 1100:
+	case 1200:
+		MessageBox(_T("Please make sure the datasourse is avaliable, \nthis operation will save ALL PARAM to file."));
+		if (d == _T("IMAGE")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE);
+		} else if (d == _T("IMAGE PAIR")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE_PAIR);
+		} else if (d == _T("VIDEO")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_VIDEO);
+		} else if (d == _T("VIDEO PAIR")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_VIDEO_PAIR);
+		} else if (d == _T("CAMERA")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_CAMERA);
+		} else if (d == _T("CAMERA PAIR")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_CAMERA_PAIR);
+		} else if (d == _T("DSP CAMERA")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_DSP);
+		} else if (d == _T("DSP CAMERA PAIR")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_DSP_PAIR);
+		} else if (d == _T("KINECT")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_KINECT);
+		} else if (d == _T("IMAGE FOLDER")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE_FOLDER);
+		} else if (d == _T("IMAGE FOLDER PAIR")){
+			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER);
+		}
+		
+		GenerateProperties();
+		break;
 	case 101://repeated string
 		pack[id].pR->SetRepeatedString(pack[id].pM, pack[id].pF, 0, std::string((LPCSTR)CStringA(d)));
 		break;
@@ -1735,7 +2016,8 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 	default:
 		break;
 	}
-	
+
+	//GenerateProperties();
 	return 0;
 }
 
