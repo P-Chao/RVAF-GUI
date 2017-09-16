@@ -8,6 +8,7 @@
 #include "io.hpp"
 #include <string>
 #include <hash_map>
+#include "afxcmn.h"
 
 // CRVAFGUIDlg dialog
 class CRVAFGUIDlg : public CDialogEx
@@ -83,4 +84,8 @@ public:
 	CButton m_showMore;
 	CStatic m_zoonTool;
 	CStatic m_zoonDisplay;
+	CStatic m_zoonDisp2;
+	CStatic m_zoonDisp3;
+	CStatic m_zoonDisp4;
+	CRichEditCtrl m_editMsg;
 };

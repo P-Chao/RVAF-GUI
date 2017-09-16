@@ -15,11 +15,11 @@
 #define GUI_NRM_H 697
 #define GUI_EXP_W 1128
 #define GUI_EXP_H GUI_NRM_H
-#define GUI_OFF_X 300 // 出口相对屏幕初始位置
+#define GUI_OFF_X 200 // 出口相对屏幕初始位置
 #define GUI_OFF_Y 200
 #define TOOL_MARGN 1 // 工具与左侧间隔
 #define TOOL_WIDTH 45 // 工具与左侧宽度
-
+#define DISP_MARGN 2 // 显示区边界宽度
 
 // CAboutDlg dialog used for App About
 
@@ -51,7 +51,6 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
-//	ON_WM_SIZE()
 END_MESSAGE_MAP()
 
 
@@ -73,6 +72,10 @@ void CRVAFGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BUTTON_MORE, m_showMore);
 	DDX_Control(pDX, IDC_ZOON_TOOL, m_zoonTool);
 	DDX_Control(pDX, IDC_ZOON_DISP, m_zoonDisplay);
+	DDX_Control(pDX, IDC_ZOON_DISP2, m_zoonDisp2);
+	DDX_Control(pDX, IDC_ZOON_DISP3, m_zoonDisp3);
+	DDX_Control(pDX, IDC_ZOON_DISP4, m_zoonDisp4);
+	DDX_Control(pDX, IDC_RICHEDIT21, m_editMsg);
 }
 
 BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
@@ -2089,8 +2092,22 @@ void CRVAFGUIDlg::SetTopButtonLayout(){
 }
 
 void CRVAFGUIDlg::SetMainUILayout(int type){
-	CRect rc;
+	if (type){
+		type = 6;
+	}
+
+	CRect rc, rc2;
 	GetWindowRect(rc);
+	// 展示计算方法
+	int left_edge = gui_nrm_w - 16 + TOOL_MARGN + TOOL_WIDTH; // 不变
+	int top_edge = 0; // 不变
+	int right_edge = gui_nrm_w - 16; // 动态
+	int bottom_edge = gui_nrm_h - 31 - 8; // 不变
+	int box_height = 0;
+	int edittop_edge = bottom_edge - 200; // 动态
+	int middle_edge = 0;
+	int margin_edge = 0; // 横，中间额外划分的3/4用
+
 	switch (type)
 	{
 	case 0: // 最小面板
@@ -2099,18 +2116,128 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		rc.right = rc.left + gui_nrm_w;
 		rc.bottom = rc.top + gui_nrm_h;
 		break;
-	case 1: //
+	case 1: // 单画面面板
 		isExpan = true;
+		gui_exp_w = GUI_EXP_W;
+		gui_exp_h = GUI_EXP_H;
 		m_showMore.SetWindowTextW(_T("<"));
 		rc.right = rc.left + gui_exp_w;
 		rc.bottom = rc.top + gui_exp_h;
+		m_zoonDisplay.ShowWindow(SW_SHOW);
+		m_zoonDisp2.ShowWindow(SW_HIDE);
+		m_zoonDisp3.ShowWindow(SW_HIDE);
+		m_zoonDisp4.ShowWindow(SW_HIDE);
+		right_edge = gui_exp_w - 16;
+		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
+		edittop_edge = box_height * 0.75;
+		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
+		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		break;
-	case 2:
+	case 2: // 单宽画幅面板
 		isExpan = true;
+		gui_exp_w = GUI_EXP_W + 550;
+		gui_exp_h = GUI_EXP_H;
 		m_showMore.SetWindowTextW(_T("<"));
-	case 3:
+		rc.right = rc.left + gui_exp_w;
+		rc.bottom = rc.top + gui_exp_h;
+		m_zoonDisplay.ShowWindow(SW_SHOW);
+		m_zoonDisp2.ShowWindow(SW_HIDE);
+		m_zoonDisp3.ShowWindow(SW_HIDE);
+		m_zoonDisp4.ShowWindow(SW_HIDE);
+		right_edge = gui_exp_w - 16;
+		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
+		edittop_edge = box_height * 0.375;
+		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
+		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
+		break;
+	case 3: // 双画幅面板
 		isExpan = true;
+		gui_exp_w = GUI_EXP_W + 550;
+		gui_exp_h = GUI_EXP_H;
 		m_showMore.SetWindowTextW(_T("<"));
+		rc.right = rc.left + gui_exp_w;
+		rc.bottom = rc.top + gui_exp_h;
+		m_zoonDisplay.ShowWindow(SW_SHOW);
+		m_zoonDisp2.ShowWindow(SW_SHOW);
+		m_zoonDisp3.ShowWindow(SW_HIDE);
+		m_zoonDisp4.ShowWindow(SW_HIDE);
+		right_edge = gui_exp_w - 16;
+		middle_edge = (right_edge + left_edge) / 2;
+		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
+		edittop_edge = box_height * 0.375;
+		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
+		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, middle_edge - DISP_MARGN / 2, top_edge + edittop_edge));
+		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
+		m_showMore.SetWindowTextW(_T("<"));
+		break;
+	case 4: // 宽三画幅面板
+		isExpan = true;
+		gui_exp_w = GUI_EXP_W + 100;
+		gui_exp_h = GUI_EXP_H;
+		m_showMore.SetWindowTextW(_T("<"));
+		rc.right = rc.left + gui_exp_w;
+		rc.bottom = rc.top + gui_exp_h;
+		m_zoonDisplay.ShowWindow(SW_SHOW);
+		m_zoonDisp2.ShowWindow(SW_SHOW);
+		m_zoonDisp3.ShowWindow(SW_SHOW);
+		m_zoonDisp4.ShowWindow(SW_HIDE);
+		right_edge = gui_exp_w - 16;
+		middle_edge = (right_edge + left_edge) / 2;
+		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
+		margin_edge = box_height * 0.375;
+		edittop_edge = box_height * 0.75;
+		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
+		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, middle_edge - DISP_MARGN / 2, top_edge + margin_edge));
+		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + margin_edge));
+		m_zoonDisp3.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
+		m_showMore.SetWindowTextW(_T("<"));
+		break;
+	case 5: // 四画幅面板
+		isExpan = true;
+		gui_exp_w = GUI_EXP_W + 100;
+		gui_exp_h = GUI_EXP_H;
+		m_showMore.SetWindowTextW(_T("<"));
+		rc.right = rc.left + gui_exp_w;
+		rc.bottom = rc.top + gui_exp_h;
+		m_zoonDisplay.ShowWindow(SW_SHOW);
+		m_zoonDisp2.ShowWindow(SW_SHOW);
+		m_zoonDisp3.ShowWindow(SW_SHOW);
+		m_zoonDisp4.ShowWindow(SW_SHOW);
+		right_edge = gui_exp_w - 16;
+		middle_edge = (right_edge + left_edge) / 2;
+		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
+		margin_edge = box_height * 0.375;
+		edittop_edge = box_height * 0.75;
+		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
+		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, middle_edge - DISP_MARGN / 2, top_edge + margin_edge));
+		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + margin_edge));
+		m_zoonDisp3.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge + margin_edge + DISP_MARGN, middle_edge - DISP_MARGN / 2, top_edge + edittop_edge + DISP_MARGN));
+		m_zoonDisp4.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
+		m_showMore.SetWindowTextW(_T("<"));
+		break;
+	case 6: // 三画幅面板
+		isExpan = true;
+		gui_exp_w = GUI_EXP_W + 186;
+		gui_exp_h = GUI_EXP_H;
+		m_showMore.SetWindowTextW(_T("<"));
+		rc.right = rc.left + gui_exp_w;
+		rc.bottom = rc.top + gui_exp_h;
+		m_zoonDisplay.ShowWindow(SW_SHOW);
+		m_zoonDisp2.ShowWindow(SW_SHOW);
+		m_zoonDisp3.ShowWindow(SW_HIDE);
+		m_zoonDisp4.ShowWindow(SW_SHOW);
+		right_edge = gui_exp_w - 16;
+		middle_edge = (right_edge + left_edge) / 2;
+		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
+		margin_edge = box_height * 0.375;
+		edittop_edge = box_height * 0.75;
+		//m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
+		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, middle_edge - DISP_MARGN / 2, top_edge + margin_edge));
+		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + margin_edge));
+		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge + margin_edge + DISP_MARGN, middle_edge - DISP_MARGN / 2, top_edge + edittop_edge + DISP_MARGN));
+		m_zoonDisp4.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
+		m_showMore.SetWindowTextW(_T("<"));
+		break;
 	default:
 		break;
 	}
