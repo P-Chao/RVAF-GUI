@@ -44,6 +44,8 @@ public:
 	int gui_exp_w;
 	int gui_exp_h;
 
+	int gui_type;
+
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter> layers;
 	hash_map<int, std::string> idtable;

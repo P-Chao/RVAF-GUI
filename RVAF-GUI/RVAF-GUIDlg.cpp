@@ -125,6 +125,7 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	isExpan = false;
 
+	gui_type = 1;
 	//
 	gui_nrm_w = GUI_NRM_W;
 	gui_nrm_h = GUI_NRM_H;
@@ -312,7 +313,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 	const google::protobuf::FieldDescriptor* pField = NULL;
 	string type_name;
 
-	
+	bool isbinocular = false;
+	int use_four;
+	int use_three;
+	int use_big;
+	int use_three_big;
 	Node *node = &dummy;
 	while (node->next){
 		CMFCPropertyGridProperty * group = NULL, * group2 = NULL;
@@ -327,6 +332,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 		case svaf::LayerParameter_LayerType_NONE://00
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE://01
+			isbinocular = false;
+			gui_type = 1;
+
 			group = new CMFCPropertyGridProperty(_T("Image"));
 
 			// 0100 enum
@@ -397,6 +405,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR://02
+			isbinocular = true;
+			gui_type = 2;
+
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
 			// 0200 enum
@@ -488,6 +499,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO://03
+			isbinocular = false;
+			gui_type = 1;
+
 			group = new CMFCPropertyGridProperty(_T("Video"));
 
 			// 0300 enum
@@ -558,6 +572,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO_PAIR://04
+			isbinocular = true;
+			gui_type = 2;
+
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
 
 			// 0400 enum
@@ -648,6 +665,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_CAMERA://05
+			isbinocular = false;
+			gui_type = 1;
+
 			group = new CMFCPropertyGridProperty(_T("Camera"));
 
 			// 0500 enum
@@ -710,6 +730,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_CAMERA_PAIR://06
+			isbinocular = true;
+			gui_type = 2;
+
 			group = new CMFCPropertyGridProperty(_T("Camera Pair"));
 
 			// 0600 enum
@@ -789,6 +812,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_DSP://07
+			isbinocular = false;
+			gui_type = 1;
+
 			group = new CMFCPropertyGridProperty(_T("DSP Camera"));
 
 			// 0700 enum
@@ -834,6 +860,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_DSP_PAIR://08
+			isbinocular = true;
+			gui_type = 2;
+
 			group = new CMFCPropertyGridProperty(_T("DSP Camera Pair"));
 
 			// 0800 enum
@@ -879,6 +908,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_KINECT://09
+			isbinocular = false;
+			gui_type = 1;
+
 			group = new CMFCPropertyGridProperty(_T("Kinect"));
 
 			// 0900 enum
@@ -924,6 +956,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_FOLDER://11
+			isbinocular = false;
+			gui_type = 1;
+
 			group = new CMFCPropertyGridProperty(_T("Image Folder"));
 
 			// 1100 enum
@@ -992,6 +1027,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
+			isbinocular = true;
+			gui_type = 2;
+
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
 
 			// 1200 enum
@@ -1079,6 +1117,12 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_ADABOOST://21
 			group = new CMFCPropertyGridProperty(_T("Adaboost"));
+
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
 
 			// 2101 string
 			id = 2101;
@@ -1191,36 +1235,102 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_MILTRACK://31
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("MILTrack"));
 			break;
 		case svaf::LayerParameter_LayerType_BITTRACK://32
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("Bino MILTrack"));
 			break;
 		case svaf::LayerParameter_LayerType_SIFT_POINT://41
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("SIFT Point"));
 			break;
 		case svaf::LayerParameter_LayerType_SURF_POINT://42
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("SURF Point"));
 			break;
 		case svaf::LayerParameter_LayerType_STAR_POINT://43
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("STAR Point"));
 			break;
 		case svaf::LayerParameter_LayerType_BRISK_POINT://44
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("Brisk Point"));
 			break;
 		case svaf::LayerParameter_LayerType_FAST_POINT://45
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("FAST Point"));
 			break;
 		case svaf::LayerParameter_LayerType_ORB_POINT://46
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("ORB Point"));
 			break;
 		case svaf::LayerParameter_LayerType_KAZE_POINT://47
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("KAZE Point"));
 			break;
 		case svaf::LayerParameter_LayerType_HARRIS_POINT://48
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("Harris Point"));
 			break;
 		case svaf::LayerParameter_LayerType_CV_POINT://49
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("CV Point"));
 			break;
 		case svaf::LayerParameter_LayerType_SIFT_DESP://51
@@ -1251,30 +1361,39 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group = new CMFCPropertyGridProperty(_T("CV Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_KDTREE_MATCH://61
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("KDtree Match"));
 			break;
 		case svaf::LayerParameter_LayerType_EULAR_MATCH://62
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("Eular Match"));
 			break;
 		case svaf::LayerParameter_LayerType_RANSAC://63
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("Ransac"));
 			break;
 		case svaf::LayerParameter_LayerType_BF_MATCH://64
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("BF Match"));
 			break;
 		case svaf::LayerParameter_LayerType_FLANN_MATCH://65
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("Flann Match"));
 			break;
 		case svaf::LayerParameter_LayerType_EC_MATCH://68
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("EC Match"));
 			break;
 		case svaf::LayerParameter_LayerType_CV_MATCH://69
+			gui_type = 3;
 			group = new CMFCPropertyGridProperty(_T("CV Match"));
 			break;
 		case svaf::LayerParameter_LayerType_SGM_MATCH://71
+			gui_type = 6;
 			group = new CMFCPropertyGridProperty(_T("SGM Stereo Match"));
 			break;
 		case svaf::LayerParameter_LayerType_EADP_MATCH://72
+			gui_type = 6;
 			group = new CMFCPropertyGridProperty(_T("Eadp Stereo Match"));
 			
 			// 7201 int32
@@ -1476,6 +1595,8 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group = new CMFCPropertyGridProperty(_T("Center Position"));
 			break;
 		case svaf::LayerParameter_LayerType_IA_EST://94
+			gui_type = 4;
+
 			group = new CMFCPropertyGridProperty(_T("SAC-IA"));
 
 			// 9401 string
@@ -1714,15 +1835,27 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_IAICP_EST://95
+			gui_type = 4;
 			group = new CMFCPropertyGridProperty(_T("SAC-IA ICP"));
 			break;
 		case svaf::LayerParameter_LayerType_IANDT_EST://96
+			gui_type = 4;
 			group = new CMFCPropertyGridProperty(_T("SAC-IA NDP"));
 			break;
 		case svaf::LayerParameter_LayerType_SUPIX_SEG://101
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
 			group = new CMFCPropertyGridProperty(_T("Superpixel Segment"));
 			break;
 		case svaf::LayerParameter_LayerType_RECTIFY://141
+			if (isbinocular){
+				gui_type = 2;
+			} else{
+				gui_type = 1;
+			}
 			group = new CMFCPropertyGridProperty(_T("Stereo Rectify"));
 
 			// 14101 string
@@ -2075,7 +2208,7 @@ void CRVAFGUIDlg::OnShowMoreClicked()
 	if (isExpan){
 		SetMainUILayout(0);
 	} else{
-		SetMainUILayout(1);
+		SetMainUILayout(gui_type);
 	}
 
 }
@@ -2092,10 +2225,6 @@ void CRVAFGUIDlg::SetTopButtonLayout(){
 }
 
 void CRVAFGUIDlg::SetMainUILayout(int type){
-	if (type){
-		type = 6;
-	}
-
 	CRect rc, rc2;
 	GetWindowRect(rc);
 	// Õ¹Ê¾¼ÆËã·½·¨
@@ -2133,7 +2262,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
 		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		break;
-	case 2: // µ¥¿í»­·ùÃæ°å
+	case 3: // µ¥¿í»­·ùÃæ°å
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 550;
 		gui_exp_h = GUI_EXP_H;
@@ -2150,7 +2279,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
 		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		break;
-	case 3: // Ë«»­·ùÃæ°å
+	case 2: // Ë«»­·ùÃæ°å
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 550;
 		gui_exp_h = GUI_EXP_H;
@@ -2170,7 +2299,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		m_showMore.SetWindowTextW(_T("<"));
 		break;
-	case 4: // ¿íÈý»­·ùÃæ°å
+	case 5: // ¿íÈý»­·ùÃæ°å
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 100;
 		gui_exp_h = GUI_EXP_H;
@@ -2192,7 +2321,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_zoonDisp3.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
 		m_showMore.SetWindowTextW(_T("<"));
 		break;
-	case 5: // ËÄ»­·ùÃæ°å
+	case 4: // ËÄ»­·ùÃæ°å
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 100;
 		gui_exp_h = GUI_EXP_H;
