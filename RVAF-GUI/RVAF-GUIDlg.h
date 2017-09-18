@@ -47,7 +47,7 @@ public:
 	int gui_type;
 
 	svaf::SvafTask m_svaftask;
-	hash_map<std::string, svaf::LayerParameter> layers;
+	hash_map<std::string, svaf::LayerParameter*> layers;
 	hash_map<int, std::string> idtable;
 	bool ReadCheckProtoFile(std::string filename);
 	void OpenProtoFile(std::string filename);
@@ -90,4 +90,6 @@ public:
 	CStatic m_zoonDisp3;
 	CStatic m_zoonDisp4;
 	CRichEditCtrl m_editMsg;
+	afx_msg void OnSaveProtoText();
+	afx_msg void OnSaveProtoBinary();
 };

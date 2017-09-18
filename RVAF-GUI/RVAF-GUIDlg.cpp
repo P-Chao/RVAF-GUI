@@ -86,6 +86,8 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON_SETALG, &CRVAFGUIDlg::OnSelectAlgorithm)
 	ON_BN_CLICKED(IDC_BUTTON_MORE, &CRVAFGUIDlg::OnShowMoreClicked)
 	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_BUTTON6, &CRVAFGUIDlg::OnSaveProtoText)
+	ON_BN_CLICKED(IDC_BUTTON7, &CRVAFGUIDlg::OnSaveProtoBinary)
 END_MESSAGE_MAP()
 
 
@@ -225,7 +227,7 @@ bool CRVAFGUIDlg::ReadCheckProtoFile(std::string filename){
 	}
 
 	if (m_svaftask.version() != REC_VERSION){
-		MessageBoxW(L"File version error, file will be recreate!", L"Tips", 0);
+		MessageBoxW(L"File version error, open failed!", L"Tips", 0);
 		return false;
 	}
 	return true;
@@ -262,13 +264,13 @@ void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 	// Read proto layers
 	for (int i = 0; i < m_svaftask.layer_size(); ++i){
 		svaf::LayerParameter layer = m_svaftask.layer(i);
-		layers[layer.name()] = layer;
+		layers[layer.name()] = const_cast<svaf::LayerParameter*>(&m_svaftask.layer(i));
 	}
 
 	// Build linked list
 	for (auto layer : layers){
-		if (layer.second.name() == layer.second.bottom()){
-			dummy.next = new Node(layer.second.name());
+		if (layer.second->name() == layer.second->bottom()){
+			dummy.next = new Node(layer.second->name());
 			break;
 		}
 	}
@@ -276,14 +278,14 @@ void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 	int layer_cnt = 1;
 	node = dummy.next;
 	while (true){
-		if (layers[node->name].name() == layers[node->name].top()){
+		if (layers[node->name]->name() == layers[node->name]->top()){
 			break;
 		}
-		if (layers.end() == layers.find(layers[node->name].top())){
+		if (layers.end() == layers.find(layers[node->name]->top())){
 			MessageBoxW(L"Layer Loss", L"Tips", 0);
 			return;
 		}
-		node->next = new Node(layers[node->name].top());
+		node->next = new Node(layers[node->name]->top());
 		node = node->next;
 		layer_cnt++;
 		if (layer_cnt > m_svaftask.layer_size()){
@@ -314,10 +316,6 @@ void CRVAFGUIDlg::GenerateProperties(){
 	string type_name;
 
 	bool isbinocular = false;
-	int use_four;
-	int use_three;
-	int use_big;
-	int use_three_big;
 	Node *node = &dummy;
 	while (node->next){
 		CMFCPropertyGridProperty * group = NULL, * group2 = NULL;
@@ -325,7 +323,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 		CString cs_temp;
 		
 		node = node->next;
-		auto type = layers[node->name].type();
+		auto type = layers[node->name]->type();
 		//auto layer = layers[node->name];
 		switch (type)
 		{
@@ -366,14 +364,14 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			if (layers[node->name].imagedata_param().name_size() == 0){
-				const_cast<::svaf::ImageDataParameter&>(layers[node->name].imagedata_param()).add_name((const char*)"");
+			if (layers[node->name]->imagedata_param().name_size() == 0){
+				const_cast<::svaf::ImageDataParameter&>(layers[node->name]->imagedata_param()).add_name((const char*)"");
 			} else{
-				std::string tempstr = layers[node->name].imagedata_param().name(0);
-				const_cast<::svaf::ImageDataParameter&>(layers[node->name].imagedata_param()).clear_name();
-				const_cast<::svaf::ImageDataParameter&>(layers[node->name].imagedata_param()).add_name(tempstr);
+				std::string tempstr = layers[node->name]->imagedata_param().name(0);
+				const_cast<::svaf::ImageDataParameter&>(layers[node->name]->imagedata_param()).clear_name();
+				const_cast<::svaf::ImageDataParameter&>(layers[node->name]->imagedata_param()).add_name(tempstr);
 			}
-			pMessage = &layers[node->name].imagedata_param();
+			pMessage = &layers[node->name]->imagedata_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("name");
@@ -390,7 +388,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 			
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -432,14 +430,14 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->AllowEdit(FALSE);
 			group->AddSubItem(pProp);
 
-			if (layers[node->name].imagepair_param().pair_size() == 0){
-				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).add_pair();
+			if (layers[node->name]->imagepair_param().pair_size() == 0){
+				const_cast<::svaf::ImagePairParameter&>(layers[node->name]->imagepair_param()).add_pair();
 			} else{
-				auto temppair = layers[node->name].imagepair_param().pair(0);
-				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).clear_pair();
-				const_cast<::svaf::ImagePairParameter&>(layers[node->name].imagepair_param()).add_pair();
-				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_left(temppair.left());
-				const_cast<::svaf::BinocularPair&>(layers[node->name].imagepair_param().pair(0)).set_right(temppair.right());
+				auto temppair = layers[node->name]->imagepair_param().pair(0);
+				const_cast<::svaf::ImagePairParameter&>(layers[node->name]->imagepair_param()).clear_pair();
+				const_cast<::svaf::ImagePairParameter&>(layers[node->name]->imagepair_param()).add_pair();
+				const_cast<::svaf::BinocularPair&>(layers[node->name]->imagepair_param().pair(0)).set_left(temppair.left());
+				const_cast<::svaf::BinocularPair&>(layers[node->name]->imagepair_param().pair(0)).set_right(temppair.right());
 			}
 			// 0201 string
 			id = 201;
@@ -448,7 +446,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 			
-			pMessage = &layers[node->name].imagepair_param().pair(0);
+			pMessage = &layers[node->name]->imagepair_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("left");
@@ -466,7 +464,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].imagepair_param().pair(0);
+			pMessage = &layers[node->name]->imagepair_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("right");
@@ -484,7 +482,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -533,14 +531,14 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			if (layers[node->name].videodata_param().name_size() == 0){
-				const_cast<::svaf::VideoDataParameter&>(layers[node->name].videodata_param()).add_name((const char*)"");
+			if (layers[node->name]->videodata_param().name_size() == 0){
+				const_cast<::svaf::VideoDataParameter&>(layers[node->name]->videodata_param()).add_name((const char*)"");
 			} else{
-				std::string tempstr = layers[node->name].videodata_param().name(0);
-				const_cast<::svaf::VideoDataParameter&>(layers[node->name].videodata_param()).clear_name();
-				const_cast<::svaf::VideoDataParameter&>(layers[node->name].videodata_param()).add_name(tempstr);
+				std::string tempstr = layers[node->name]->videodata_param().name(0);
+				const_cast<::svaf::VideoDataParameter&>(layers[node->name]->videodata_param()).clear_name();
+				const_cast<::svaf::VideoDataParameter&>(layers[node->name]->videodata_param()).add_name(tempstr);
 			}
-			pMessage = &layers[node->name].videodata_param();
+			pMessage = &layers[node->name]->videodata_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("name");
@@ -557,7 +555,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -599,14 +597,14 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->AllowEdit(FALSE);
 			group->AddSubItem(pProp);
 
-			if (layers[node->name].videopair_param().pair_size() == 0){
-				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).add_pair();
+			if (layers[node->name]->videopair_param().pair_size() == 0){
+				const_cast<::svaf::VideoPairParameter&>(layers[node->name]->videopair_param()).add_pair();
 			} else{
-				auto temppair = layers[node->name].videopair_param().pair(0);
-				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).clear_pair();
-				const_cast<::svaf::VideoPairParameter&>(layers[node->name].videopair_param()).add_pair();
-				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_left(temppair.left());
-				const_cast<::svaf::BinocularPair&>(layers[node->name].videopair_param().pair(0)).set_right(temppair.right());
+				auto temppair = layers[node->name]->videopair_param().pair(0);
+				const_cast<::svaf::VideoPairParameter&>(layers[node->name]->videopair_param()).clear_pair();
+				const_cast<::svaf::VideoPairParameter&>(layers[node->name]->videopair_param()).add_pair();
+				const_cast<::svaf::BinocularPair&>(layers[node->name]->videopair_param().pair(0)).set_left(temppair.left());
+				const_cast<::svaf::BinocularPair&>(layers[node->name]->videopair_param().pair(0)).set_right(temppair.right());
 			}
 			// 0401 string
 			id = 401;
@@ -615,7 +613,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].videopair_param().pair(0);
+			pMessage = &layers[node->name]->videopair_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("left");
@@ -633,7 +631,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].videopair_param().pair(0);
+			pMessage = &layers[node->name]->videopair_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("right");
@@ -650,7 +648,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -698,7 +696,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].cameradata_param();
+			pMessage = &layers[node->name]->cameradata_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("camera");
@@ -715,7 +713,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -763,7 +761,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].camerapair_param();
+			pMessage = &layers[node->name]->camerapair_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("leftcamera");
@@ -780,7 +778,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].camerapair_param();
+			pMessage = &layers[node->name]->camerapair_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("rightcamera");
@@ -797,7 +795,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -845,7 +843,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -893,7 +891,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -941,7 +939,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -989,14 +987,14 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			if (layers[node->name].folder_param().name_size() == 0){
-				const_cast<::svaf::ImageFolderParameter&>(layers[node->name].folder_param()).add_name((const char*)"");
+			if (layers[node->name]->folder_param().name_size() == 0){
+				const_cast<::svaf::ImageFolderParameter&>(layers[node->name]->folder_param()).add_name((const char*)"");
 			} else{
-				std::string tempstr = layers[node->name].folder_param().name(0);
-				const_cast<::svaf::ImageFolderParameter&>(layers[node->name].folder_param()).clear_name();
-				const_cast<::svaf::ImageFolderParameter&>(layers[node->name].folder_param()).add_name(tempstr);
+				std::string tempstr = layers[node->name]->folder_param().name(0);
+				const_cast<::svaf::ImageFolderParameter&>(layers[node->name]->folder_param()).clear_name();
+				const_cast<::svaf::ImageFolderParameter&>(layers[node->name]->folder_param()).add_name(tempstr);
 			}
-			pMessage = &layers[node->name].folder_param();
+			pMessage = &layers[node->name]->folder_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("name");
@@ -1012,7 +1010,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -1054,14 +1052,14 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->AllowEdit(FALSE);
 			group->AddSubItem(pProp);
 
-			if (layers[node->name].pairfolder_param().pair_size() == 0){
-				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).add_pair();
+			if (layers[node->name]->pairfolder_param().pair_size() == 0){
+				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name]->pairfolder_param()).add_pair();
 			} else{
-				auto temppair = layers[node->name].pairfolder_param().pair(0);
-				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).clear_pair();
-				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name].pairfolder_param()).add_pair();
-				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_left(temppair.left());
-				const_cast<::svaf::BinocularPair&>(layers[node->name].pairfolder_param().pair(0)).set_right(temppair.right());
+				auto temppair = layers[node->name]->pairfolder_param().pair(0);
+				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name]->pairfolder_param()).clear_pair();
+				const_cast<::svaf::ImagePairFolderParameter&>(layers[node->name]->pairfolder_param()).add_pair();
+				const_cast<::svaf::BinocularPair&>(layers[node->name]->pairfolder_param().pair(0)).set_left(temppair.left());
+				const_cast<::svaf::BinocularPair&>(layers[node->name]->pairfolder_param().pair(0)).set_right(temppair.right());
 			}
 			// 1201 string
 			id = 1201;
@@ -1069,7 +1067,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].pairfolder_param().pair(0);
+			pMessage = &layers[node->name]->pairfolder_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("left");
@@ -1085,7 +1083,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].pairfolder_param().pair(0);
+			pMessage = &layers[node->name]->pairfolder_param().pair(0);
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("right");
@@ -1101,7 +1099,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].data_param();
+			pMessage = &layers[node->name]->data_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("color");
@@ -1131,7 +1129,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].adaboost_param();
+			pMessage = &layers[node->name]->adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("detector");
@@ -1148,7 +1146,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].adaboost_param();
+			pMessage = &layers[node->name]->adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sync_frame");
@@ -1167,7 +1165,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].adaboost_param();
+			pMessage = &layers[node->name]->adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sync_video");
@@ -1186,7 +1184,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].adaboost_param();
+			pMessage = &layers[node->name]->adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sync_epipolar");
@@ -1205,7 +1203,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].adaboost_param();
+			pMessage = &layers[node->name]->adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("thresh");
@@ -1222,7 +1220,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].adaboost_param();
+			pMessage = &layers[node->name]->adaboost_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("nms");
@@ -1402,7 +1400,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("max_disp");
@@ -1419,7 +1417,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("factor");
@@ -1436,7 +1434,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("guidmr");
@@ -1453,7 +1451,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("dispmr");
@@ -1470,7 +1468,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sg");
@@ -1487,7 +1485,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("sc");
@@ -1504,7 +1502,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("r1");
@@ -1521,7 +1519,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].eadp_param();
+			pMessage = &layers[node->name]->eadp_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("r2");
@@ -1542,7 +1540,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].triang_param();
+			pMessage = &layers[node->name]->triang_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("toolbox_dir");
@@ -1558,7 +1556,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].triang_param();
+			pMessage = &layers[node->name]->triang_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("calibmat_dir");
@@ -1574,7 +1572,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].triang_param();
+			pMessage = &layers[node->name]->triang_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("savepc");
@@ -1606,7 +1604,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].sacia_param();
+			pMessage = &layers[node->name]->sacia_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("pcd_filename");
@@ -1626,7 +1624,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().ia_param();
+				pMessage = &layers[node->name]->sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("max_iter");
@@ -1643,7 +1641,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().ia_param();
+				pMessage = &layers[node->name]->sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("min_cors");
@@ -1660,7 +1658,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().ia_param();
+				pMessage = &layers[node->name]->sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("max_cors");
@@ -1677,7 +1675,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().ia_param();
+				pMessage = &layers[node->name]->sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("voxel_grid");
@@ -1694,7 +1692,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().ia_param();
+				pMessage = &layers[node->name]->sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("norm_rad");
@@ -1711,7 +1709,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().ia_param();
+				pMessage = &layers[node->name]->sacia_param().ia_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("feat_rad");
@@ -1734,7 +1732,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().coor_param();
+				pMessage = &layers[node->name]->sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("x");
@@ -1751,7 +1749,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().coor_param();
+				pMessage = &layers[node->name]->sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("y");
@@ -1768,7 +1766,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().coor_param();
+				pMessage = &layers[node->name]->sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("z");
@@ -1785,7 +1783,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().coor_param();
+				pMessage = &layers[node->name]->sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("a");
@@ -1802,7 +1800,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().coor_param();
+				pMessage = &layers[node->name]->sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("b");
@@ -1819,7 +1817,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 				pProp->SetData(id);
 				idtable[id] = node->name;
 
-				pMessage = &layers[node->name].sacia_param().coor_param();
+				pMessage = &layers[node->name]->sacia_param().coor_param();
 				pDescriptor = pMessage->GetDescriptor();
 				pReflection = pMessage->GetReflection();
 				pField = pDescriptor->FindFieldByName("c");
@@ -1865,7 +1863,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			pProp->SetData(id);
 			idtable[id] = node->name;
 
-			pMessage = &layers[node->name].rectify_param();
+			pMessage = &layers[node->name]->rectify_param();
 			pDescriptor = pMessage->GetDescriptor();
 			pReflection = pMessage->GetReflection();
 			pField = pDescriptor->FindFieldByName("filename");
@@ -1925,29 +1923,29 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 	case 900:
 	case 1100:
 	case 1200:
-		MessageBox(_T("Please make sure the datasourse is avaliable, \nthis operation will save ALL PARAM to file."));
+		MessageBox(_T("Please make sure the datasourse is avaliable, \nNot change datasource from binocular sourse \nand monocular source."));
 		if (d == _T("IMAGE")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_IMAGE);
 		} else if (d == _T("IMAGE PAIR")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE_PAIR);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_IMAGE_PAIR);
 		} else if (d == _T("VIDEO")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_VIDEO);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_VIDEO);
 		} else if (d == _T("VIDEO PAIR")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_VIDEO_PAIR);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_VIDEO_PAIR);
 		} else if (d == _T("CAMERA")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_CAMERA);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_CAMERA);
 		} else if (d == _T("CAMERA PAIR")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_CAMERA_PAIR);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_CAMERA_PAIR);
 		} else if (d == _T("DSP CAMERA")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_DSP);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_DSP);
 		} else if (d == _T("DSP CAMERA PAIR")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_DSP_PAIR);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_DSP_PAIR);
 		} else if (d == _T("KINECT")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_KINECT);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_KINECT);
 		} else if (d == _T("IMAGE FOLDER")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE_FOLDER);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_IMAGE_FOLDER);
 		} else if (d == _T("IMAGE FOLDER PAIR")){
-			layers[idtable[id]].set_type(svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER);
+			layers[idtable[id]]->set_type(svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER);
 		}
 		
 		GenerateProperties();
@@ -2189,22 +2187,6 @@ LRESULT CRVAFGUIDlg::OnPropertyChanged(WPARAM wParam, LPARAM lParam){
 void CRVAFGUIDlg::OnShowMoreClicked()
 {
 	// TODO: Add your control notification handler code here
-	/*CRect rc;
-	GetWindowRect(rc);
-
-	if (isExpan){
-		rc.right -= (gui_exp_w - gui_nrm_w);
-		rc.bottom -= (gui_exp_h - gui_nrm_h);
-		m_showMore.SetWindowTextW(_T(">"));
-		isExpan = false;
-	} else{
-		rc.right += (gui_exp_w - gui_nrm_w);
-		rc.bottom += (gui_exp_h - gui_nrm_h);
-		m_showMore.SetWindowTextW(_T("<"));
-		isExpan = true;
-	}
-
-	MoveWindow(rc);*/
 	if (isExpan){
 		SetMainUILayout(0);
 	} else{
@@ -2378,12 +2360,32 @@ void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 	CDialogEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
-	/*CRect	rc;
-	GetWindowRect(rc);
-	rc.right = 393;
-	rc.left = 0;
-	rc.bottom = 697;
-	rc.top = 0;
-	ScreenToClient(rc);
-	MoveWindow(rc);*/
+}
+
+
+void CRVAFGUIDlg::OnSaveProtoText()
+{
+	// TODO: Add your control notification handler code here
+	CString saveFileName;
+	CFileDialog dlg(FALSE, _T("pbf"), _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, _T("ProtoBufFile|*.pbf|All Files|*||"));
+	dlg.m_ofn.lpstrTitle = _T("Save Algorithm Configuration File");
+	if (dlg.DoModal() == IDOK){
+		saveFileName = dlg.GetPathName();
+	}
+	svaf::WriteProtoToTextFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
+	GenerateProperties();
+}
+
+
+void CRVAFGUIDlg::OnSaveProtoBinary()
+{
+	// TODO: Add your control notification handler code here
+	CString saveFileName;
+	CFileDialog dlg(FALSE, _T("pbf"), _T(""), OFN_OVERWRITEPROMPT | OFN_HIDEREADONLY, _T("ProtoBufFile|*.pbf|All Files|*||"));
+	dlg.m_ofn.lpstrTitle = _T("Save Algorithm Configuration File");
+	if (dlg.DoModal() == IDOK){
+		saveFileName = dlg.GetPathName();
+	}
+	svaf::WriteProtoToBinaryFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
+	GenerateProperties();
 }
