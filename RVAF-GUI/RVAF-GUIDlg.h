@@ -37,6 +37,7 @@ public:
 	vector<int> toolid;
 
 	bool isExpan;
+	bool isPause;
 	bool ready_proto;
 
 	int gui_nrm_w;
@@ -64,6 +65,9 @@ public:
 	void ReciveInterprocess();
 	void ProcessInterprocess();
 	void SendCommand(int cmd);
+	void CloseProgram(CString strProgram);
+	DWORD GetProcessIdFromName(LPCTSTR name);
+
 
 	struct ReflectPackage{
 		std::string layer_name;
@@ -104,4 +108,6 @@ public:
 	afx_msg void OnSaveProtoBinary();
 	afx_msg void OnDestroy();
 	afx_msg void OnRunSvafTask();
+	afx_msg void OnStopSvafTask();
+	afx_msg void OnPauseContinue();
 };

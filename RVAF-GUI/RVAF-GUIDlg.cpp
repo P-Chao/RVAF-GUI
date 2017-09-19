@@ -6,6 +6,7 @@
 #include "RVAF-GUI.h"
 #include "RVAF-GUIDlg.h"
 #include "afxdialogex.h"
+#include <tlhelp32.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -90,6 +91,8 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON7, &CRVAFGUIDlg::OnSaveProtoBinary)
 	ON_WM_DESTROY()
 	ON_BN_CLICKED(IDC_BUTTON3, &CRVAFGUIDlg::OnRunSvafTask)
+	ON_BN_CLICKED(IDC_BUTTON5, &CRVAFGUIDlg::OnStopSvafTask)
+	ON_BN_CLICKED(IDC_BUTTON4, &CRVAFGUIDlg::OnPauseContinue)
 END_MESSAGE_MAP()
 
 
@@ -134,6 +137,8 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	InitInterprocess();
+
+	isPause = false;
 
 	ready_proto = false;
 
@@ -184,8 +189,8 @@ void CRVAFGUIDlg::InitInterprocess(){
 	memset(&m_pInfo, 0, sizeof(m_pInfo));
 
 	// send mapping
-	m_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 4, _T("SVAF_GUISENT_COMMAND"));
-	m_hMutex = CreateEvent(nullptr, false, false, _T(""));
+	m_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 4, _T("SVAF_GUI2ALG_CMD"));
+	m_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_GUI2ALG_CMD_MUTEX"));
 	m_pMapping = (LPTSTR)MapViewOfFile(m_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (m_pMapping == NULL){
 		MessageBox(_T("Create Inter Process Error!"));
@@ -196,13 +201,14 @@ void CRVAFGUIDlg::InitInterprocess(){
 void CRVAFGUIDlg::SendInterprocess(){
 	LPTSTR p = m_pMapping;
 	((int*)p)[0] = 0;
-	SetEvent(m_hMutex);
+	//SetEvent(m_hMutex);
 }
+
 
 void CRVAFGUIDlg::SendCommand(int cmd){
 	LPTSTR p = m_pMapping;
 	((int*)p)[0] = cmd;
-	SetEvent(m_hMutex);
+	//SetEvent(m_hMutex);
 }
 
 void CRVAFGUIDlg::ReciveInterprocess(){
@@ -2418,6 +2424,7 @@ void CRVAFGUIDlg::OnRunSvafTask()
 		DWORD	ExitCode;
 		GetExitCodeProcess(m_pInfo.hProcess, &ExitCode);
 		if (ExitCode != STILL_ACTIVE){
+			isPause = false;
 			STARTUPINFO si = { sizeof(si) };
 
 			si.dwFlags = STARTF_USESHOWWINDOW; // wShowWindow有效
@@ -2425,7 +2432,7 @@ void CRVAFGUIDlg::OnRunSvafTask()
 
 			BOOL bRet = ::CreateProcess(
 				str,
-				_T(" --config_file=\"cache\" "),
+				_T(" --config_file=\"cache\" --use_mapping=true"),
 				NULL,
 				NULL,
 				FALSE,
@@ -2452,9 +2459,9 @@ void CRVAFGUIDlg::OnSaveProtoText()
 	dlg.m_ofn.lpstrTitle = _T("Save Algorithm Configuration File");
 	if (dlg.DoModal() == IDOK){
 		saveFileName = dlg.GetPathName();
+		svaf::WriteProtoToTextFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
+		GenerateProperties();
 	}
-	svaf::WriteProtoToTextFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
-	GenerateProperties();
 }
 
 
@@ -2466,10 +2473,86 @@ void CRVAFGUIDlg::OnSaveProtoBinary()
 	dlg.m_ofn.lpstrTitle = _T("Save Algorithm Configuration File");
 	if (dlg.DoModal() == IDOK){
 		saveFileName = dlg.GetPathName();
+		svaf::WriteProtoToBinaryFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
+		GenerateProperties();
 	}
-	svaf::WriteProtoToBinaryFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
-	GenerateProperties();
+}
+
+DWORD CRVAFGUIDlg::GetProcessIdFromName(LPCTSTR name)    //通过执行文件名获得进程ID的方法
+{
+	PROCESSENTRY32 pe;
+	DWORD id = 0;
+
+	HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+	pe.dwSize = sizeof(PROCESSENTRY32);
+	if (!Process32First(hSnapshot, &pe))
+		return 0;
+
+	do
+	{
+		pe.dwSize = sizeof(PROCESSENTRY32);
+		if (Process32Next(hSnapshot, &pe) == FALSE)
+			break;
+		if (strcmp((char*)pe.szExeFile, (char*)name) == 0)
+		{
+			id = pe.th32ProcessID;
+			break;
+		}
+
+	} while (1);
+
+	CloseHandle(hSnapshot);
+
+	return id;
+}
+
+void CRVAFGUIDlg::CloseProgram(CString strProgram)
+{
+	HANDLE handle; //定义CreateToolhelp32Snapshot系统快照句柄   
+	HANDLE handle1; //定义要结束进程句柄   
+	handle = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);//获得系统快照句柄   
+	PROCESSENTRY32 *info; //定义PROCESSENTRY32结构字指   
+	//PROCESSENTRY32 结构的 dwSize 成员设置成 sizeof(PROCESSENTRY32)   
+
+	info = new PROCESSENTRY32;
+	info->dwSize = sizeof(PROCESSENTRY32);
+	//调用一次 Process32First 函数，从快照中获取进程列表   
+	Process32First(handle, info);
+	//重复调用 Process32Next，直到函数返回 FALSE 为止   
+	while (Process32Next(handle, info) != FALSE)
+	{
+		CString strTmp = info->szExeFile;     //指向进程名字     
+		//strcmp字符串比较函数同要结束相同     
+		//if(strcmp(c, info->szExeFile) == 0 )     
+		if (strProgram.CompareNoCase(info->szExeFile) == 0)
+		{
+			//PROCESS_TERMINATE表示为结束操作打开,FALSE=可继承,info->th32ProcessID=进程ID      
+			handle1 = OpenProcess(PROCESS_TERMINATE, FALSE, info->th32ProcessID);
+			//结束进程      
+			TerminateProcess(handle1, 0);
+		}
+	}
+	delete info;
+
+	CloseHandle(handle);
+}
+
+void CRVAFGUIDlg::OnStopSvafTask()
+{
+	// TODO: Add your control notification handler code here
+	CloseProgram(_T("SVAF.exe"));
 }
 
 
-
+void CRVAFGUIDlg::OnPauseContinue()
+{
+	// TODO: Add your control notification handler code here
+	if (!isPause){ // apply pause
+		isPause = true;
+		SendCommand(2);
+	} else{
+		isPause = false;
+		SendCommand(3);
+		SetEvent(m_hMutex);
+	}
+}
