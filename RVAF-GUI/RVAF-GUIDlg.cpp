@@ -88,10 +88,20 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_WM_SIZE()
 	ON_BN_CLICKED(IDC_BUTTON6, &CRVAFGUIDlg::OnSaveProtoText)
 	ON_BN_CLICKED(IDC_BUTTON7, &CRVAFGUIDlg::OnSaveProtoBinary)
+	ON_WM_DESTROY()
+	ON_BN_CLICKED(IDC_BUTTON3, &CRVAFGUIDlg::OnRunSvafTask)
 END_MESSAGE_MAP()
 
 
 // CRVAFGUIDlg message handlers
+void CRVAFGUIDlg::OnDestroy()
+{
+	CDialogEx::OnDestroy();
+
+	// TODO: Add your message handler code here
+	CloseHandle(m_hFileMapping);
+	CloseHandle(m_hMutex);
+}
 
 BOOL CRVAFGUIDlg::OnInitDialog()
 {
@@ -123,6 +133,8 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	InitInterprocess();
+
 	ready_proto = false;
 
 	isExpan = false;
@@ -165,6 +177,40 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	SetTopButtonLayout();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
+}
+
+void CRVAFGUIDlg::InitInterprocess(){
+	// run process
+	memset(&m_pInfo, 0, sizeof(m_pInfo));
+
+	// send mapping
+	m_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 4, _T("SVAF_GUISENT_COMMAND"));
+	m_hMutex = CreateEvent(nullptr, false, false, _T(""));
+	m_pMapping = (LPTSTR)MapViewOfFile(m_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (m_pMapping == NULL){
+		MessageBox(_T("Create Inter Process Error!"));
+		exit(-1);
+	}
+}
+
+void CRVAFGUIDlg::SendInterprocess(){
+	LPTSTR p = m_pMapping;
+	((int*)p)[0] = 0;
+	SetEvent(m_hMutex);
+}
+
+void CRVAFGUIDlg::SendCommand(int cmd){
+	LPTSTR p = m_pMapping;
+	((int*)p)[0] = cmd;
+	SetEvent(m_hMutex);
+}
+
+void CRVAFGUIDlg::ReciveInterprocess(){
+	
+}
+
+void CRVAFGUIDlg::ProcessInterprocess(){
+
 }
 
 void CRVAFGUIDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -2362,6 +2408,41 @@ void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 	// TODO: Add your message handler code here
 }
 
+void CRVAFGUIDlg::OnRunSvafTask()
+{
+	// TODO: Add your control notification handler code here
+	//svaf::WriteProtoToBinaryFile(m_svaftask, "cache");
+	svaf::WriteProtoToTextFile(m_svaftask, "cache");
+	CString str(_T("SVAF.exe"));
+	if (str.GetLength() != 0){
+		DWORD	ExitCode;
+		GetExitCodeProcess(m_pInfo.hProcess, &ExitCode);
+		if (ExitCode != STILL_ACTIVE){
+			STARTUPINFO si = { sizeof(si) };
+
+			si.dwFlags = STARTF_USESHOWWINDOW; // wShowWindow有效
+			si.wShowWindow = TRUE; // TRUE 显示新建进程主窗口， FALSE 不显示
+
+			BOOL bRet = ::CreateProcess(
+				str,
+				_T(" --config_file=\"cache\" "),
+				NULL,
+				NULL,
+				FALSE,
+				CREATE_NEW_CONSOLE,
+				NULL,
+				NULL,
+				&si,
+				&m_pInfo);
+			if (bRet == FALSE){
+				MessageBox(_T("Create Process Failed!"));
+			}
+		} else{
+			MessageBox(_T("Please Wait Current Task Finished!"));
+		}
+	}
+
+}
 
 void CRVAFGUIDlg::OnSaveProtoText()
 {
@@ -2389,3 +2470,6 @@ void CRVAFGUIDlg::OnSaveProtoBinary()
 	svaf::WriteProtoToBinaryFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
 	GenerateProperties();
 }
+
+
+

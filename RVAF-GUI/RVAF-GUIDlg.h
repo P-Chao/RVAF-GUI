@@ -46,6 +46,11 @@ public:
 
 	int gui_type;
 
+	HANDLE m_hFileMapping;
+	HANDLE m_hMutex;
+	LPTSTR m_pMapping;
+	PROCESS_INFORMATION m_pInfo;
+
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
 	hash_map<int, std::string> idtable;
@@ -54,6 +59,11 @@ public:
 	void GenerateProperties();
 	void SetMainUILayout(int type = 0);
 	void SetTopButtonLayout();
+	void InitInterprocess();
+	void SendInterprocess();
+	void ReciveInterprocess();
+	void ProcessInterprocess();
+	void SendCommand(int cmd);
 
 	struct ReflectPackage{
 		std::string layer_name;
@@ -92,4 +102,6 @@ public:
 	CRichEditCtrl m_editMsg;
 	afx_msg void OnSaveProtoText();
 	afx_msg void OnSaveProtoBinary();
+	afx_msg void OnDestroy();
+	afx_msg void OnRunSvafTask();
 };
