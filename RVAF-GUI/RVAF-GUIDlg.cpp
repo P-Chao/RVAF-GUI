@@ -102,8 +102,11 @@ void CRVAFGUIDlg::OnDestroy()
 	CDialogEx::OnDestroy();
 
 	// TODO: Add your message handler code here
-	CloseHandle(m_hFileMapping);
-	CloseHandle(m_hMutex);
+	CloseHandle(c_hFileMapping);
+	CloseHandle(c_hMutex);
+
+	CloseHandle(d_hFileMapping);
+	CloseHandle(d_hMutex);
 }
 
 BOOL CRVAFGUIDlg::OnInitDialog()
@@ -189,24 +192,34 @@ void CRVAFGUIDlg::InitInterprocess(){
 	memset(&m_pInfo, 0, sizeof(m_pInfo));
 
 	// send mapping
-	m_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 4, _T("SVAF_GUI2ALG_CMD"));
-	m_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_GUI2ALG_CMD_MUTEX"));
-	m_pMapping = (LPTSTR)MapViewOfFile(m_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-	if (m_pMapping == NULL){
+	c_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 4, _T("SVAF_GUI2ALG_CMD"));
+	c_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_GUI2ALG_CMD_MUTEX"));
+	c_pMapping = (LPTSTR)MapViewOfFile(c_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (c_pMapping == NULL){
 		MessageBox(_T("Create Inter Process Error!"));
 		exit(-1);
 	}
+
+	// recive data
+	d_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 640*480*4*20, _T("SVAF_ALG2GUI_DATA"));
+	d_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_ALG2GUI_DATA_MUTEX"));
+	d_pMapping = (LPTSTR)MapViewOfFile(d_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (d_pMapping == NULL){
+		MessageBox(_T("Create Inter Process Error!"));
+		exit(-1);
+	}
+
 }
 
 void CRVAFGUIDlg::SendInterprocess(){
-	LPTSTR p = m_pMapping;
+	LPTSTR p = c_pMapping;
 	((int*)p)[0] = 0;
 	//SetEvent(m_hMutex);
 }
 
 
 void CRVAFGUIDlg::SendCommand(int cmd){
-	LPTSTR p = m_pMapping;
+	LPTSTR p = c_pMapping;
 	((int*)p)[0] = cmd;
 	//SetEvent(m_hMutex);
 }
@@ -2553,6 +2566,6 @@ void CRVAFGUIDlg::OnPauseContinue()
 	} else{
 		isPause = false;
 		SendCommand(3);
-		SetEvent(m_hMutex);
+		SetEvent(c_hMutex);
 	}
 }

@@ -47,10 +47,14 @@ public:
 
 	int gui_type;
 
-	HANDLE m_hFileMapping;
-	HANDLE m_hMutex;
-	LPTSTR m_pMapping;
+	HANDLE c_hFileMapping; //used to send cmd
+	HANDLE c_hMutex;
+	LPTSTR c_pMapping;
 	PROCESS_INFORMATION m_pInfo;
+
+	HANDLE d_hFileMapping; //used to recive data
+	HANDLE d_hMutex;
+	LPTSTR d_pMapping;
 
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
