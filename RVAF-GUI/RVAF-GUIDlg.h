@@ -47,6 +47,9 @@ public:
 
 	int gui_type;
 
+	DWORD ThreadID;
+	HANDLE hThread;
+
 	HANDLE c_hFileMapping; //used to send cmd
 	HANDLE c_hMutex;
 	LPTSTR c_pMapping;

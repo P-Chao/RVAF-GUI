@@ -55,6 +55,14 @@ BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 END_MESSAGE_MAP()
 
 
+// Work Thread
+
+UINT ThreadReciveData(LPVOID lpParam){
+	CRVAFGUIDlg *maindlg = (CRVAFGUIDlg*)lpParam;
+	//maindlg->OnShowMoreClicked();
+	return 0;
+}
+
 // CRVAFGUIDlg dialog
 
 
@@ -140,6 +148,9 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	InitInterprocess();
+	
+	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveData, this, CREATE_SUSPENDED, &ThreadID);
+	ResumeThread(hThread);
 
 	isPause = false;
 
