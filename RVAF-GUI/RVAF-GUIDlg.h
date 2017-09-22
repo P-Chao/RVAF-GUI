@@ -52,12 +52,12 @@ public:
 
 	HANDLE c_hFileMapping; //used to send cmd
 	HANDLE c_hMutex;
-	LPTSTR c_pMapping;
+	LPTSTR c_pMsg;
 	PROCESS_INFORMATION m_pInfo;
 
 	HANDLE d_hFileMapping; //used to recive data
 	HANDLE d_hMutex;
-	LPTSTR d_pMapping;
+	LPTSTR d_pMsg;
 
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
@@ -69,7 +69,9 @@ public:
 	void SetTopButtonLayout();
 	void InitInterprocess();
 	void SendInterprocess();
-	void ReciveInterprocess();
+public:
+	void ReciveDataInterprocess();
+protected:
 	void ProcessInterprocess();
 	void SendCommand(int cmd);
 	void CloseProgram(CString strProgram);

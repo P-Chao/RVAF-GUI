@@ -59,7 +59,7 @@ END_MESSAGE_MAP()
 
 UINT ThreadReciveData(LPVOID lpParam){
 	CRVAFGUIDlg *maindlg = (CRVAFGUIDlg*)lpParam;
-	//maindlg->OnShowMoreClicked();
+	maindlg->ReciveDataInterprocess();
 	return 0;
 }
 
@@ -148,7 +148,7 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	InitInterprocess();
-	
+
 	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveData, this, CREATE_SUSPENDED, &ThreadID);
 	ResumeThread(hThread);
 
@@ -205,8 +205,8 @@ void CRVAFGUIDlg::InitInterprocess(){
 	// send mapping
 	c_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 4, _T("SVAF_GUI2ALG_CMD"));
 	c_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_GUI2ALG_CMD_MUTEX"));
-	c_pMapping = (LPTSTR)MapViewOfFile(c_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-	if (c_pMapping == NULL){
+	c_pMsg = (LPTSTR)MapViewOfFile(c_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (c_pMsg == NULL){
 		MessageBox(_T("Create Inter Process Error!"));
 		exit(-1);
 	}
@@ -214,8 +214,8 @@ void CRVAFGUIDlg::InitInterprocess(){
 	// recive data
 	d_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 640*480*4*20, _T("SVAF_ALG2GUI_DATA"));
 	d_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_ALG2GUI_DATA_MUTEX"));
-	d_pMapping = (LPTSTR)MapViewOfFile(d_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
-	if (d_pMapping == NULL){
+	d_pMsg = (LPTSTR)MapViewOfFile(d_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (d_pMsg == NULL){
 		MessageBox(_T("Create Inter Process Error!"));
 		exit(-1);
 	}
@@ -223,20 +223,31 @@ void CRVAFGUIDlg::InitInterprocess(){
 }
 
 void CRVAFGUIDlg::SendInterprocess(){
-	LPTSTR p = c_pMapping;
+	LPTSTR p = c_pMsg;
 	((int*)p)[0] = 0;
 	//SetEvent(m_hMutex);
 }
 
 
 void CRVAFGUIDlg::SendCommand(int cmd){
-	LPTSTR p = c_pMapping;
+	LPTSTR p = c_pMsg;
 	((int*)p)[0] = cmd;
 	//SetEvent(m_hMutex);
 }
 
-void CRVAFGUIDlg::ReciveInterprocess(){
-	
+using SyncBucket = struct{
+	char	head[16];
+	char	message[10][256];
+};
+
+void CRVAFGUIDlg::ReciveDataInterprocess(){
+	int a = sizeof(SyncBucket);
+	while (true){
+		WaitForSingleObject(d_hMutex, INFINITE);
+		SyncBucket* pBucket = (SyncBucket*)d_pMsg;
+		continue;
+	}
+	return;
 }
 
 void CRVAFGUIDlg::ProcessInterprocess(){
