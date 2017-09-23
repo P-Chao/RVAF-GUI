@@ -158,7 +158,7 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	isExpan = false;
 
-	gui_type = 1;
+	gui_type = svaf::GUIType::ONE;
 	//
 	gui_nrm_w = GUI_NRM_W;
 	gui_nrm_h = GUI_NRM_H;
@@ -235,16 +235,16 @@ void CRVAFGUIDlg::SendCommand(int cmd){
 	//SetEvent(m_hMutex);
 }
 
-using SyncBucket = struct{
+using Bucket = struct{
 	char	head[16];
 	char	message[10][256];
 };
 
 void CRVAFGUIDlg::ReciveDataInterprocess(){
-	int a = sizeof(SyncBucket);
+	int a = sizeof(Bucket);
 	while (true){
 		WaitForSingleObject(d_hMutex, INFINITE);
-		SyncBucket* pBucket = (SyncBucket*)d_pMsg;
+		Bucket* pBucket = (Bucket*)d_pMsg;
 		continue;
 	}
 	return;
@@ -418,7 +418,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE://01
 			isbinocular = false;
-			gui_type = 1;
+			task_type = svaf::SvafApp::S_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Image"));
 
@@ -491,7 +491,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR://02
 			isbinocular = true;
-			gui_type = 2;
+			task_type = svaf::SvafApp::B_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Image Pair"));
 
@@ -585,7 +585,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO://03
 			isbinocular = false;
-			gui_type = 1;
+			task_type = svaf::SvafApp::S_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Video"));
 
@@ -658,7 +658,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_VIDEO_PAIR://04
 			isbinocular = true;
-			gui_type = 2;
+			task_type = svaf::SvafApp::B_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Video Pair"));
 
@@ -751,7 +751,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_CAMERA://05
 			isbinocular = false;
-			gui_type = 1;
+			task_type = svaf::SvafApp::S_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Camera"));
 
@@ -816,7 +816,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_CAMERA_PAIR://06
 			isbinocular = true;
-			gui_type = 2;
+			task_type = svaf::SvafApp::B_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Camera Pair"));
 
@@ -898,7 +898,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_DSP://07
 			isbinocular = false;
-			gui_type = 1;
+			task_type = svaf::SvafApp::S_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("DSP Camera"));
 
@@ -946,7 +946,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_DSP_PAIR://08
 			isbinocular = true;
-			gui_type = 2;
+			task_type = svaf::SvafApp::B_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("DSP Camera Pair"));
 
@@ -994,7 +994,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_KINECT://09
 			isbinocular = false;
-			gui_type = 1;
+			task_type = svaf::SvafApp::S_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Kinect"));
 
@@ -1042,7 +1042,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_FOLDER://11
 			isbinocular = false;
-			gui_type = 1;
+			task_type = svaf::SvafApp::S_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Image Folder"));
 
@@ -1113,7 +1113,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_IMAGE_PAIR_FOLDER://12
 			isbinocular = true;
-			gui_type = 2;
+			task_type = svaf::SvafApp::B_SHOW;
 
 			group = new CMFCPropertyGridProperty(_T("Image Folder Pair"));
 
@@ -1204,9 +1204,9 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group = new CMFCPropertyGridProperty(_T("Adaboost"));
 
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_DETECT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_DETECT;
 			}
 
 			// 2101 string
@@ -1321,164 +1321,218 @@ void CRVAFGUIDlg::GenerateProperties(){
 			break;
 		case svaf::LayerParameter_LayerType_MILTRACK://31
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_DETECT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_DETECT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("MILTrack"));
 			break;
 		case svaf::LayerParameter_LayerType_BITTRACK://32
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_DETECT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_DETECT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("Bino MILTrack"));
 			break;
 		case svaf::LayerParameter_LayerType_SIFT_POINT://41
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("SIFT Point"));
 			break;
 		case svaf::LayerParameter_LayerType_SURF_POINT://42
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("SURF Point"));
 			break;
 		case svaf::LayerParameter_LayerType_STAR_POINT://43
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("STAR Point"));
 			break;
 		case svaf::LayerParameter_LayerType_BRISK_POINT://44
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("Brisk Point"));
 			break;
 		case svaf::LayerParameter_LayerType_FAST_POINT://45
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("FAST Point"));
 			break;
 		case svaf::LayerParameter_LayerType_ORB_POINT://46
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("ORB Point"));
 			break;
 		case svaf::LayerParameter_LayerType_KAZE_POINT://47
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("KAZE Point"));
 			break;
 		case svaf::LayerParameter_LayerType_HARRIS_POINT://48
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("Harris Point"));
 			break;
 		case svaf::LayerParameter_LayerType_CV_POINT://49
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_POINT;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_POINT;
 			}
 
 			group = new CMFCPropertyGridProperty(_T("CV Point"));
 			break;
 		case svaf::LayerParameter_LayerType_SIFT_DESP://51
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("SIFT Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_SURF_DESP://52
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("SURF Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_STAR_DESP://53
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("STAR Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_BRIEF_DESP://54
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("BRIEF Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_BRISK_DESP://55
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("Brisk Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_FAST_DESP://56
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("FAST Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_ORB_DESP://57
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("ORB Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_KAZE_DESP://58
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("KAZE Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_CV_DESP://59
+			if (isbinocular){
+				task_type = svaf::SvafApp::B_POINTDESP;
+			} else{
+				task_type = svaf::SvafApp::S_POINTDESP;
+			}
+
 			group = new CMFCPropertyGridProperty(_T("CV Descriptor"));
 			break;
 		case svaf::LayerParameter_LayerType_KDTREE_MATCH://61
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("KDtree Match"));
 			break;
 		case svaf::LayerParameter_LayerType_EULAR_MATCH://62
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("Eular Match"));
 			break;
 		case svaf::LayerParameter_LayerType_RANSAC://63
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("Ransac"));
 			break;
 		case svaf::LayerParameter_LayerType_BF_MATCH://64
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("BF Match"));
 			break;
 		case svaf::LayerParameter_LayerType_FLANN_MATCH://65
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("Flann Match"));
 			break;
 		case svaf::LayerParameter_LayerType_EC_MATCH://68
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("EC Match"));
 			break;
 		case svaf::LayerParameter_LayerType_CV_MATCH://69
-			gui_type = 3;
+			task_type = svaf::SvafApp::POINT_MATCH;
 			group = new CMFCPropertyGridProperty(_T("CV Match"));
 			break;
 		case svaf::LayerParameter_LayerType_SGM_MATCH://71
-			gui_type = 6;
+			task_type = svaf::SvafApp::STEREO_MATCH;
 			group = new CMFCPropertyGridProperty(_T("SGM Stereo Match"));
 			break;
 		case svaf::LayerParameter_LayerType_EADP_MATCH://72
-			gui_type = 6;
+			task_type = svaf::SvafApp::STEREO_MATCH;
 			group = new CMFCPropertyGridProperty(_T("Eadp Stereo Match"));
 			
 			// 7201 int32
@@ -1680,7 +1734,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 			group = new CMFCPropertyGridProperty(_T("Center Position"));
 			break;
 		case svaf::LayerParameter_LayerType_IA_EST://94
-			gui_type = 4;
+			task_type = svaf::SvafApp::POINT_CLOUD;
 
 			group = new CMFCPropertyGridProperty(_T("SAC-IA"));
 
@@ -1920,26 +1974,26 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_IAICP_EST://95
-			gui_type = 4;
+			task_type = svaf::SvafApp::POINT_CLOUD;
 			group = new CMFCPropertyGridProperty(_T("SAC-IA ICP"));
 			break;
 		case svaf::LayerParameter_LayerType_IANDT_EST://96
-			gui_type = 4;
+			task_type = svaf::SvafApp::POINT_CLOUD;
 			group = new CMFCPropertyGridProperty(_T("SAC-IA NDP"));
 			break;
 		case svaf::LayerParameter_LayerType_SUPIX_SEG://101
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_SUPIX;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_SUPIX;
 			}
 			group = new CMFCPropertyGridProperty(_T("Superpixel Segment"));
 			break;
 		case svaf::LayerParameter_LayerType_RECTIFY://141
 			if (isbinocular){
-				gui_type = 2;
+				task_type = svaf::SvafApp::B_RECTIFY;
 			} else{
-				gui_type = 1;
+				task_type = svaf::SvafApp::S_RECTIFY;
 			}
 			group = new CMFCPropertyGridProperty(_T("Stereo Rectify"));
 
@@ -1963,6 +2017,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		default:
+			MessageBox(L"Unrecoganize Task Layer");
 			break;
 		}
 		
@@ -1970,6 +2025,68 @@ void CRVAFGUIDlg::GenerateProperties(){
 			m_properaty.AddProperty(group);
 		}
 	}
+
+	switch (task_type)
+	{
+	case svaf::NONE:
+		gui_type = svaf::GUIType::PROTO;
+		break;
+	case svaf::S_SHOW:
+		gui_type = svaf::GUIType::ONE;
+		break;
+	case svaf::B_SHOW:
+		gui_type = svaf::GUIType::TWO;
+		break;
+	case svaf::S_RECTIFY:
+		gui_type = svaf::GUIType::ONE;
+		break;
+	case svaf::B_RECTIFY:
+		gui_type = svaf::GUIType::TWO;
+		break;
+	case svaf::S_DETECT:
+		gui_type = svaf::GUIType::ONE;
+		break;
+	case svaf::B_DETECT:
+		gui_type = svaf::GUIType::TWO;
+		break;
+	case svaf::S_POINT:
+		gui_type = svaf::GUIType::ONE;
+		break;
+	case svaf::B_POINT:
+		gui_type = svaf::GUIType::TWO;
+		break;
+	case svaf::S_POINTDESP:
+		gui_type = svaf::GUIType::ONE;
+		break;
+	case svaf::B_POINTDESP:
+		gui_type = svaf::GUIType::TWO;
+		break;
+	case svaf::S_SUPIX:
+		gui_type = svaf::GUIType::ONE;
+		break;
+	case svaf::B_SUPIX:
+		gui_type = svaf::GUIType::TWO;
+		break;
+	case svaf::POINT_MATCH:
+		gui_type = svaf::GUIType::ONE_BIG;
+		break;
+	case svaf::RANSAC_MATCH:
+		gui_type = svaf::GUIType::ONE_BIG;
+		break;
+	case svaf::STEREO_MATCH:
+		gui_type = svaf::GUIType::FOUR;
+		break;
+	case svaf::POINT_CLOUD:
+		gui_type = svaf::GUIType::FOUR;
+		break;
+	case svaf::SITCH:
+		gui_type = svaf::GUIType::THREE_BIG;
+		break;
+	default:
+		MessageBox(L"Unrecoganize Task Type");
+		break;
+	}
+
 	m_properaty.RedrawWindow();
 }
 
@@ -1982,7 +2099,7 @@ void CRVAFGUIDlg::OnSelectAlgorithm()
 		OpenProtoFile((LPCSTR)CStringA(filename));
 		GenerateProperties();
 		if (!ready_proto){
-			SetMainUILayout(0);
+			SetMainUILayout(svaf::GUIType::PROTO);
 		}
 	}
 
@@ -2275,7 +2392,7 @@ void CRVAFGUIDlg::OnShowMoreClicked()
 {
 	// TODO: Add your control notification handler code here
 	if (isExpan){
-		SetMainUILayout(0);
+		SetMainUILayout(svaf::GUIType::PROTO);
 	} else{
 		SetMainUILayout(gui_type);
 	}
@@ -2293,7 +2410,7 @@ void CRVAFGUIDlg::SetTopButtonLayout(){
 	}
 }
 
-void CRVAFGUIDlg::SetMainUILayout(int type){
+void CRVAFGUIDlg::SetMainUILayout(svaf::GUIType type){
 	CRect rc, rc2;
 	GetWindowRect(rc);
 	// 展示计算方法
@@ -2308,13 +2425,13 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 
 	switch (type)
 	{
-	case 0: // 最小面板
+	case svaf::GUIType::PROTO: // 最小面板
 		isExpan = false;
 		m_showMore.SetWindowTextW(_T(">"));
 		rc.right = rc.left + gui_nrm_w;
 		rc.bottom = rc.top + gui_nrm_h;
 		break;
-	case 1: // 单画面面板
+	case svaf::GUIType::ONE: // 单画面面板
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W;
 		gui_exp_h = GUI_EXP_H;
@@ -2331,7 +2448,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
 		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		break;
-	case 3: // 单宽画幅面板
+	case svaf::GUIType::ONE_BIG: // 单宽画幅面板
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 550;
 		gui_exp_h = GUI_EXP_H;
@@ -2348,7 +2465,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, edittop_edge + DISP_MARGN, right_edge - DISP_MARGN, bottom_edge - DISP_MARGN));
 		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		break;
-	case 2: // 双画幅面板
+	case svaf::GUIType::TWO: // 双画幅面板
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 550;
 		gui_exp_h = GUI_EXP_H;
@@ -2368,7 +2485,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + edittop_edge));
 		m_showMore.SetWindowTextW(_T("<"));
 		break;
-	case 5: // 宽三画幅面板
+	case svaf::GUIType::THREE_BIG: // 宽三画幅面板
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 100;
 		gui_exp_h = GUI_EXP_H;
@@ -2390,7 +2507,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_zoonDisp3.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
 		m_showMore.SetWindowTextW(_T("<"));
 		break;
-	case 4: // 四画幅面板
+	case svaf::GUIType::FOUR: // 四画幅面板
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 100;
 		gui_exp_h = GUI_EXP_H;
@@ -2413,7 +2530,7 @@ void CRVAFGUIDlg::SetMainUILayout(int type){
 		m_zoonDisp4.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
 		m_showMore.SetWindowTextW(_T("<"));
 		break;
-	case 6: // 三画幅面板
+	case svaf::GUIType::THREE: // 三画幅面板
 		isExpan = true;
 		gui_exp_w = GUI_EXP_W + 186;
 		gui_exp_h = GUI_EXP_H;

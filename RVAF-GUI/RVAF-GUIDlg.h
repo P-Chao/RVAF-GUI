@@ -10,6 +10,44 @@
 #include <hash_map>
 #include "afxcmn.h"
 
+namespace svaf{
+
+enum SvafApp{
+	NONE = 0, // gui_type = PROTO
+	S_SHOW = 1, // ONE
+	B_SHOW = 2, // TWO
+	S_RECTIFY = 3, // ONE
+	B_RECTIFY = 4, // TWO
+	S_DETECT = 5, // ONE
+	B_DETECT = 6, // TWO
+	//S_TRACK = 7, // ONE
+	//B_TRACK = 8, // TWO
+	S_POINT = 9, // ONE
+	B_POINT = 10, // TWO
+	S_POINTDESP = 11, // ONE
+	B_POINTDESP = 12, // TWO
+	S_SUPIX = 13, // ONE
+	B_SUPIX = 14, // TWO
+
+	POINT_MATCH = 21, // ONE_BIG
+	RANSAC_MATCH = 22, // ONE_BIG
+	STEREO_MATCH = 23, // FOUR
+	POINT_CLOUD = 24, // FOUR
+	SITCH = 25 // THREE_BIG
+};
+
+enum GUIType{
+	PROTO = 0,
+	ONE = 1,
+	TWO = 2,
+	ONE_BIG = 3,
+	FOUR = 4,
+	THREE_BIG = 5,
+	THREE = 6
+};
+
+}
+
 // CRVAFGUIDlg dialog
 class CRVAFGUIDlg : public CDialogEx
 {
@@ -45,7 +83,8 @@ public:
 	int gui_exp_w;
 	int gui_exp_h;
 
-	int gui_type;
+	svaf::SvafApp task_type;
+	svaf::GUIType gui_type;
 
 	DWORD ThreadID;
 	HANDLE hThread;
@@ -65,7 +104,7 @@ public:
 	bool ReadCheckProtoFile(std::string filename);
 	void OpenProtoFile(std::string filename);
 	void GenerateProperties();
-	void SetMainUILayout(int type = 0);
+	void SetMainUILayout(svaf::GUIType type = svaf::GUIType::PROTO);
 	void SetTopButtonLayout();
 	void InitInterprocess();
 	void SendInterprocess();
