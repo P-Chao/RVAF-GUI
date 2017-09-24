@@ -265,6 +265,9 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			//cv::imshow("123", img);
 			//cv::waitKey(0);
 		}
+
+		SendMessage(WM_PAINT);
+		
 		continue;
 	}
 	return;
@@ -313,6 +316,48 @@ void CRVAFGUIDlg::OnPaint()
 	else
 	{
 		CDialogEx::OnPaint();
+
+		// TODO:
+		int zoondisp[4] = { IDC_ZOON_DISP, IDC_ZOON_DISP2, IDC_ZOON_DISP3, IDC_ZOON_DISP4 };
+
+		int MaxColors = 256;
+		CImage CI;
+		RGBQUAD* ColorTable = new RGBQUAD[MaxColors];
+		for (int i = 0; i < m_imgs.size(); ++i){
+			CWnd * pWnd = GetDlgItem(zoondisp[i]);
+			CDC *pDC = pWnd->GetWindowDC();
+			
+			CRect rect;
+			m_zoonDisplay.GetWindowRect(&rect);
+			m_zoonDisplay.ScreenToClient(&rect);
+
+			cv::Mat imgt;
+			cv::resize(m_imgs[i], imgt, cv::Size(rect.right - rect.left, rect.bottom - rect.top));
+
+			CI.Destroy();
+			CI.Create(imgt.cols, imgt.rows, 8 * imgt.channels());
+
+			if (imgt.channels() == 1){
+				cv::cvtColor(imgt, imgt, CV_GRAY2RGB);
+			}
+
+			if (imgt.channels() == 3){
+				uchar *pS;
+				uchar *pImg = (uchar*)CI.GetBits();
+				int step = CI.GetPitch();
+				for (int x = 0; x < imgt.rows; ++x){
+					pS = imgt.ptr<uchar>(x);
+					for (int y = 0; y < imgt.cols; ++y){
+						*(pImg + x * step + y * 3) = pS[y * 3];
+						*(pImg + x * step + y * 3 + 1) = pS[y * 3 + 1];
+						*(pImg + x * step + y * 3 + 2) = pS[y * 3 + 2];
+					}
+				}
+			}
+			
+			CI.StretchBlt(pDC->m_hDC, rect, SRCCOPY);
+		}
+		delete[]ColorTable;
 	}
 }
 
@@ -2559,8 +2604,8 @@ void CRVAFGUIDlg::SetMainUILayout(svaf::GUIType type){
 		rc.bottom = rc.top + gui_exp_h;
 		m_zoonDisplay.ShowWindow(SW_SHOW);
 		m_zoonDisp2.ShowWindow(SW_SHOW);
-		m_zoonDisp3.ShowWindow(SW_HIDE);
-		m_zoonDisp4.ShowWindow(SW_SHOW);
+		m_zoonDisp3.ShowWindow(SW_SHOW);
+		m_zoonDisp4.ShowWindow(SW_HIDE);
 		right_edge = gui_exp_w - 16;
 		middle_edge = (right_edge + left_edge) / 2;
 		box_height = right_edge - left_edge - DISP_MARGN - DISP_MARGN;
@@ -2570,7 +2615,7 @@ void CRVAFGUIDlg::SetMainUILayout(svaf::GUIType type){
 		m_zoonDisplay.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge, middle_edge - DISP_MARGN / 2, top_edge + margin_edge));
 		m_zoonDisp2.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge, right_edge - DISP_MARGN, top_edge + margin_edge));
 		m_editMsg.MoveWindow(CRect(left_edge + DISP_MARGN, top_edge + margin_edge + DISP_MARGN, middle_edge - DISP_MARGN / 2, top_edge + edittop_edge + DISP_MARGN));
-		m_zoonDisp4.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
+		m_zoonDisp3.MoveWindow(CRect(middle_edge + DISP_MARGN / 2, top_edge + margin_edge + DISP_MARGN, right_edge - DISP_MARGN, top_edge + edittop_edge + DISP_MARGN));
 		m_showMore.SetWindowTextW(_T("<"));
 		break;
 	default:
