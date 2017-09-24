@@ -9,6 +9,7 @@
 #include <string>
 #include <hash_map>
 #include "afxcmn.h"
+#include <opencv2\opencv.hpp>
 
 namespace svaf{
 
@@ -73,6 +74,7 @@ public:
 	Node dummy;
 
 	vector<int> toolid;
+	vector<cv::Mat> m_imgs;
 
 	bool isExpan;
 	bool isPause;

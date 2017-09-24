@@ -236,15 +236,35 @@ void CRVAFGUIDlg::SendCommand(int cmd){
 }
 
 using Bucket = struct{
-	char	head[16];
-	char	message[10][256];
+	char	head[4];
+	char	message[10][128];
+	int		msgCount;
+	int		imgCount;
+	int		cols[8];
+	int		rows[8];
+	int		chns[8];
+	int		offs[8];
+	int		PCoff;
 };
 
 void CRVAFGUIDlg::ReciveDataInterprocess(){
-	int a = sizeof(Bucket);
+	
+	
 	while (true){
 		WaitForSingleObject(d_hMutex, INFINITE);
+		m_imgs.clear();
+		LPTSTR p = d_pMsg;
 		Bucket* pBucket = (Bucket*)d_pMsg;
+		char *pBuf = (char *)p;
+		int offset = sizeof(Bucket);
+		int frameCount = pBucket->imgCount;
+		for (int i = 0; i < frameCount; ++i){
+			int type = (pBucket->chns[i] == 1) ? CV_8UC1 : CV_8UC3;
+			cv::Mat img(pBucket->rows[i], pBucket->cols[i], type, pBuf + pBucket->offs[i]);
+			m_imgs.push_back(img.clone());
+			//cv::imshow("123", img);
+			//cv::waitKey(0);
+		}
 		continue;
 	}
 	return;
