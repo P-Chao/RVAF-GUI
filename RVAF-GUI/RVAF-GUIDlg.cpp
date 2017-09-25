@@ -324,6 +324,9 @@ void CRVAFGUIDlg::OnPaint()
 		CImage CI;
 		RGBQUAD* ColorTable = new RGBQUAD[MaxColors];
 		for (int i = 0; i < m_imgs.size(); ++i){
+			if (i > 3){
+				break;
+			}
 			CWnd * pWnd = GetDlgItem(zoondisp[i]);
 			CDC *pDC = pWnd->GetWindowDC();
 			
@@ -1738,6 +1741,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_TRIANG://81
+			task_type = svaf::SvafApp::PC_TRIANGLE;
 			group = new CMFCPropertyGridProperty(_T("Triangle"));
 
 			// 8102 string
@@ -1793,13 +1797,15 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_MXMUL://82
+			task_type = svaf::SvafApp::PC_MULMATRIX;
 			group = new CMFCPropertyGridProperty(_T("Matrix Mul"));
 			break;
 		case svaf::LayerParameter_LayerType_CENTER_POS://91
+			task_type = svaf::SvafApp::PR_CENTER;
 			group = new CMFCPropertyGridProperty(_T("Center Position"));
 			break;
 		case svaf::LayerParameter_LayerType_IA_EST://94
-			task_type = svaf::SvafApp::POINT_CLOUD;
+			task_type = svaf::SvafApp::PC_REGISTRATION;
 
 			group = new CMFCPropertyGridProperty(_T("SAC-IA"));
 
@@ -2039,11 +2045,11 @@ void CRVAFGUIDlg::GenerateProperties(){
 
 			break;
 		case svaf::LayerParameter_LayerType_IAICP_EST://95
-			task_type = svaf::SvafApp::POINT_CLOUD;
+			task_type = svaf::SvafApp::PC_REGISTRATION;
 			group = new CMFCPropertyGridProperty(_T("SAC-IA ICP"));
 			break;
 		case svaf::LayerParameter_LayerType_IANDT_EST://96
-			task_type = svaf::SvafApp::POINT_CLOUD;
+			task_type = svaf::SvafApp::PC_REGISTRATION;
 			group = new CMFCPropertyGridProperty(_T("SAC-IA NDP"));
 			break;
 		case svaf::LayerParameter_LayerType_SUPIX_SEG://101
@@ -2141,8 +2147,17 @@ void CRVAFGUIDlg::GenerateProperties(){
 	case svaf::STEREO_MATCH:
 		gui_type = svaf::GUIType::FOUR;
 		break;
-	case svaf::POINT_CLOUD:
+	case svaf::PC_TRIANGLE:
+		gui_type = svaf::GUIType::THREE_BIG;
+		break;
+	case svaf::PC_MULMATRIX:
+		gui_type = svaf::GUIType::THREE_BIG;
+		break;
+	case svaf::PC_REGISTRATION:
 		gui_type = svaf::GUIType::FOUR;
+		break;
+	case svaf::PR_CENTER:
+		gui_type = svaf::GUIType::TWO;
 		break;
 	case svaf::SITCH:
 		gui_type = svaf::GUIType::THREE_BIG;
