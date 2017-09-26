@@ -11,6 +11,16 @@
 #include "afxcmn.h"
 #include <opencv2\opencv.hpp>
 
+#include "GL\glew.h"
+#include "GL\freeglut.h"
+
+#pragma comment(lib, "glew32s.lib")
+#ifdef _DEBUG
+#pragma comment(lib, "GL/lib/d/freeglut_static.lib")
+#else
+#pragma comment(lib, "freeglut_static.lib")
+#endif
+
 namespace svaf{
 
 enum SvafApp{
@@ -79,6 +89,25 @@ public:
 
 	vector<int> toolid;
 	vector<cv::Mat> m_imgs;
+
+	using Pointf = struct _Pointf{
+		float x;
+		float y;
+		float z;
+		float r;
+		float g;
+		float b;
+		/*_Pointf(){}
+		_Pointf(float xx, float yy, float zz) : x(xx), y(yy), z(zz){}
+		_Pointf(float xx, float yy, float zz, float rr, float gg, float bb) :
+			x(xx), y(yy), z(zz), r(rr), g(gg), b(bb){}*/
+	};
+
+	using PointCloud = struct{
+		int chns;
+		vector<Pointf> points;
+	};
+	vector<PointCloud> pointclouds;
 
 	bool isExpan;
 	bool isPause;

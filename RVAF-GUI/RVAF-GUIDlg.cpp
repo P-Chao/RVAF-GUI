@@ -212,7 +212,7 @@ void CRVAFGUIDlg::InitInterprocess(){
 	}
 
 	// recive data
-	d_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 640*480*4*20, _T("SVAF_ALG2GUI_DATA"));
+	d_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 640*480*3*20, _T("SVAF_ALG2GUI_DATA"));
 	d_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_ALG2GUI_DATA_MUTEX"));
 	d_pMsg = (LPTSTR)MapViewOfFile(d_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (d_pMsg == NULL){
@@ -244,7 +244,10 @@ using Bucket = struct{
 	int		rows[8];
 	int		chns[8];
 	int		offs[8];
-	int		PCoff;
+	int		PointSize[4];
+	int		PointChns[4];// xyz(3) or xyzrgb(6)
+	int		PointOffs[4];
+	int		pclCount;
 };
 
 void CRVAFGUIDlg::ReciveDataInterprocess(){
@@ -258,12 +261,36 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 		char *pBuf = (char *)p;
 		int offset = sizeof(Bucket);
 		int frameCount = pBucket->imgCount;
+		int pointCount = pBucket->pclCount;
 		for (int i = 0; i < frameCount; ++i){
 			int type = (pBucket->chns[i] == 1) ? CV_8UC1 : CV_8UC3;
 			cv::Mat img(pBucket->rows[i], pBucket->cols[i], type, pBuf + pBucket->offs[i]);
 			m_imgs.push_back(img.clone());
-			//cv::imshow("123", img);
-			//cv::waitKey(0);
+		}
+		for (int i = 0; i < pointCount; ++i){
+			int pnts = pBucket->PointSize[i];
+			int chns = pBucket->PointChns[i];
+			float *pPC = (float*)(pBuf + pBucket->PointOffs[i]);
+			PointCloud pointcloud;
+			pointcloud.chns = chns;
+			pointcloud.points.resize(pnts);
+			if (chns == 3){
+				for (int j = 0; j < pnts; ++j){
+					pointcloud.points[j].x = pPC[j * chns];
+					pointcloud.points[j].y = pPC[j * chns + 1];
+					pointcloud.points[j].z = pPC[j * chns + 2];
+				}
+			} else if(chns == 6){
+				for (int j = 0; j < pnts; ++j){
+					pointcloud.points[j].x = pPC[j * chns];
+					pointcloud.points[j].y = pPC[j * chns + 1];
+					pointcloud.points[j].z = pPC[j * chns + 2];
+					pointcloud.points[j].r = pPC[j * chns + 3];
+					pointcloud.points[j].g = pPC[j * chns + 4];
+					pointcloud.points[j].b = pPC[j * chns + 5];
+				}
+			}
+			pointclouds.push_back(pointcloud);
 		}
 
 		SendMessage(WM_PAINT);
@@ -322,7 +349,6 @@ void CRVAFGUIDlg::OnPaint()
 
 		int MaxColors = 256;
 		CImage CI;
-		RGBQUAD* ColorTable = new RGBQUAD[MaxColors];
 		for (int i = 0; i < m_imgs.size(); ++i){
 			if (i > 3){
 				break;
@@ -360,7 +386,8 @@ void CRVAFGUIDlg::OnPaint()
 			
 			CI.StretchBlt(pDC->m_hDC, rect, SRCCOPY);
 		}
-		delete[]ColorTable;
+		
+		
 	}
 }
 
