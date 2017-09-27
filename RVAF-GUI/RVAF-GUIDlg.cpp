@@ -195,6 +195,20 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	SetTopButtonLayout();
 
+	CRect rect;
+	m_zoonDisp3.GetWindowRect(rect);
+	ScreenToClient(rect);
+	m_oglWindow1.oglCreate(rect, this, L"Left");
+	m_oglWindow1.ShowWindow(SW_HIDE);
+	//m_oglWindow1.m_unpTimer = m_oglWindow1.SetTimer(1, 1, 0);
+
+	m_zoonDisp4.GetWindowRect(rect);
+	ScreenToClient(rect);
+	m_oglWindow2.oglCreate(rect, this, L"Right");
+	m_oglWindow2.ShowWindow(SW_HIDE);
+	//m_oglWindow2.m_unpTimer = m_oglWindow1.SetTimer(1, 1, 0);
+	
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -271,23 +285,25 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			int pnts = pBucket->PointSize[i];
 			int chns = pBucket->PointChns[i];
 			float *pPC = (float*)(pBuf + pBucket->PointOffs[i]);
-			PointCloud pointcloud;
-			pointcloud.chns = chns;
-			pointcloud.points.resize(pnts);
+			vector<Pointf> pointcloud;
+			pointcloud.resize(pnts);
 			if (chns == 3){
 				for (int j = 0; j < pnts; ++j){
-					pointcloud.points[j].x = pPC[j * chns];
-					pointcloud.points[j].y = pPC[j * chns + 1];
-					pointcloud.points[j].z = pPC[j * chns + 2];
+					pointcloud[j].x = pPC[j * chns];
+					pointcloud[j].y = pPC[j * chns + 1];
+					pointcloud[j].z = pPC[j * chns + 2];
+					pointcloud[j].r = 1;
+					pointcloud[j].g = 1;
+					pointcloud[j].b = 0.5;
 				}
 			} else if(chns == 6){
 				for (int j = 0; j < pnts; ++j){
-					pointcloud.points[j].x = pPC[j * chns];
-					pointcloud.points[j].y = pPC[j * chns + 1];
-					pointcloud.points[j].z = pPC[j * chns + 2];
-					pointcloud.points[j].r = pPC[j * chns + 3];
-					pointcloud.points[j].g = pPC[j * chns + 4];
-					pointcloud.points[j].b = pPC[j * chns + 5];
+					pointcloud[j].x = pPC[j * chns];
+					pointcloud[j].y = pPC[j * chns + 1];
+					pointcloud[j].z = pPC[j * chns + 2];
+					pointcloud[j].r = pPC[j * chns + 3];
+					pointcloud[j].g = pPC[j * chns + 4];
+					pointcloud[j].b = pPC[j * chns + 5];
 				}
 			}
 			pointclouds.push_back(pointcloud);
@@ -347,9 +363,10 @@ void CRVAFGUIDlg::OnPaint()
 		// TODO:
 		int zoondisp[4] = { IDC_ZOON_DISP, IDC_ZOON_DISP2, IDC_ZOON_DISP3, IDC_ZOON_DISP4 };
 
-		int MaxColors = 256;
+		int zoon_id = 0;
 		CImage CI;
 		for (int i = 0; i < m_imgs.size(); ++i){
+			zoon_id = i;
 			if (i > 3){
 				break;
 			}
@@ -387,6 +404,35 @@ void CRVAFGUIDlg::OnPaint()
 			CI.StretchBlt(pDC->m_hDC, rect, SRCCOPY);
 		}
 		
+		COpenGLControl * pOgl = &m_oglWindow1;
+		for (int i = 0; i < pointclouds.size(); ++i){
+			zoon_id++;
+			if (zoon_id > 3){
+				break;
+			}
+			CWnd * pWnd = GetDlgItem(zoondisp[zoon_id]);
+			CRect rect;
+			pWnd->GetWindowRect(rect);
+			ScreenToClient(rect);
+
+			if (i == 1){
+				pOgl = &m_oglWindow2;
+				m_oglWindow2.MoveWindow(rect);
+				pOgl->ShowWindow(SW_SHOW);
+				pOgl->SetTimer(1, 1, 0);
+				pWnd->ShowWindow(SW_HIDE);
+				pOgl->SetViewPoint(cv::Scalar(0, 0, 0), cv::Scalar(40, -40, 40));
+				break;
+			}
+			pOgl->SetPointCloud(pointclouds[i]);
+			pOgl->MoveWindow(rect);
+			pOgl->ShowWindow(SW_SHOW);
+			pOgl->SetTimer(1, 1, 0);
+			pWnd->ShowWindow(SW_HIDE);
+
+			
+			
+		}
 		
 	}
 }
@@ -415,7 +461,6 @@ bool CRVAFGUIDlg::ReadCheckProtoFile(std::string filename){
 	return true;
 }
 #undef REC_VERSION
-
 
 
 void CRVAFGUIDlg::OpenProtoFile(std::string filename){
@@ -2671,6 +2716,27 @@ void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 	CDialogEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
+	switch (nType)
+	{
+	case SIZE_RESTORED:
+		if (m_oglWindow1.m_bIsMaximized){
+			m_oglWindow1.OnSize(nType, cx, cy);
+			m_oglWindow1.m_bIsMaximized = false;
+		}
+		if (m_oglWindow2.m_bIsMaximized){
+			m_oglWindow2.OnSize(nType, cx, cy);
+			m_oglWindow2.m_bIsMaximized = false;
+		}
+		break;
+	case SIZE_MAXIMIZED:
+		m_oglWindow1.OnSize(nType, cx, cy);
+		m_oglWindow1.m_bIsMaximized = true;
+		m_oglWindow2.OnSize(nType, cx, cy);
+		m_oglWindow2.m_bIsMaximized = true;
+		break;
+	default:
+		break;
+	}
 }
 
 void CRVAFGUIDlg::OnRunSvafTask()

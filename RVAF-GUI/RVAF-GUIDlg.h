@@ -10,16 +10,7 @@
 #include <hash_map>
 #include "afxcmn.h"
 #include <opencv2\opencv.hpp>
-
-#include "GL\glew.h"
-#include "GL\freeglut.h"
-
-#pragma comment(lib, "glew32s.lib")
-#ifdef _DEBUG
-#pragma comment(lib, "GL/lib/d/freeglut_static.lib")
-#else
-#pragma comment(lib, "freeglut_static.lib")
-#endif
+#include "OpenGLControl.h"
 
 namespace svaf{
 
@@ -63,6 +54,15 @@ enum GUIType{
 
 }
 
+//using Pointf = struct _Pointf{
+//	float x;
+//	float y;
+//	float z;
+//	float r;
+//	float g;
+//	float b;
+//};
+
 // CRVAFGUIDlg dialog
 class CRVAFGUIDlg : public CDialogEx
 {
@@ -90,24 +90,7 @@ public:
 	vector<int> toolid;
 	vector<cv::Mat> m_imgs;
 
-	using Pointf = struct _Pointf{
-		float x;
-		float y;
-		float z;
-		float r;
-		float g;
-		float b;
-		/*_Pointf(){}
-		_Pointf(float xx, float yy, float zz) : x(xx), y(yy), z(zz){}
-		_Pointf(float xx, float yy, float zz, float rr, float gg, float bb) :
-			x(xx), y(yy), z(zz), r(rr), g(gg), b(bb){}*/
-	};
-
-	using PointCloud = struct{
-		int chns;
-		vector<Pointf> points;
-	};
-	vector<PointCloud> pointclouds;
+	vector<vector<Pointf>> pointclouds;
 
 	bool isExpan;
 	bool isPause;
@@ -133,6 +116,9 @@ public:
 	HANDLE d_hMutex;
 	LPTSTR d_pMsg;
 
+	COpenGLControl m_oglWindow1;
+	COpenGLControl m_oglWindow2;
+
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
 	hash_map<int, std::string> idtable;
@@ -150,7 +136,6 @@ protected:
 	void SendCommand(int cmd);
 	void CloseProgram(CString strProgram);
 	DWORD GetProcessIdFromName(LPCTSTR name);
-
 
 	struct ReflectPackage{
 		std::string layer_name;
