@@ -195,17 +195,17 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	SetTopButtonLayout();
 
-	CRect rect;
-	m_zoonDisp3.GetWindowRect(rect);
-	ScreenToClient(rect);
-	m_oglWindow1.oglCreate(rect, this, L"Left");
-	m_oglWindow1.ShowWindow(SW_HIDE);
+	//CRect rect;
+	//m_zoonDisp3.GetWindowRect(rect);
+	//ScreenToClient(rect);
+	//m_oglWindow1.oglCreate(rect, this, L"Left");
+	//m_oglWindow1.ShowWindow(SW_HIDE);
 	//m_oglWindow1.m_unpTimer = m_oglWindow1.SetTimer(1, 1, 0);
 
-	m_zoonDisp4.GetWindowRect(rect);
-	ScreenToClient(rect);
-	m_oglWindow2.oglCreate(rect, this, L"Right");
-	m_oglWindow2.ShowWindow(SW_HIDE);
+	//m_zoonDisp4.GetWindowRect(rect);
+	//ScreenToClient(rect);
+	//m_oglWindow2.oglCreate(rect, this, L"Right");
+	//m_oglWindow2.ShowWindow(SW_HIDE);
 	//m_oglWindow2.m_unpTimer = m_oglWindow1.SetTimer(1, 1, 0);
 	
 
@@ -404,7 +404,7 @@ void CRVAFGUIDlg::OnPaint()
 			CI.StretchBlt(pDC->m_hDC, rect, SRCCOPY);
 		}
 		
-		COpenGLControl * pOgl = &m_oglWindow1;
+		/*COpenGLControl * pOgl = &m_oglWindow1;
 		for (int i = 0; i < pointclouds.size(); ++i){
 			zoon_id++;
 			if (zoon_id > 3){
@@ -432,7 +432,7 @@ void CRVAFGUIDlg::OnPaint()
 
 			
 			
-		}
+		}*/
 		
 	}
 }
@@ -2716,27 +2716,6 @@ void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 	CDialogEx::OnSize(nType, cx, cy);
 
 	// TODO: Add your message handler code here
-	switch (nType)
-	{
-	case SIZE_RESTORED:
-		if (m_oglWindow1.m_bIsMaximized){
-			m_oglWindow1.OnSize(nType, cx, cy);
-			m_oglWindow1.m_bIsMaximized = false;
-		}
-		if (m_oglWindow2.m_bIsMaximized){
-			m_oglWindow2.OnSize(nType, cx, cy);
-			m_oglWindow2.m_bIsMaximized = false;
-		}
-		break;
-	case SIZE_MAXIMIZED:
-		m_oglWindow1.OnSize(nType, cx, cy);
-		m_oglWindow1.m_bIsMaximized = true;
-		m_oglWindow2.OnSize(nType, cx, cy);
-		m_oglWindow2.m_bIsMaximized = true;
-		break;
-	default:
-		break;
-	}
 }
 
 void CRVAFGUIDlg::OnRunSvafTask()

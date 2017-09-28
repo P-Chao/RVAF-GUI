@@ -193,6 +193,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="svaf.pb.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="VtkViewer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glGraber.cpp" />
@@ -207,6 +208,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="svaf.pb.cc" />
+    <ClCompile Include="VtkViewer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RVAF-GUI.rc" />

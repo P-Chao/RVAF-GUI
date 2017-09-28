@@ -116,8 +116,8 @@ public:
 	HANDLE d_hMutex;
 	LPTSTR d_pMsg;
 
-	COpenGLControl m_oglWindow1;
-	COpenGLControl m_oglWindow2;
+	//COpenGLControl m_oglWindow1;
+	//COpenGLControl m_oglWindow2;
 
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
@@ -147,6 +147,8 @@ protected:
 			pM(const_cast<google::protobuf::Message*>(pMessage)), pR(const_cast<google::protobuf::Reflection*>(pReflection)), pF(const_cast<google::protobuf::FieldDescriptor*>(pField)), layer_name(node_name){}
 	};
 	hash_map<int, ReflectPackage> pack;
+
+	
 
 // Implementation
 protected:
