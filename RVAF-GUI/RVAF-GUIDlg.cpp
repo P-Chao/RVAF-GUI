@@ -2734,11 +2734,15 @@ void CRVAFGUIDlg::OnRunSvafTask()
 			STARTUPINFO si = { sizeof(si) };
 
 			si.dwFlags = STARTF_USESHOWWINDOW; // wShowWindow有效
+#ifdef _DEBUG
 			si.wShowWindow = TRUE; // TRUE 显示新建进程主窗口， FALSE 不显示
+#else
+			si.wShowWindow = FALSE;
+#endif
 
 			BOOL bRet = ::CreateProcess(
 				str,
-				_T(" --config_file=\"cache\" --use_mapping=true"),
+				_T(" --config_file=\"cache\" --use_gui=true"),
 				NULL,
 				NULL,
 				FALSE,
