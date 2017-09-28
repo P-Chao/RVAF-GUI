@@ -1,11 +1,6 @@
 #pragma once
 #include "afxwin.h"
-#include <vtkAutoInit.h>
-VTK_MODULE_INIT(vtkRenderingOpenGL)
-VTK_MODULE_INIT(vtkInteractionStyle)
-VTK_MODULE_INIT(vtkRenderingFreeType)
-//VTK_MODULE_INIT(vtkRenderer)
-//VTK_MODULE_INIT(vtkRenderingWindow)
+
 #include <vtkResliceCursor.h>  
 #include <vtkResliceCursorWidget.h>  
 
@@ -39,6 +34,11 @@ VTK_MODULE_INIT(vtkRenderingFreeType)
 #include <vtkLookupTable.h>
 #include <vtkFloatArray.h>
 #include <vtkPointData.h>
+
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL)
+VTK_MODULE_INIT(vtkInteractionStyle)
+VTK_MODULE_INIT(vtkRenderingFreeType)
 
 using Pointf = struct _Pointf{
 	float x;

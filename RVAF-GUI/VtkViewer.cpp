@@ -1,9 +1,6 @@
 ﻿#include "stdafx.h"  
 #include "VtkViewer.h"  
 
-
-// CVtkView  
-
 IMPLEMENT_DYNAMIC(CVtkViewer, CStatic)
 
 CVtkViewer::CVtkViewer()
