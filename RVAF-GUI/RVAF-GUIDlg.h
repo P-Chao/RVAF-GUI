@@ -10,7 +10,7 @@
 #include <hash_map>
 #include "afxcmn.h"
 #include <opencv2\opencv.hpp>
-#include "OpenGLControl.h"
+#include "VtkViewer.h"
 
 namespace svaf{
 
@@ -95,6 +95,7 @@ public:
 	bool isExpan;
 	bool isPause;
 	bool ready_proto;
+	bool hide_vtk;
 
 	int gui_nrm_w;
 	int gui_nrm_h;
@@ -173,6 +174,8 @@ public:
 	CStatic m_zoonDisp2;
 	CStatic m_zoonDisp3;
 	CStatic m_zoonDisp4;
+	CVtkViewer m_vtk1;
+	CVtkViewer m_vtk2;
 	CRichEditCtrl m_editMsg;
 	afx_msg void OnSaveProtoText();
 	afx_msg void OnSaveProtoBinary();
@@ -180,4 +183,5 @@ public:
 	afx_msg void OnRunSvafTask();
 	afx_msg void OnStopSvafTask();
 	afx_msg void OnPauseContinue();
+	
 };

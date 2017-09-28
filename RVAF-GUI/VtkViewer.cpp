@@ -18,6 +18,84 @@ CVtkViewer::~CVtkViewer()
 {
 }
 
+void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
+	int n = pointcloud.size();
+	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
+	points->SetNumberOfPoints(n);
+	vtkSmartPointer<vtkLookupTable> lut = vtkSmartPointer<vtkLookupTable>::New();
+	lut->SetNumberOfTableValues(n);
+	lut->Build();
+	for (int i = 0; i < n; ++i){
+		points->InsertPoint(i, pointcloud[i].x, pointcloud[i].y, pointcloud[i].z);
+		lut->SetTableValue(i, pointcloud[i].r, pointcloud[i].g, pointcloud[i].b);
+	}
+	vtkSmartPointer<vtkPolyVertex> polyVertex = vtkSmartPointer<vtkPolyVertex>::New();
+	polyVertex->GetPointIds()->SetNumberOfIds(n);
+	vtkSmartPointer<vtkFloatArray> pointsScalars = vtkSmartPointer<vtkFloatArray>::New();
+	pointsScalars->SetNumberOfTuples(n);
+	for (int i = 0; i < n; ++i){
+		polyVertex->GetPointIds()->SetId(i, i);
+		pointsScalars->InsertValue(i, i);
+	}
+
+	vtkSmartPointer<vtkUnstructuredGrid> grid = vtkSmartPointer<vtkUnstructuredGrid>::New();
+	grid->Allocate(1, 1);
+	grid->SetPoints(points);
+	grid->GetPointData()->SetScalars(pointsScalars);
+	grid->InsertNextCell(polyVertex->GetCellType(), polyVertex->GetPointIds());
+
+	vtkSmartPointer<vtkDataSetMapper> mapper = vtkSmartPointer<vtkDataSetMapper>::New();
+	mapper->SetInputData(grid);
+	mapper->ScalarVisibilityOn();
+	mapper->SetScalarRange(0, n-1);
+	mapper->SetLookupTable(lut);
+
+	m_Renderer->RemoveActor(actor);
+	actor = vtkSmartPointer<vtkActor>::New();
+	actor->SetMapper(mapper);
+	actor->GetProperty()->SetRepresentationToPoints();
+	actor->GetProperty()->SetPointSize(2);
+
+	m_Renderer->AddActor(actor);
+	m_Renderer->SetBackground(0, 0, 0);
+	m_Renderer->ResetCamera();
+	m_RenderWindow->Render();
+
+	// 点云全部显示同样的颜色
+/*	vtkPoints * points = vtkPoints::New();
+	int n = pointcloud.size(); int idx = 0;
+	for (int i = 0; i < n; ++i){
+		points->InsertPoint(i, pointcloud[i].x, pointcloud[i].y, pointcloud[i].z);
+	}
+
+	vtkPolyVertex * polyvertex = vtkPolyVertex::New();
+	polyvertex->GetPointIds()->SetNumberOfIds(n);
+	for (int i = 0; i < n; ++i){
+		polyvertex->GetPointIds()->SetId(i, i);
+	}
+
+	vtkUnstructuredGrid * grid = vtkUnstructuredGrid::New();
+	grid->SetPoints(points);
+	grid->InsertNextCell(polyvertex->GetCellType(), polyvertex->GetPointIds());
+
+	vtkDataSetMapper * map = vtkDataSetMapper::New();
+	map->SetInputData(grid);
+
+	vtkActor * actor = vtkActor::New();
+	actor->SetMapper(map);
+	actor->GetProperty()->SetColor(0.194, 0.562, 0.75);
+	
+	m_Renderer->AddActor(actor);
+	m_Renderer->SetBackground(0, 0, 0);
+	m_Renderer->ResetCamera();
+	m_RenderWindow->Render();
+
+	map->Delete();
+	grid->Delete();
+	actor->Delete();
+	points->Delete();
+	polyvertex->Delete();*/
+}
 
 void CVtkViewer::PreSubclassWindow()
 {
@@ -80,6 +158,11 @@ void CVtkViewer::SetupReslice()
 	m_ResliceCursorWidget->GetResliceCursorRepresentation()->
 		SetWindowLevel(range[1] - range[0], (range[0] + range[1]) / 2.0);
 	m_ImagePlaneWidget->SetWindowLevel(range[1] - range[0], (range[0] + range[1]) / 2.0);
+}
+
+void CVtkViewer::MoveWindow(CRect rect){
+	m_RenderWindow->SetSize(rect.Width(), rect.Height());
+	CStatic::MoveWindow(rect);
 }
 
 BEGIN_MESSAGE_MAP(CVtkViewer, CStatic)

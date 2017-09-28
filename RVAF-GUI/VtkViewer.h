@@ -3,6 +3,7 @@
 #include <vtkAutoInit.h>
 VTK_MODULE_INIT(vtkRenderingOpenGL)
 VTK_MODULE_INIT(vtkInteractionStyle)
+VTK_MODULE_INIT(vtkRenderingFreeType)
 //VTK_MODULE_INIT(vtkRenderer)
 //VTK_MODULE_INIT(vtkRenderingWindow)
 #include <vtkResliceCursor.h>  
@@ -29,7 +30,24 @@ VTK_MODULE_INIT(vtkInteractionStyle)
 #include <vtkWin32OpenGLRenderWindow.h>  
 #include <vtkWin32RenderWindowInteractor.h> 
 
+#include <vtkPolyVertex.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkDataSetMapper.h>
+#include <vtkActor.h>
+#include <vtkProperty.h>
 
+#include <vtkLookupTable.h>
+#include <vtkFloatArray.h>
+#include <vtkPointData.h>
+
+using Pointf = struct _Pointf{
+	float x;
+	float y;
+	float z;
+	float r;
+	float g;
+	float b;
+};
 
 class CVtkViewer : public CStatic
 {
@@ -39,6 +57,9 @@ public:
 	CVtkViewer();
 	virtual ~CVtkViewer();
 
+	vtkSmartPointer<vtkActor> actor;
+	void ReadPointCloud(std::vector<Pointf>&);
+
 public:
 	//3.2 重载CvtkView类PreSubclassWindow（）函数和OnPaint()函数  
 	//PreSubclassWindow函数负责创建VTK可视化管线，OnPaint()函数负责客户区内场景渲染。  
@@ -47,6 +68,7 @@ public:
 	void PreSubclassWindow();
 	void SetImageData(vtkSmartPointer<vtkImageData> ImageData);
 	void SetupReslice();
+	void MoveWindow(CRect);
 
 private:
 	vtkSmartPointer< vtkImagePlaneWidget >   m_ImagePlaneWidget;

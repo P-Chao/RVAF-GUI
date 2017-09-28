@@ -85,6 +85,8 @@ void CRVAFGUIDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_ZOON_DISP3, m_zoonDisp3);
 	DDX_Control(pDX, IDC_ZOON_DISP4, m_zoonDisp4);
 	DDX_Control(pDX, IDC_RICHEDIT21, m_editMsg);
+	DDX_Control(pDX, IDC_VTK1, m_vtk1);
+	DDX_Control(pDX, IDC_VTK2, m_vtk2);
 }
 
 BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
@@ -195,19 +197,9 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	SetTopButtonLayout();
 
-	//CRect rect;
-	//m_zoonDisp3.GetWindowRect(rect);
-	//ScreenToClient(rect);
-	//m_oglWindow1.oglCreate(rect, this, L"Left");
-	//m_oglWindow1.ShowWindow(SW_HIDE);
-	//m_oglWindow1.m_unpTimer = m_oglWindow1.SetTimer(1, 1, 0);
-
-	//m_zoonDisp4.GetWindowRect(rect);
-	//ScreenToClient(rect);
-	//m_oglWindow2.oglCreate(rect, this, L"Right");
-	//m_oglWindow2.ShowWindow(SW_HIDE);
-	//m_oglWindow2.m_unpTimer = m_oglWindow1.SetTimer(1, 1, 0);
-	
+	hide_vtk = true;
+	m_vtk1.ShowWindow(SW_HIDE);
+	m_vtk2.ShowWindow(SW_HIDE);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -265,11 +257,11 @@ using Bucket = struct{
 };
 
 void CRVAFGUIDlg::ReciveDataInterprocess(){
-	
-	
+
 	while (true){
 		WaitForSingleObject(d_hMutex, INFINITE);
 		m_imgs.clear();
+		pointclouds.clear();
 		LPTSTR p = d_pMsg;
 		Bucket* pBucket = (Bucket*)d_pMsg;
 		char *pBuf = (char *)p;
@@ -402,37 +394,29 @@ void CRVAFGUIDlg::OnPaint()
 			}
 			
 			CI.StretchBlt(pDC->m_hDC, rect, SRCCOPY);
+
+			if (pointclouds.size() > 0){
+				hide_vtk = false;
+				CRect rect;
+				m_zoonDisp3.GetWindowRect(rect);
+				m_zoonDisp3.ShowWindow(SW_HIDE);
+				ScreenToClient(rect);
+				m_vtk1.ReadPointCloud(pointclouds[0]);
+				m_vtk1.MoveWindow(rect);
+				m_vtk1.ShowWindow(SW_SHOW);
+			}
+
+			if (pointclouds.size() == 2){
+				CRect rect;
+				m_zoonDisp4.GetWindowRect(rect);
+				m_zoonDisp4.ShowWindow(SW_HIDE);
+				ScreenToClient(rect);
+				m_vtk2.ReadPointCloud(pointclouds[1]);
+				m_vtk2.MoveWindow(rect);
+				m_vtk2.ShowWindow(SW_SHOW);
+			}
+
 		}
-		
-		/*COpenGLControl * pOgl = &m_oglWindow1;
-		for (int i = 0; i < pointclouds.size(); ++i){
-			zoon_id++;
-			if (zoon_id > 3){
-				break;
-			}
-			CWnd * pWnd = GetDlgItem(zoondisp[zoon_id]);
-			CRect rect;
-			pWnd->GetWindowRect(rect);
-			ScreenToClient(rect);
-
-			if (i == 1){
-				pOgl = &m_oglWindow2;
-				m_oglWindow2.MoveWindow(rect);
-				pOgl->ShowWindow(SW_SHOW);
-				pOgl->SetTimer(1, 1, 0);
-				pWnd->ShowWindow(SW_HIDE);
-				pOgl->SetViewPoint(cv::Scalar(0, 0, 0), cv::Scalar(40, -40, 40));
-				break;
-			}
-			pOgl->SetPointCloud(pointclouds[i]);
-			pOgl->MoveWindow(rect);
-			pOgl->ShowWindow(SW_SHOW);
-			pOgl->SetTimer(1, 1, 0);
-			pWnd->ShowWindow(SW_HIDE);
-
-			
-			
-		}*/
 		
 	}
 }
@@ -540,7 +524,7 @@ void CRVAFGUIDlg::GenerateProperties(){
 	const google::protobuf::Descriptor* pDescriptor = NULL;
 	const google::protobuf::Reflection* pReflection = NULL;
 	const google::protobuf::FieldDescriptor* pField = NULL;
-	string type_name;
+	//string type_name;
 
 	bool isbinocular = false;
 	Node *node = &dummy;
@@ -2253,6 +2237,14 @@ void CRVAFGUIDlg::OnSelectAlgorithm()
 		if (!ready_proto){
 			SetMainUILayout(svaf::GUIType::PROTO);
 		}
+		hide_vtk = true;
+		pointclouds.clear();
+		m_imgs.clear();
+		if (isExpan){
+			SetMainUILayout(gui_type);
+		}
+		Invalidate(true);
+		//PostMessage(WM_PAINT);
 	}
 
 	SetTopButtonLayout();
@@ -2709,6 +2701,16 @@ void CRVAFGUIDlg::SetMainUILayout(svaf::GUIType type){
 		break;
 	}
 	MoveWindow(rc);
+	if (hide_vtk){
+		m_vtk1.ShowWindow(SW_HIDE);
+		m_vtk2.ShowWindow(SW_HIDE);
+	} else if (pointclouds.size() == 1){
+		m_zoonDisp3.ShowWindow(SW_HIDE);
+	} else if (pointclouds.size() == 2){
+		m_zoonDisp3.ShowWindow(SW_HIDE);
+		m_zoonDisp4.ShowWindow(SW_HIDE);
+	}
+	
 }
 
 void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
