@@ -1,7 +1,6 @@
 #pragma once
-//#include <afxwin.h>
-//#include <afxsock.h>
-#include "RSocket.h"
+#include <afxwin.h>
+#include <afxsock.h>
 
 #define COMMANDLENGTH 64
 
@@ -27,6 +26,19 @@ using PDAT = struct{
 	int IPO_FRAME;
 	char POINT2[24];
 	bool TQ_STATE;
+};
+
+class CRobotControl;
+
+class RSocket : public CSocket
+{
+public:
+	RSocket(){}
+	virtual ~RSocket(){}
+	virtual void OnClose(int nErrorCode);
+	virtual void OnReceive(int nErrorCode);
+	virtual void OnAccept(int nErrorCode);
+	CRobotControl *par;
 };
 
 class CRobotControl

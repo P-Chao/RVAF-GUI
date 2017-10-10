@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "RobotControl.h"
-#include "RSocket.h"
+
+void RSocket::OnClose(int nErrorCode){ par->OnClose(); }
+void RSocket::OnReceive(int nErrorCode){ par->OnReceive(); }
+void RSocket::OnAccept(int nErrorCode){ par->OnAccept(); }
 
 CRobotControl::CRobotControl()
 	: nPort(6006)

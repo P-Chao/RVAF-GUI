@@ -188,7 +188,6 @@
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RobotControl.h" />
     <ClInclude Include="RobotControlDlg.h" />
-    <ClInclude Include="RSocket.h" />
     <ClInclude Include="RVAF-GUI.h" />
     <ClInclude Include="RVAF-GUIDlg.h" />
     <ClInclude Include="stdafx.h" />
@@ -200,7 +199,6 @@
     <ClCompile Include="io.cpp" />
     <ClCompile Include="RobotControl.cpp" />
     <ClCompile Include="RobotControlDlg.cpp" />
-    <ClCompile Include="RSocket.cpp" />
     <ClCompile Include="RVAF-GUI.cpp" />
     <ClCompile Include="RVAF-GUIDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
