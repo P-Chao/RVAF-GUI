@@ -11,6 +11,7 @@
 #include "afxcmn.h"
 #include <opencv2\opencv.hpp>
 #include "VtkViewer.h"
+#include "RobotControlDlg.h"
 
 namespace svaf{
 
@@ -117,8 +118,7 @@ public:
 	HANDLE d_hMutex;
 	LPTSTR d_pMsg;
 
-	//COpenGLControl m_oglWindow1;
-	//COpenGLControl m_oglWindow2;
+	CRobotControlDlg * pRobotCtrlDlg;
 
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
@@ -184,4 +184,5 @@ public:
 	afx_msg void OnStopSvafTask();
 	afx_msg void OnPauseContinue();
 	
+	afx_msg void OnOpenRobotCtrlDlg();
 };

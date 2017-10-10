@@ -103,6 +103,7 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CRVAFGUIDlg::OnRunSvafTask)
 	ON_BN_CLICKED(IDC_BUTTON5, &CRVAFGUIDlg::OnStopSvafTask)
 	ON_BN_CLICKED(IDC_BUTTON4, &CRVAFGUIDlg::OnPauseContinue)
+	ON_BN_CLICKED(IDC_BUTTON12, &CRVAFGUIDlg::OnOpenRobotCtrlDlg)
 END_MESSAGE_MAP()
 
 
@@ -117,6 +118,9 @@ void CRVAFGUIDlg::OnDestroy()
 
 	CloseHandle(d_hFileMapping);
 	CloseHandle(d_hMutex);
+
+	delete pRobotCtrlDlg;
+	pRobotCtrlDlg = NULL;
 }
 
 BOOL CRVAFGUIDlg::OnInitDialog()
@@ -150,6 +154,9 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	// TODO: Add extra initialization here
 	InitInterprocess();
+
+	pRobotCtrlDlg = new CRobotControlDlg();
+	pRobotCtrlDlg->Create(IDD_ROBOT_DIALOG);
 
 	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveData, this, CREATE_SUSPENDED, &ThreadID);
 	ResumeThread(hThread);
@@ -2865,4 +2872,13 @@ void CRVAFGUIDlg::OnPauseContinue()
 		SendCommand(3);
 		SetEvent(c_hMutex);
 	}
+}
+
+
+void CRVAFGUIDlg::OnOpenRobotCtrlDlg()
+{
+	// TODO: Add your control notification handler code here
+	//pRobotCtrlDlg = new CRobotControlDlg();
+	//pRobotCtrlDlg->Create(IDD_ROBOT_DIALOG);
+	pRobotCtrlDlg->ShowWindow(SW_SHOW);
 }
