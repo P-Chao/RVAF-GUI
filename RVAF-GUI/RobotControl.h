@@ -29,6 +29,7 @@ using PDAT = struct{
 };
 
 class CRobotControl;
+class CRobotControlDlg;
 
 class RSocket : public CSocket
 {
@@ -47,14 +48,16 @@ public:
 	CRobotControl();
 	~CRobotControl();
 
-	void OnCreate(); // 创建
-	void OnClose(); // 销毁
-	void OnLink(); // 建立Socket连接
-	void OnLinkOff(); // 断开Socket连接
+	void Create(CRobotControlDlg*); // 创建
+	bool Link(); // 建立Socket连接
+	void LinkOff(); // 断开Socket连接
+	void OnClose(); // Socket重载，销毁
 	void OnAccept();
 	void OnReceive();
 
 	void SetAxis(int);
+	void SetPort(int);
+	void SetDlg(CRobotControlDlg*);
 
 	void AddA1();
 	void DecA1();
@@ -76,6 +79,10 @@ public:
 	void GetCurrentMark(); // 获取当前坐标
 	void GetCurrentBaseMark();
 	void ResetAxisMark();
+	void ResetBaseMark();
+
+	void DataFromDlg();
+	void DataToDlg();
 
 protected:
 	float A1, A2, A3, A4, A5, A6;
@@ -95,7 +102,7 @@ protected:
 	float	VelBase; // 基坐标系下直线运动的速度
 	float	AccBase; // 基坐标系下直线运动的加速度
 	
-	void *pDlg;
+	CRobotControlDlg *pDlg;
 	enum AXISSYS{
 		AXIS = 0,
 		BASE = 1,

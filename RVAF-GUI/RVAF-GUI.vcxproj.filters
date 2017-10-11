@@ -51,6 +51,9 @@
     <ClInclude Include="RobotControlDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MySpin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RVAF-GUI.cpp">
@@ -75,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RobotControlDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MySpin.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

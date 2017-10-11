@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "RobotControl.h"
+#include "RobotControlDlg.h"
 
 void RSocket::OnClose(int nErrorCode){ par->OnClose(); }
 void RSocket::OnReceive(int nErrorCode){ par->OnReceive(); }
@@ -33,18 +34,15 @@ CRobotControl::CRobotControl()
 	, axis(AXIS)
 	, pDlg(NULL)
 {
-	m_ServerSocket.par = this;
-	m_ClientSocket.par = this;
-
-	OnCreate();
 }
 
 
 CRobotControl::~CRobotControl()
 {
+	pDlg = NULL;
 }
 
-void CRobotControl::OnCreate(){
+void CRobotControl::Create(CRobotControlDlg* p){
 	RobotCommond[60] = '/';
 	RobotCommond[61] = '%';
 	RobotCommond[62] = '/';
@@ -53,6 +51,10 @@ void CRobotControl::OnCreate(){
 	SendError = false;
 	IsRecv = false;
 
+	m_ServerSocket.par = this;
+	m_ClientSocket.par = this;
+
+	pDlg = p;
 	if (pDlg){
 
 	}
@@ -62,16 +64,19 @@ void CRobotControl::OnClose(){
 	m_ClientSocket.Close();
 }
 
-void CRobotControl::OnLink(){
+bool CRobotControl::Link(){
+	bool success = false;
 	if (m_ServerSocket.Create(nPort)){
-		TRACE("创建套接字，绑定端口，绑IP成功\n");
+		//TRACE("创建套接字，绑定端口，绑IP成功\n");
 		if (m_ServerSocket.Listen()){
-			TRACE("监听成功");
+			//TRACE("监听成功");
+			success = true;
 		}
 	}
+	return success;
 }
 
-void CRobotControl::OnLinkOff(){
+void CRobotControl::LinkOff(){
 	char GetCloseMsg[64] = { 0 };
 	m_ClientSocket.Send(GetCloseMsg, COMMANDLENGTH);
 	RecvMode = 0;
@@ -93,7 +98,7 @@ void CRobotControl::OnReceive(){
 			SendError = true;
 			return;
 		}
-		char Recvs[256];
+		//char Recvs[256];
 		switch (RecvMode)
 		{
 		case 0:
@@ -116,6 +121,7 @@ void CRobotControl::OnReceive(){
 			CRecv = PP1.C;
 
 			IsRecv = true;
+			DataToDlg();
 			break;
 		default:
 			break;
@@ -125,6 +131,10 @@ void CRobotControl::OnReceive(){
 
 void CRobotControl::SetAxis(int ax){
 	axis = AXISSYS(ax);
+}
+
+void CRobotControl::SetPort(int port){
+	nPort = port;
 }
 
 void CRobotControl::AddA1(){
@@ -496,6 +506,8 @@ void CRobotControl::StopMove(){
 }
 
 void CRobotControl::MoveToAxisMark(){
+	DataFromDlg();
+
 	float sendf[6];
 	sendf[0] = A1;
 	sendf[1] = A2;
@@ -522,6 +534,8 @@ void CRobotControl::MoveToAxisMark(){
 }
 
 void CRobotControl::MoveToBaseMark(){
+	DataFromDlg();
+
 	float sendf[6];
 	sendf[0] = VelBase;
 	sendf[1] = AccBase;
@@ -549,7 +563,6 @@ void CRobotControl::GetCurrentMark(){
 	RobotCommond[62] = '/';
 	RobotCommond[63] = '%';
 	m_ClientSocket.Send(RobotCommond, COMMANDLENGTH);
-
 }
 
 void CRobotControl::GetCurrentBaseMark(){
@@ -572,4 +585,97 @@ void CRobotControl::ResetAxisMark(){
 	A4 = 0;
 	A5 = 0;
 	A6 = 0;
+	if (pDlg){
+		pDlg->m_A1axis = A1;
+		pDlg->m_A2axis = A2;
+		pDlg->m_A3axis = A3;
+		pDlg->m_A4axis = A4;
+		pDlg->m_A5axis = A5;
+		pDlg->m_A6axis = A6;
+		pDlg->UpdateData(false);
+	}
+}
+
+void CRobotControl::ResetBaseMark(){
+	ABase = 0;
+	BBase = 0;
+	CBase = 0;
+	XBase = 0;
+	YBase = 0;
+	ZBase = 0;
+	AccBase = 0.5;
+	VelBase = 0.1;
+	if (pDlg){
+		pDlg->m_acc = AccBase;
+		pDlg->m_vec = VelBase;
+		pDlg->m_ABase = ABase;
+		pDlg->m_BBase = BBase;
+		pDlg->m_CBase = CBase;
+		pDlg->m_XBase = XBase;
+		pDlg->m_YBase = YBase;
+		pDlg->m_ZBase = ZBase;
+		pDlg->UpdateData(false);
+	}
+}
+
+void CRobotControl::DataFromDlg(){
+	if (pDlg){
+		VelBase = pDlg->m_vec;
+		AccBase = pDlg->m_acc;
+		XBase = pDlg->m_XBase;
+		YBase = pDlg->m_YBase;
+		ZBase = pDlg->m_ZBase;
+		ABase = pDlg->m_ABase;
+		BBase = pDlg->m_BBase;
+		CBase = pDlg->m_CBase;
+
+		A1 = pDlg->m_A1axis;
+		A2 = pDlg->m_A2axis;
+		A3 = pDlg->m_A1axis;
+		A4 = pDlg->m_A2axis;
+		A5 = pDlg->m_A1axis;
+		A6 = pDlg->m_A2axis;
+	}
+}
+
+void CRobotControl::DataToDlg(){
+	if (pDlg){
+		CString cs;
+		pDlg->m_A1status = A1Recv;
+		cs.Format(L"%7.3f", A1Recv);
+		pDlg->GetDlgItem(IDC_EDIT8)->SetWindowTextW(cs);
+		pDlg->m_A2status = A2Recv;
+		cs.Format(L"%7.3f", A2Recv);
+		pDlg->GetDlgItem(IDC_EDIT9)->SetWindowTextW(cs);
+		pDlg->m_A3status = A3Recv;
+		cs.Format(L"%7.3f", A3Recv);
+		pDlg->GetDlgItem(IDC_EDIT10)->SetWindowTextW(cs);
+		pDlg->m_A4status = A4Recv;
+		cs.Format(L"%7.3f", A4Recv);
+		pDlg->GetDlgItem(IDC_EDIT11)->SetWindowTextW(cs);
+		pDlg->m_A5status = A5Recv;
+		cs.Format(L"%7.3f", A5Recv);
+		pDlg->GetDlgItem(IDC_EDIT12)->SetWindowTextW(cs);
+		pDlg->m_A6status = A6Recv;
+		cs.Format(L"%7.3f", A6Recv);
+		pDlg->GetDlgItem(IDC_EDIT13)->SetWindowTextW(cs);
+		pDlg->m_Xstatus = XRecv;
+		cs.Format(L"%7.3f", XRecv);
+		pDlg->GetDlgItem(IDC_EDIT14)->SetWindowTextW(cs);
+		pDlg->m_Ystatus = YRecv;
+		cs.Format(L"%7.3f", YRecv);
+		pDlg->GetDlgItem(IDC_EDIT15)->SetWindowTextW(cs);
+		pDlg->m_Zstatus = ZRecv;
+		cs.Format(L"%7.3f", ZRecv);
+		pDlg->GetDlgItem(IDC_EDIT16)->SetWindowTextW(cs);
+		pDlg->m_Astatus = ARecv;
+		cs.Format(L"%7.3f", ARecv);
+		pDlg->GetDlgItem(IDC_EDIT17)->SetWindowTextW(cs);
+		pDlg->m_Bstatus = BRecv;
+		cs.Format(L"%7.3f", BRecv);
+		pDlg->GetDlgItem(IDC_EDIT18)->SetWindowTextW(cs);
+		pDlg->m_Cstatus = CRecv;
+		cs.Format(L"%7.3f", CRecv);
+		pDlg->GetDlgItem(IDC_EDIT19)->SetWindowTextW(cs);
+	}
 }
