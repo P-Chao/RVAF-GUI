@@ -2,9 +2,23 @@
 #include "RobotControl.h"
 #include "RobotControlDlg.h"
 
-void RSocket::OnClose(int nErrorCode){ par->OnClose(); }
-void RSocket::OnReceive(int nErrorCode){ par->OnReceive(); }
-void RSocket::OnAccept(int nErrorCode){ par->OnAccept(); }
+void RSocket::OnClose(int nErrorCode){ 
+	if (nErrorCode == 0){
+		par->OnClose();
+	}
+}
+
+void RSocket::OnReceive(int nErrorCode){ 
+	if (nErrorCode == 0){
+		par->OnReceive();
+	}
+}
+
+void RSocket::OnAccept(int nErrorCode){ 
+	if (nErrorCode == 0){
+		par->OnAccept();
+	}
+}
 
 CRobotControl::CRobotControl()
 	: nPort(6006)
@@ -34,6 +48,9 @@ CRobotControl::CRobotControl()
 	, axis(AXIS)
 	, pDlg(NULL)
 {
+	if (!AfxSocketInit()){
+		AfxMessageBox(L"Socket Init Error!");
+	}
 }
 
 
@@ -86,7 +103,6 @@ void CRobotControl::LinkOff(){
 
 void CRobotControl::OnAccept(){
 	m_ServerSocket.Accept(m_ClientSocket); // 对m_ClientSocket进行初始化 以方便与客户端收发信息
-
 }
 
 void CRobotControl::OnReceive(){

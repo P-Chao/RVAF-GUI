@@ -20,7 +20,6 @@ public:
 
 protected:
 	CRobotControl m_rbc;
-	void UiConnectedLock(bool);
 
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
@@ -28,6 +27,7 @@ protected:
 public:
 	afx_msg void OnDestroy();
 	virtual BOOL OnInitDialog();
+	void UiConnectedLock(bool);
 	int m_port;
 	float m_A1status;
 	float m_A2status;
