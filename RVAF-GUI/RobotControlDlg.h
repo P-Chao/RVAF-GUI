@@ -3,7 +3,6 @@
 #include "resource.h"
 #include "afxwin.h"
 #include "afxcmn.h"
-#include "MySpin.h"
 
 // CRobotControlDlg dialog
 
@@ -57,12 +56,6 @@ public:
 	float m_A4axis;
 	float m_A5axis;
 	float m_A6axis;
-	CMySpin m_spin1;
-	CMySpin m_spin2;
-	CMySpin m_spin3;
-	CMySpin m_spin4;
-	CMySpin m_spin5;
-	CMySpin m_spin6;
 	CComboBox m_combo;
 	afx_msg void OnLink();
 	afx_msg void OnLinkOff();
@@ -71,12 +64,6 @@ public:
 	afx_msg void OnMoveToAxisMark();
 	afx_msg void OnResetAxisMark();
 	afx_msg void OnGetCurrentLocation();
-	afx_msg void OnDeltaposSpin1(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnDeltaposSpin3(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnDeltaposSpin4(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnDeltaposSpin5(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg void OnDeltaposSpin6(NMHDR *pNMHDR, LRESULT *pResult);
-	afx_msg LRESULT OnSpinRelease(WPARAM, LPARAM);
 	afx_msg void OnComboSelection();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

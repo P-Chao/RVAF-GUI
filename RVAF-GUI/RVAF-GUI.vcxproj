@@ -185,7 +185,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="io.hpp" />
-    <ClInclude Include="MySpin.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RobotControl.h" />
     <ClInclude Include="RobotControlDlg.h" />
@@ -198,7 +197,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="io.cpp" />
-    <ClCompile Include="MySpin.cpp" />
     <ClCompile Include="RobotControl.cpp" />
     <ClCompile Include="RobotControlDlg.cpp" />
     <ClCompile Include="RVAF-GUI.cpp" />

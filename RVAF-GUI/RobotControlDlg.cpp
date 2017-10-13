@@ -86,12 +86,6 @@ void CRobotControlDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT23, m_A4axis);
 	DDX_Text(pDX, IDC_EDIT24, m_A5axis);
 	DDX_Text(pDX, IDC_EDIT25, m_A6axis);
-	DDX_Control(pDX, IDC_SPIN1, m_spin1);
-	DDX_Control(pDX, IDC_SPIN2, m_spin2);
-	DDX_Control(pDX, IDC_SPIN3, m_spin3);
-	DDX_Control(pDX, IDC_SPIN4, m_spin4);
-	DDX_Control(pDX, IDC_SPIN5, m_spin5);
-	DDX_Control(pDX, IDC_SPIN6, m_spin6);
 	DDX_Control(pDX, IDC_COMBO1, m_combo);
 }
 
@@ -105,13 +99,6 @@ BEGIN_MESSAGE_MAP(CRobotControlDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON3, &CRobotControlDlg::OnMoveToAxisMark)
 	ON_BN_CLICKED(IDC_BUTTON4, &CRobotControlDlg::OnResetAxisMark)
 	ON_BN_CLICKED(IDC_BUTTON2, &CRobotControlDlg::OnGetCurrentLocation)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN1, &CRobotControlDlg::OnDeltaposSpin1)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN2, &CRobotControlDlg::OnDeltaposSpin2)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN3, &CRobotControlDlg::OnDeltaposSpin3)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN4, &CRobotControlDlg::OnDeltaposSpin4)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN5, &CRobotControlDlg::OnDeltaposSpin5)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_SPIN6, &CRobotControlDlg::OnDeltaposSpin6)
-	ON_MESSAGE(WM_USER+8, OnSpinRelease)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CRobotControlDlg::OnComboSelection)
 END_MESSAGE_MAP()
 
@@ -160,17 +147,29 @@ void CRobotControlDlg::UiConnectedLock(bool linked){
 		//p->EnableWindow(true);
 		p = GetDlgItem(IDC_BUTTON7);
 		p->EnableWindow(true);
-		p = GetDlgItem(IDC_SPIN1);
+		p = GetDlgItem(IDC_BUTTON8);
 		p->EnableWindow(true);
-		p = GetDlgItem(IDC_SPIN2);
+		p = GetDlgItem(IDC_BUTTON9);
 		p->EnableWindow(true);
-		p = GetDlgItem(IDC_SPIN3);
+		p = GetDlgItem(IDC_BUTTON10);
 		p->EnableWindow(true);
-		p = GetDlgItem(IDC_SPIN4);
+		p = GetDlgItem(IDC_BUTTON11);
 		p->EnableWindow(true);
-		p = GetDlgItem(IDC_SPIN5);
+		p = GetDlgItem(IDC_BUTTON12);
 		p->EnableWindow(true);
-		p = GetDlgItem(IDC_SPIN6);
+		p = GetDlgItem(IDC_BUTTON13);
+		p->EnableWindow(true);
+		p = GetDlgItem(IDC_BUTTON14);
+		p->EnableWindow(true);
+		p = GetDlgItem(IDC_BUTTON15);
+		p->EnableWindow(true);
+		p = GetDlgItem(IDC_BUTTON16);
+		p->EnableWindow(true);
+		p = GetDlgItem(IDC_BUTTON17);
+		p->EnableWindow(true);
+		p = GetDlgItem(IDC_BUTTON18);
+		p->EnableWindow(true);
+		p = GetDlgItem(IDC_BUTTON19);
 		p->EnableWindow(true);
 	} else{
 		CWnd *p = GetDlgItem(IDC_BUTTON1);
@@ -187,17 +186,29 @@ void CRobotControlDlg::UiConnectedLock(bool linked){
 		//p->EnableWindow(false);
 		p = GetDlgItem(IDC_BUTTON7);
 		p->EnableWindow(false);
-		p = GetDlgItem(IDC_SPIN1);
+		p = GetDlgItem(IDC_BUTTON8);
 		p->EnableWindow(false);
-		p = GetDlgItem(IDC_SPIN2);
+		p = GetDlgItem(IDC_BUTTON9);
 		p->EnableWindow(false);
-		p = GetDlgItem(IDC_SPIN3);
+		p = GetDlgItem(IDC_BUTTON10);
 		p->EnableWindow(false);
-		p = GetDlgItem(IDC_SPIN4);
+		p = GetDlgItem(IDC_BUTTON11);
 		p->EnableWindow(false);
-		p = GetDlgItem(IDC_SPIN5);
+		p = GetDlgItem(IDC_BUTTON12);
 		p->EnableWindow(false);
-		p = GetDlgItem(IDC_SPIN6);
+		p = GetDlgItem(IDC_BUTTON13);
+		p->EnableWindow(false);
+		p = GetDlgItem(IDC_BUTTON14);
+		p->EnableWindow(false);
+		p = GetDlgItem(IDC_BUTTON15);
+		p->EnableWindow(false);
+		p = GetDlgItem(IDC_BUTTON16);
+		p->EnableWindow(false);
+		p = GetDlgItem(IDC_BUTTON17);
+		p->EnableWindow(false);
+		p = GetDlgItem(IDC_BUTTON18);
+		p->EnableWindow(false);
+		p = GetDlgItem(IDC_BUTTON19);
 		p->EnableWindow(false);
 	}
 }
@@ -261,93 +272,70 @@ void CRobotControlDlg::OnGetCurrentLocation()
 }
 
 
-void CRobotControlDlg::OnDeltaposSpin1(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	if (pNMUpDown->iDelta == -1){
-		m_rbc.AddA1();
-	} else if(pNMUpDown->iDelta == 1){
-		m_rbc.DecA1();
-	}
-	*pResult = 0;
-}
-
-
-void CRobotControlDlg::OnDeltaposSpin2(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	if (pNMUpDown->iDelta == -1){
-		m_rbc.AddA2();
-	} else if (pNMUpDown->iDelta == 1){
-		m_rbc.DecA2();
-	}
-	*pResult = 0;
-}
-
-
-void CRobotControlDlg::OnDeltaposSpin3(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	if (pNMUpDown->iDelta == -1){
-		m_rbc.AddA3();
-	} else if (pNMUpDown->iDelta == 1){
-		m_rbc.DecA3();
-	}
-	*pResult = 0;
-}
-
-
-void CRobotControlDlg::OnDeltaposSpin4(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	if (pNMUpDown->iDelta == -1){
-		m_rbc.AddA4();
-	} else if (pNMUpDown->iDelta == 1){
-		m_rbc.DecA4();
-	}
-	*pResult = 0;
-}
-
-
-void CRobotControlDlg::OnDeltaposSpin5(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	if (pNMUpDown->iDelta == -1){
-		m_rbc.AddA5();
-	} else if (pNMUpDown->iDelta == 1){
-		m_rbc.DecA5();
-	}
-	*pResult = 0;
-}
-
-void CRobotControlDlg::OnDeltaposSpin6(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	// TODO: Add your control notification handler code here
-	if (pNMUpDown->iDelta == -1){
-		m_rbc.AddA6();
-	} else if (pNMUpDown->iDelta == 1){
-		m_rbc.DecA6();
-	}
-	*pResult = 0;
-}
-
-LRESULT CRobotControlDlg::OnSpinRelease(WPARAM w, LPARAM l)
-{
-	// TODO: Add your control notification handler code here
-	m_rbc.StopMove();
-	return 0;
-}
-
-
 void CRobotControlDlg::OnComboSelection()
 {
 	// TODO: Add your control notification handler code here
 	int n_Sel = m_combo.GetCurSel();
 	m_rbc.SetAxis(n_Sel);
+}
+
+
+BOOL CRobotControlDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: Add your specialized code here and/or call the base class
+	if (WM_LBUTTONDOWN == pMsg->message)
+	{
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON8)->m_hWnd)
+			m_rbc.DecA1();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON9)->m_hWnd)
+			m_rbc.AddA1();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON10)->m_hWnd)
+			m_rbc.DecA2();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON11)->m_hWnd)
+			m_rbc.AddA2();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON12)->m_hWnd)
+			m_rbc.DecA3();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON13)->m_hWnd)
+			m_rbc.AddA3();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON14)->m_hWnd)
+			m_rbc.DecA4();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON15)->m_hWnd)
+			m_rbc.AddA4();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON16)->m_hWnd)
+			m_rbc.DecA5();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON17)->m_hWnd)
+			m_rbc.AddA5();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON18)->m_hWnd)
+			m_rbc.DecA6();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON19)->m_hWnd)
+			m_rbc.AddA6();
+	}
+	if (WM_LBUTTONUP == pMsg->message)
+	{
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON8)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON9)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON10)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON11)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON12)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON13)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON14)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON15)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON16)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON17)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON18)->m_hWnd)
+			m_rbc.StopMove();
+		if (pMsg->hwnd == GetDlgItem(IDC_BUTTON19)->m_hWnd)
+			m_rbc.StopMove();
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
 }
