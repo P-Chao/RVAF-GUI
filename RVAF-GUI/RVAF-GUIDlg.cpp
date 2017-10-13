@@ -347,7 +347,7 @@ void CRVAFGUIDlg::ReciveInfoInterprocess(){
 	while (true){
 		WaitForSingleObject(i_hMutex, INFINITE);
 		cs = (char *)i_pMsg;
-		cs += _T("\r\n");
+		cs += _T("\n");
 		AppendMessage(_T("SVAF"), cs);
 	}
 }
