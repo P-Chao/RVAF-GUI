@@ -647,10 +647,10 @@ void CRobotControl::DataFromDlg(){
 
 		A1 = pDlg->m_A1axis;
 		A2 = pDlg->m_A2axis;
-		A3 = pDlg->m_A1axis;
-		A4 = pDlg->m_A2axis;
-		A5 = pDlg->m_A1axis;
-		A6 = pDlg->m_A2axis;
+		A3 = pDlg->m_A3axis;
+		A4 = pDlg->m_A4axis;
+		A5 = pDlg->m_A5axis;
+		A6 = pDlg->m_A6axis;
 	}
 }
 
