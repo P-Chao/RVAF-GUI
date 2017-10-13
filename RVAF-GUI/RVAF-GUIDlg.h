@@ -106,8 +106,8 @@ public:
 	svaf::SvafApp task_type;
 	svaf::GUIType gui_type;
 
-	DWORD ThreadID;
-	HANDLE hThread;
+	DWORD d_ThreadID;
+	HANDLE d_hThread;
 
 	HANDLE c_hFileMapping; //used to send cmd
 	HANDLE c_hMutex;
@@ -117,6 +117,13 @@ public:
 	HANDLE d_hFileMapping; //used to recive data
 	HANDLE d_hMutex;
 	LPTSTR d_pMsg;
+
+	DWORD i_ThreadID;
+	HANDLE i_hThread;
+
+	HANDLE i_hFileMapping; //used to recive information
+	HANDLE i_hMutex;
+	LPTSTR i_pMsg;
 
 	CRobotControlDlg * pRobotCtrlDlg;
 
@@ -132,11 +139,14 @@ public:
 	void SendInterprocess();
 public:
 	void ReciveDataInterprocess();
+	void ReciveInfoInterprocess();
 protected:
-	void ProcessInterprocess();
 	void SendCommand(int cmd);
 	void CloseProgram(CString strProgram);
 	DWORD GetProcessIdFromName(LPCTSTR name);
+
+	void AppendMessage(LPCTSTR user, LPCTSTR strText);
+	void AppendMessage(LPCTSTR strText);
 
 	struct ReflectPackage{
 		std::string layer_name;
@@ -177,12 +187,12 @@ public:
 	CVtkViewer m_vtk1;
 	CVtkViewer m_vtk2;
 	CRichEditCtrl m_editMsg;
+	CRichEditCtrl *m_pMsgCtrl;
 	afx_msg void OnSaveProtoText();
 	afx_msg void OnSaveProtoBinary();
 	afx_msg void OnDestroy();
 	afx_msg void OnRunSvafTask();
 	afx_msg void OnStopSvafTask();
 	afx_msg void OnPauseContinue();
-	
 	afx_msg void OnOpenRobotCtrlDlg();
 };

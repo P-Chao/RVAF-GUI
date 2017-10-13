@@ -63,6 +63,12 @@ UINT ThreadReciveData(LPVOID lpParam){
 	return 0;
 }
 
+UINT ThreadReciveInfo(LPVOID lpParam){
+	CRVAFGUIDlg *maindlg = (CRVAFGUIDlg*)lpParam;
+	maindlg->ReciveInfoInterprocess();
+	return 0;
+}
+
 // CRVAFGUIDlg dialog
 
 
@@ -119,6 +125,9 @@ void CRVAFGUIDlg::OnDestroy()
 	CloseHandle(d_hFileMapping);
 	CloseHandle(d_hMutex);
 
+	CloseHandle(i_hFileMapping);
+	CloseHandle(i_hMutex);
+
 	delete pRobotCtrlDlg;
 	pRobotCtrlDlg = NULL;
 }
@@ -153,13 +162,19 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
+	m_pMsgCtrl = &m_editMsg;
+	
+	
 	InitInterprocess();
 
 	pRobotCtrlDlg = new CRobotControlDlg();
 	pRobotCtrlDlg->Create(IDD_ROBOT_DIALOG);
 
-	hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveData, this, CREATE_SUSPENDED, &ThreadID);
-	ResumeThread(hThread);
+	d_hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveData, this, CREATE_SUSPENDED, &d_ThreadID);
+	ResumeThread(d_hThread);
+
+	i_hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveInfo, this, CREATE_SUSPENDED, &i_ThreadID);
+	ResumeThread(i_hThread);
 
 	isPause = false;
 
@@ -208,6 +223,8 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	m_vtk1.ShowWindow(SW_HIDE);
 	m_vtk2.ShowWindow(SW_HIDE);
 
+	AppendMessage(_T("RVAF-GUI copyright(c) Peng Chao 2017\r\n"));
+
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -229,6 +246,15 @@ void CRVAFGUIDlg::InitInterprocess(){
 	d_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_ALG2GUI_DATA_MUTEX"));
 	d_pMsg = (LPTSTR)MapViewOfFile(d_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
 	if (d_pMsg == NULL){
+		MessageBox(_T("Create Inter Process Error!"));
+		exit(-1);
+	}
+
+	// recive info
+	i_hFileMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, 1024, _T("SVAF_ALG2GUI_INFO"));
+	i_hMutex = CreateEvent(nullptr, false, false, _T("SVAF_ALG2GUI_INFO_MUTEX"));
+	i_pMsg = (LPTSTR)MapViewOfFile(i_hFileMapping, FILE_MAP_ALL_ACCESS, 0, 0, 0);
+	if (i_pMsg == NULL){
 		MessageBox(_T("Create Inter Process Error!"));
 		exit(-1);
 	}
@@ -315,8 +341,15 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 	return;
 }
 
-void CRVAFGUIDlg::ProcessInterprocess(){
+void CRVAFGUIDlg::ReciveInfoInterprocess(){
 
+	CString cs;
+	while (true){
+		WaitForSingleObject(i_hMutex, INFINITE);
+		cs = (char *)i_pMsg;
+		cs += _T("\r\n");
+		AppendMessage(_T("SVAF"), cs);
+	}
 }
 
 void CRVAFGUIDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -433,6 +466,56 @@ void CRVAFGUIDlg::OnPaint()
 HCURSOR CRVAFGUIDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
+}
+
+void CRVAFGUIDlg::AppendMessage(LPCTSTR user, LPCTSTR strText){
+	if (NULL == m_pMsgCtrl){
+		return;
+	}
+	CString addTimeStr;
+	addTimeStr.Format(_T("%s>> %s"), user, strText);
+	HWND hWnd = m_pMsgCtrl->GetSafeHwnd();
+	ULONG_PTR dwResult = 0;
+	ULONG_PTR p = dwResult;
+	if (SendMessageTimeoutW(hWnd, WM_GETTEXTLENGTH, 0, 0, SMTO_NORMAL, 1000L, &dwResult) != 0)
+	{
+		int nLen = (int)dwResult;
+		if (SendMessageTimeout(hWnd, EM_SETSEL, nLen, nLen, SMTO_NORMAL, 1000L, &dwResult) != 0)
+		{
+			if (SendMessageTimeout(hWnd, EM_REPLACESEL, FALSE, (LPARAM)(LPCTSTR)addTimeStr,
+				SMTO_NORMAL, 1000L, &dwResult) != 0)
+			{
+			}
+		}
+	}
+	m_pMsgCtrl->LineScroll(1);
+}
+
+void CRVAFGUIDlg::AppendMessage(LPCTSTR strText){
+	if (NULL == m_pMsgCtrl){
+		return;
+	}
+	CString addTimeStr;
+	SYSTEMTIME sysTime;
+	GetLocalTime(&sysTime);
+	addTimeStr.Format(_T("%4d/%02d/%02d %02d:%02d:%02d: %s"), sysTime.wYear, sysTime.wMonth,
+		sysTime.wDay, sysTime.wHour, sysTime.wMinute, sysTime.wSecond, strText);
+	//addTimeStr.Format(_T(">>> "));
+	HWND hWnd = m_pMsgCtrl->GetSafeHwnd();
+	ULONG_PTR dwResult = 0;
+	ULONG_PTR p = dwResult;
+	if (SendMessageTimeoutW(hWnd, WM_GETTEXTLENGTH, 0, 0, SMTO_NORMAL, 1000L, &dwResult) != 0)
+	{
+		int nLen = (int)dwResult;
+		if (SendMessageTimeout(hWnd, EM_SETSEL, nLen, nLen, SMTO_NORMAL, 1000L, &dwResult) != 0)
+		{
+			if (SendMessageTimeout(hWnd, EM_REPLACESEL, FALSE, (LPARAM)(LPCTSTR)addTimeStr,
+				SMTO_NORMAL, 1000L, &dwResult) != 0)
+			{
+			}
+		}
+	}
+	m_pMsgCtrl->LineScroll(1);
 }
 
 #define REC_VERSION "v_1.22"
