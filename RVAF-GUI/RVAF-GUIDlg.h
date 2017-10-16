@@ -12,6 +12,7 @@
 #include <opencv2\opencv.hpp>
 #include "VtkViewer.h"
 #include "RobotControlDlg.h"
+#include "CleanDlg.h"
 
 namespace svaf{
 
@@ -195,4 +196,5 @@ public:
 	afx_msg void OnStopSvafTask();
 	afx_msg void OnPauseContinue();
 	afx_msg void OnOpenRobotCtrlDlg();
+	afx_msg void OnClearProgram();
 };

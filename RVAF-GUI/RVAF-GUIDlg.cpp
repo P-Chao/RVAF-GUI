@@ -110,6 +110,7 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON5, &CRVAFGUIDlg::OnStopSvafTask)
 	ON_BN_CLICKED(IDC_BUTTON4, &CRVAFGUIDlg::OnPauseContinue)
 	ON_BN_CLICKED(IDC_BUTTON12, &CRVAFGUIDlg::OnOpenRobotCtrlDlg)
+	ON_BN_CLICKED(IDC_BUTTON15, &CRVAFGUIDlg::OnClearProgram)
 END_MESSAGE_MAP()
 
 
@@ -2964,4 +2965,12 @@ void CRVAFGUIDlg::OnOpenRobotCtrlDlg()
 	//pRobotCtrlDlg = new CRobotControlDlg();
 	//pRobotCtrlDlg->Create(IDD_ROBOT_DIALOG);
 	pRobotCtrlDlg->ShowWindow(SW_SHOW);
+}
+
+
+void CRVAFGUIDlg::OnClearProgram()
+{
+	// TODO: Add your control notification handler code here
+	CCleanDlg clearProgramDlg;
+	clearProgramDlg.DoModal();
 }

@@ -184,6 +184,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CleanDlg.h" />
     <ClInclude Include="io.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RobotControl.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="VtkViewer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CleanDlg.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="RobotControl.cpp" />
     <ClCompile Include="RobotControlDlg.cpp" />
