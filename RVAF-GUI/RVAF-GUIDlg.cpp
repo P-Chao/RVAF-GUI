@@ -22,6 +22,8 @@
 #define TOOL_WIDTH 45 // 工具与左侧宽度
 #define DISP_MARGN 2 // 显示区边界宽度
 
+#define PROCESS_DETECT_TIMER 1
+
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialogEx
@@ -111,6 +113,11 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON4, &CRVAFGUIDlg::OnPauseContinue)
 	ON_BN_CLICKED(IDC_BUTTON12, &CRVAFGUIDlg::OnOpenRobotCtrlDlg)
 	ON_BN_CLICKED(IDC_BUTTON15, &CRVAFGUIDlg::OnClearProgram)
+	ON_WM_TIMER()
+//	ON_BN_CLICKED(IDC_BUTTON8, &CRVAFGUIDlg::OpenLog)
+ON_BN_CLICKED(IDC_BUTTON8, &CRVAFGUIDlg::SettingAlgorithm)
+ON_BN_CLICKED(IDC_BUTTON9, &CRVAFGUIDlg::OpenLog)
+ON_BN_CLICKED(IDC_BUTTON10, &CRVAFGUIDlg::ShowResultFiles)
 END_MESSAGE_MAP()
 
 
@@ -120,6 +127,8 @@ void CRVAFGUIDlg::OnDestroy()
 	CDialogEx::OnDestroy();
 
 	// TODO: Add your message handler code here
+	KillTimer(PROCESS_DETECT_TIMER);
+
 	CloseHandle(c_hFileMapping);
 	CloseHandle(c_hMutex);
 
@@ -225,6 +234,9 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	m_vtk2.ShowWindow(SW_HIDE);
 
 	AppendMessage(_T("RVAF-GUI copyright(c) Peng Chao 2017\r\n"));
+
+	isRunning = false;
+	SetTimer(PROCESS_DETECT_TIMER, 1000, nullptr);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -2814,6 +2826,9 @@ void CRVAFGUIDlg::OnSize(UINT nType, int cx, int cy)
 void CRVAFGUIDlg::OnRunSvafTask()
 {
 	// TODO: Add your control notification handler code here
+	// close svaf.exe
+	CloseProgram(_T("SVAF.exe"));
+
 	//svaf::WriteProtoToBinaryFile(m_svaftask, "cache");
 	svaf::WriteProtoToTextFile(m_svaftask, "cache");
 	CString str(_T("SVAF.exe"));
@@ -2844,6 +2859,9 @@ void CRVAFGUIDlg::OnRunSvafTask()
 				&m_pInfo);
 			if (bRet == FALSE){
 				MessageBox(_T("Create Process Failed!"));
+			} else{
+				AppendMessage(_T("Run SVAF.exe"));
+				isRunning = true;
 			}
 		} else{
 			MessageBox(_T("Please Wait Current Task Finished!"));
@@ -2862,6 +2880,7 @@ void CRVAFGUIDlg::OnSaveProtoText()
 		saveFileName = dlg.GetPathName();
 		svaf::WriteProtoToTextFile(m_svaftask, (LPCSTR)CStringA(saveFileName));
 		GenerateProperties();
+		AppendMessage(saveFileName + CString(" have been saved."));
 	}
 }
 
@@ -2927,7 +2946,8 @@ void CRVAFGUIDlg::CloseProgram(CString strProgram)
 		//if(strcmp(c, info->szExeFile) == 0 )     
 		if (strProgram.CompareNoCase(info->szExeFile) == 0)
 		{
-			//PROCESS_TERMINATE表示为结束操作打开,FALSE=可继承,info->th32ProcessID=进程ID      
+			//PROCESS_TERMINATE表示为结束操作打开,FALSE=可继承,info->th32ProcessID=进程ID 
+			//MessageBox(L"Current SVAF Process will be killed.");
 			handle1 = OpenProcess(PROCESS_TERMINATE, FALSE, info->th32ProcessID);
 			//结束进程      
 			TerminateProcess(handle1, 0);
@@ -2942,12 +2962,18 @@ void CRVAFGUIDlg::OnStopSvafTask()
 {
 	// TODO: Add your control notification handler code here
 	CloseProgram(_T("SVAF.exe"));
+	isRunning = false;
 }
 
 
 void CRVAFGUIDlg::OnPauseContinue()
 {
 	// TODO: Add your control notification handler code here
+	if (!isRunning){
+		isPause = false;
+		return;
+	}
+
 	if (!isPause){ // apply pause
 		isPause = true;
 		SendCommand(2);
@@ -2973,4 +2999,52 @@ void CRVAFGUIDlg::OnClearProgram()
 	// TODO: Add your control notification handler code here
 	CCleanDlg clearProgramDlg;
 	clearProgramDlg.DoModal();
+}
+
+
+void CRVAFGUIDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	CString str(_T("SVAF.exe"));
+	switch (nIDEvent)
+	{
+	case PROCESS_DETECT_TIMER:
+		if (str.GetLength() != 0){
+			DWORD	ExitCode;
+			GetExitCodeProcess(m_pInfo.hProcess, &ExitCode);
+			if (ExitCode != STILL_ACTIVE){
+				isRunning = false;
+			} else{
+				isRunning = true;
+			}
+		}
+		break;
+	default:
+		break;
+	}
+
+
+	CDialogEx::OnTimer(nIDEvent);
+}
+
+void CRVAFGUIDlg::SettingAlgorithm()
+{
+	// TODO: Add your control notification handler code here
+
+}
+
+
+void CRVAFGUIDlg::OpenLog()
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(NULL, L"explore", L"log", NULL, NULL, SW_SHOW);
+	//CString logfilename;
+	//ShellExecute(NULL, _T("open"), logfilename, NULL, NULL, SW_SHOW);
+}
+
+
+void CRVAFGUIDlg::ShowResultFiles()
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(NULL, L"explore", L"tmp", NULL, NULL, SW_SHOW);
 }

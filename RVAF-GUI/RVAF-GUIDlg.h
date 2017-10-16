@@ -94,10 +94,11 @@ public:
 
 	vector<vector<Pointf>> pointclouds;
 
-	bool isExpan;
-	bool isPause;
-	bool ready_proto;
-	bool hide_vtk;
+	bool isExpan; // 界面是否处于展开状态
+	bool isPause; // 是否处于暂停状态
+	bool isRunning; // svaf 是否在运行
+	bool ready_proto; // proto文件是否已读入内存
+	bool hide_vtk; // vtk显示窗口是否处于隐藏状态
 
 	int gui_nrm_w;
 	int gui_nrm_h;
@@ -197,4 +198,9 @@ public:
 	afx_msg void OnPauseContinue();
 	afx_msg void OnOpenRobotCtrlDlg();
 	afx_msg void OnClearProgram();
+	afx_msg void OnTimer(UINT_PTR nIDEvent);
+//	afx_msg void OpenLog();
+	afx_msg void SettingAlgorithm();
+	afx_msg void OpenLog();
+	afx_msg void ShowResultFiles();
 };
