@@ -51,6 +51,9 @@
     <ClInclude Include="RobotControlDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CleanDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RVAF-GUI.cpp">
@@ -77,6 +80,9 @@
     <ClCompile Include="RobotControlDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CleanDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RVAF-GUI.rc">
@@ -93,6 +99,51 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\RVAF-GUI.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\help.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\clean.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\continue.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\continue2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\files.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\pause.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\robot.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\run.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\save.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\setting.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\show.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\stop.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\stop2.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\txt.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\wait.ico">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

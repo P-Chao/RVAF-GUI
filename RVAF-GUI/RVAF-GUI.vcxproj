@@ -220,7 +220,22 @@
     <None Include="svaf.proto" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="res\clean.ico" />
+    <Image Include="res\continue.ico" />
+    <Image Include="res\continue2.ico" />
+    <Image Include="res\files.ico" />
+    <Image Include="res\help.ico" />
+    <Image Include="res\pause.ico" />
+    <Image Include="res\robot.ico" />
+    <Image Include="res\run.ico" />
     <Image Include="res\RVAF-GUI.ico" />
+    <Image Include="res\save.ico" />
+    <Image Include="res\setting.ico" />
+    <Image Include="res\show.ico" />
+    <Image Include="res\stop.ico" />
+    <Image Include="res\stop2.ico" />
+    <Image Include="res\txt.ico" />
+    <Image Include="res\wait.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

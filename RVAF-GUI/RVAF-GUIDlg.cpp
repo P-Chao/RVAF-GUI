@@ -171,6 +171,73 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	// init bitmap resource
+	//HBITMAP	hBitmap;
+	//hBitmap = LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_RUN));
+	EnableToolTips();
+	m_toolTip.Create(this);
+	m_toolTip.Activate(true);
+	m_toolTip.SetDelayTime(150);
+	m_toolTip.SetTipTextColor(RGB(0, 0, 255));
+	m_toolTip.SetTipBkColor(RGB(255, 255, 255));
+
+	HICON hIcon;
+	hIcon = AfxGetApp()->LoadIconW(IDI_CONTINUE);
+	((CButton*)GetDlgItem(IDC_BUTTON3))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON3), _T("Start Algorithm"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_PAUSE);
+	((CButton*)GetDlgItem(IDC_BUTTON4))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON4), _T("Pause Algorithm"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_STOP);
+	((CButton*)GetDlgItem(IDC_BUTTON5))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON5), _T("Terminate Algorithm"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_SAVE);
+	((CButton*)GetDlgItem(IDC_BUTTON6))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON6), _T("Save Algorithm Configuration"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_SAVE);
+	((CButton*)GetDlgItem(IDC_BUTTON7))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON7), _T("Save Algorithm Configuration"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_SETTING);
+	((CButton*)GetDlgItem(IDC_BUTTON8))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON8), _T("Algorithm Setting"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_SHOW);
+	((CButton*)GetDlgItem(IDC_BUTTON9))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON9), _T("Algorithm Logs"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_FILES);
+	((CButton*)GetDlgItem(IDC_BUTTON10))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON10), _T("Algorithm Results Files"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_TXT);
+	((CButton*)GetDlgItem(IDC_BUTTON11))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON11), _T("XXX"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_ROBOT);
+	((CButton*)GetDlgItem(IDC_BUTTON12))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON12), _T("Robot Control"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_CONTINUE2);
+	((CButton*)GetDlgItem(IDC_BUTTON13))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON13), _T("XXX"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_STOP2);
+	((CButton*)GetDlgItem(IDC_BUTTON14))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON14), _T("XXX"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_CLEAN);
+	((CButton*)GetDlgItem(IDC_BUTTON15))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON15), _T("Clear Cache Files"));
+
+	hIcon = AfxGetApp()->LoadIconW(IDI_HELP);
+	((CButton*)GetDlgItem(IDC_BUTTON16))->SetIcon(hIcon);
+	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON15), _T("Help"));
+
 	// TODO: Add extra initialization here
 	m_pMsgCtrl = &m_editMsg;
 	
@@ -235,7 +302,7 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 
 	AppendMessage(_T("RVAF-GUI copyright(c) Peng Chao 2017\r\n"));
 
-	isRunning = false;
+	SetRuningStatus(false);
 	SetTimer(PROCESS_DETECT_TIMER, 1000, nullptr);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -2861,7 +2928,7 @@ void CRVAFGUIDlg::OnRunSvafTask()
 				MessageBox(_T("Create Process Failed!"));
 			} else{
 				AppendMessage(_T("Run SVAF.exe"));
-				isRunning = true;
+				SetRuningStatus(true);
 			}
 		} else{
 			MessageBox(_T("Please Wait Current Task Finished!"));
@@ -2962,7 +3029,8 @@ void CRVAFGUIDlg::OnStopSvafTask()
 {
 	// TODO: Add your control notification handler code here
 	CloseProgram(_T("SVAF.exe"));
-	isRunning = false;
+	SetRuningStatus(false);
+	AppendMessage(_T("SVAF has been terminate"));
 }
 
 
@@ -2999,6 +3067,7 @@ void CRVAFGUIDlg::OnClearProgram()
 	// TODO: Add your control notification handler code here
 	CCleanDlg clearProgramDlg;
 	clearProgramDlg.DoModal();
+	AppendMessage(L"cache has been cleared.");
 }
 
 
@@ -3013,9 +3082,9 @@ void CRVAFGUIDlg::OnTimer(UINT_PTR nIDEvent)
 			DWORD	ExitCode;
 			GetExitCodeProcess(m_pInfo.hProcess, &ExitCode);
 			if (ExitCode != STILL_ACTIVE){
-				isRunning = false;
+				SetRuningStatus(false);
 			} else{
-				isRunning = true;
+				SetRuningStatus(true);
 			}
 		}
 		break;
@@ -3047,4 +3116,34 @@ void CRVAFGUIDlg::ShowResultFiles()
 {
 	// TODO: Add your control notification handler code here
 	ShellExecute(NULL, L"explore", L"tmp", NULL, NULL, SW_SHOW);
+}
+
+
+BOOL CRVAFGUIDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: Add your specialized code here and/or call the base class
+	if (pMsg->message == WM_MOUSEMOVE){
+		m_toolTip.RelayEvent(pMsg);
+	}
+	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+void CRVAFGUIDlg::SetRuningStatus(bool running){
+	HICON hIcon;
+	isRunning = running;
+	if (isRunning){
+		hIcon = AfxGetApp()->LoadIconW(IDI_WAIT);
+		((CButton*)GetDlgItem(IDC_BUTTON3))->SetIcon(hIcon);
+		m_toolTip.AddTool(GetDlgItem(IDC_BUTTON3), _T("Wait Algorithm Terminate"));
+		GetDlgItem(IDC_BUTTON3)->EnableWindow(false);
+		GetDlgItem(IDC_BUTTON4)->EnableWindow(true);
+		GetDlgItem(IDC_BUTTON5)->EnableWindow(true);
+	} else{
+		hIcon = AfxGetApp()->LoadIconW(IDI_CONTINUE);
+		((CButton*)GetDlgItem(IDC_BUTTON3))->SetIcon(hIcon);
+		m_toolTip.AddTool(GetDlgItem(IDC_BUTTON3), _T("Start Algorithm"));
+		GetDlgItem(IDC_BUTTON3)->EnableWindow(true);
+		GetDlgItem(IDC_BUTTON4)->EnableWindow(false);
+		GetDlgItem(IDC_BUTTON5)->EnableWindow(false);
+	}
 }

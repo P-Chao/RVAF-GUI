@@ -127,6 +127,7 @@ public:
 	HANDLE i_hMutex;
 	LPTSTR i_pMsg;
 
+	CToolTipCtrl m_toolTip;
 	CRobotControlDlg * pRobotCtrlDlg;
 
 	svaf::SvafTask m_svaftask;
@@ -139,6 +140,7 @@ public:
 	void SetTopButtonLayout();
 	void InitInterprocess();
 	void SendInterprocess();
+	void SetRuningStatus(bool);
 public:
 	void ReciveDataInterprocess();
 	void ReciveInfoInterprocess();
@@ -203,4 +205,5 @@ public:
 	afx_msg void SettingAlgorithm();
 	afx_msg void OpenLog();
 	afx_msg void ShowResultFiles();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };
