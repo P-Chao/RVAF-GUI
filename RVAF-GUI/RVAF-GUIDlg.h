@@ -163,11 +163,16 @@ protected:
 	};
 	hash_map<int, ReflectPackage> pack;
 
-	
+	float a, b, c, x, y, z;
 
 // Implementation
 protected:
 	HICON m_hIcon;
+
+	void RobotFetch(float a, float b, float c, float x, float y, float z);
+	void RobotMove(float a, float b, float c, float x, float y, float z);
+	void RobotReset(float x, float y, float z);
+	bool RobotIsStart();
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

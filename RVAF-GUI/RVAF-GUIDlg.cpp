@@ -421,6 +421,16 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			pointclouds.push_back(pointcloud);
 		}
 
+		if (pBucket->fetchtype){
+			a = pBucket->a;
+			b = pBucket->b;
+			c = pBucket->c;
+			x = pBucket->x;
+			y = pBucket->y;
+			z = pBucket->z;
+			RobotFetch(a, b, c, x, y, z);
+		}
+
 		SendMessage(WM_PAINT);
 		
 		continue;
@@ -3153,4 +3163,20 @@ void CRVAFGUIDlg::SetRuningStatus(bool running){
 		GetDlgItem(IDC_BUTTON4)->EnableWindow(false);
 		GetDlgItem(IDC_BUTTON5)->EnableWindow(false);
 	}
+}
+
+void CRVAFGUIDlg::RobotFetch(float a, float b, float c, float x, float y, float z){
+
+}
+
+void CRVAFGUIDlg::RobotMove(float a, float b, float c, float x, float y, float z){
+
+}
+
+void CRVAFGUIDlg::RobotReset(float x, float y, float z){
+
+}
+
+bool CRVAFGUIDlg::RobotIsStart(){
+	return false;
 }
