@@ -169,10 +169,11 @@ protected:
 protected:
 	HICON m_hIcon;
 
-	void RobotFetch(float a, float b, float c, float x, float y, float z);
-	void RobotMove(float a, float b, float c, float x, float y, float z);
-	void RobotReset(float x, float y, float z);
-	bool RobotIsStart();
+	void RobotFetch(float x, float y, float z, float a = 0.0f, float b = 0.0f, float c = 0.0f);
+	void RobotMove(float x, float y, float z, float a = 0.0f, float b = 0.0f, float c = 0.0f);
+	bool RobotRestriction(float x, float y, float z, float a = 0.0f, float b = 0.0f, float c = 0.0f);
+	void RobotReset();
+	bool RobotIsOpen();
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -206,7 +207,6 @@ public:
 	afx_msg void OnOpenRobotCtrlDlg();
 	afx_msg void OnClearProgram();
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
-//	afx_msg void OpenLog();
 	afx_msg void SettingAlgorithm();
 	afx_msg void OpenLog();
 	afx_msg void ShowResultFiles();

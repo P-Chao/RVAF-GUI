@@ -219,7 +219,9 @@ void CRobotControlDlg::OnLink()
 	UpdateData(true);
 	m_rbc.SetPort(m_port);
 	if (m_rbc.Link()){
-		UiConnectedLock(true);
+		//UiConnectedLock(true);
+		CWnd *p = GetDlgItem(IDC_BUTTON1);
+		p->EnableWindow(false);
 	} else{
 		UiConnectedLock(false);
 		MessageBox(L"¡¨Ω” ß∞‹");

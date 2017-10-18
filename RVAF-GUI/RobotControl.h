@@ -84,10 +84,10 @@ public:
 	void DataFromDlg();
 	void DataToDlg();
 
+	bool IsLinked = false;
 protected:
 	float A1, A2, A3, A4, A5, A6;
 	char RobotCommond[COMMANDLENGTH];
-	bool IsRecv = false;
 	bool SendError = false;
 	int RecvMode; // 0 char[], 1 E6AXIS, 2 POS
 	float f_DataRecv[64]; // Recive value send by robot

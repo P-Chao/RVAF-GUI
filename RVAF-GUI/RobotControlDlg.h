@@ -18,12 +18,12 @@ public:
 	enum { IDD = IDD_ROBOT_DIALOG };
 
 protected:
-	CRobotControl m_rbc;
-
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:
+	CRobotControl m_rbc;
+
 	afx_msg void OnDestroy();
 	virtual BOOL OnInitDialog();
 	void UiConnectedLock(bool);

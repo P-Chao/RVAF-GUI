@@ -66,7 +66,7 @@ void CRobotControl::Create(CRobotControlDlg* p){
 	RobotCommond[63] = '%';
 
 	SendError = false;
-	IsRecv = false;
+	IsLinked = false;
 
 	m_ServerSocket.par = this;
 	m_ClientSocket.par = this;
@@ -95,6 +95,7 @@ bool CRobotControl::Link(){
 
 void CRobotControl::LinkOff(){
 	char GetCloseMsg[64] = { 0 };
+	IsLinked = false;
 	m_ClientSocket.Send(GetCloseMsg, COMMANDLENGTH);
 	RecvMode = 0;
 	OnClose();
@@ -136,7 +137,8 @@ void CRobotControl::OnReceive(){
 			BRecv = PP1.B;
 			CRecv = PP1.C;
 
-			IsRecv = true;
+			IsLinked = true;
+			pDlg->UiConnectedLock(IsLinked);
 			DataToDlg();
 			break;
 		default:

@@ -428,7 +428,7 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			x = pBucket->x;
 			y = pBucket->y;
 			z = pBucket->z;
-			RobotFetch(a, b, c, x, y, z);
+			RobotFetch(x, y, z, a, b, c);
 		}
 
 		SendMessage(WM_PAINT);
@@ -3165,18 +3165,52 @@ void CRVAFGUIDlg::SetRuningStatus(bool running){
 	}
 }
 
-void CRVAFGUIDlg::RobotFetch(float a, float b, float c, float x, float y, float z){
+void CRVAFGUIDlg::RobotFetch(float x, float y, float z, float a, float b, float c){
+	if (RobotRestriction(x, y, z+5, a, b, c) && RobotRestriction(x, y, z+15, a, b, c)){
+		if (RobotIsOpen()){
+			CString cs;
+			cs.Format(L"Fetch command x:%7.2f, y:%7.2f, z:%7.2f", x, y, z);
+			AppendMessage(cs);
+			MessageBox(L"Fetch Confirm Stage1");
+			RobotMove(x, y, z + 15, a, b, c);
+			MessageBox(L"Fetch Confirm Stage2");
+			RobotMove(x, y, z + 5, a, b, c);
+		} else{
+			MessageBox(L"Robot Closed");
+		}
+	} else{
+		MessageBox(L"Beyond Restriction");
+	}
+}
+
+void CRVAFGUIDlg::RobotMove(float x, float y, float z, float a, float b, float c){
+	pRobotCtrlDlg->m_XBase = x;
+	pRobotCtrlDlg->m_YBase = y;
+	pRobotCtrlDlg->m_ZBase = z;
+	pRobotCtrlDlg->m_ABase = a;
+	pRobotCtrlDlg->m_BBase = b;
+	pRobotCtrlDlg->m_CBase = c;
+	pRobotCtrlDlg->UpdateData(false);
+	pRobotCtrlDlg->m_rbc.MoveToBaseMark();
+}
+
+bool CRVAFGUIDlg::RobotRestriction(float x, float y, float z, float a, float b, float c){
+	if (x < -1000 || x > 1000){
+		return false;
+	}
+	if (y < 0 || y > 1000){
+		return false;
+	}
+	if (z < 0 || z > 1000){
+		return false;
+	}
+	return true;
+}
+
+void CRVAFGUIDlg::RobotReset(){
 
 }
 
-void CRVAFGUIDlg::RobotMove(float a, float b, float c, float x, float y, float z){
-
-}
-
-void CRVAFGUIDlg::RobotReset(float x, float y, float z){
-
-}
-
-bool CRVAFGUIDlg::RobotIsStart(){
-	return false;
+bool CRVAFGUIDlg::RobotIsOpen(){
+	return pRobotCtrlDlg->m_rbc.IsLinked;
 }
