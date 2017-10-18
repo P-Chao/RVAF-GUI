@@ -114,7 +114,6 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON12, &CRVAFGUIDlg::OnOpenRobotCtrlDlg)
 	ON_BN_CLICKED(IDC_BUTTON15, &CRVAFGUIDlg::OnClearProgram)
 	ON_WM_TIMER()
-//	ON_BN_CLICKED(IDC_BUTTON8, &CRVAFGUIDlg::OpenLog)
 ON_BN_CLICKED(IDC_BUTTON8, &CRVAFGUIDlg::SettingAlgorithm)
 ON_BN_CLICKED(IDC_BUTTON9, &CRVAFGUIDlg::OpenLog)
 ON_BN_CLICKED(IDC_BUTTON10, &CRVAFGUIDlg::ShowResultFiles)
@@ -174,6 +173,8 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	// init bitmap resource
 	//HBITMAP	hBitmap;
 	//hBitmap = LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_RUN));
+	//((CButton*)GetDlgItem(IDC_BUTTON3))->SetBitmap(hBitmap);
+
 	EnableToolTips();
 	m_toolTip.Create(this);
 	m_toolTip.Activate(true);
@@ -356,7 +357,6 @@ void CRVAFGUIDlg::SendCommand(int cmd){
 
 using Bucket = struct{
 	char	head[4];
-	char	message[10][128];
 	int		msgCount;
 	int		imgCount;
 	int		cols[8];
@@ -367,6 +367,13 @@ using Bucket = struct{
 	int		PointChns[4];// xyz(3) or xyzrgb(6)
 	int		PointOffs[4];
 	int		pclCount;
+	int		fetchtype; // 0 dont fetch, 1 world coord
+	float	x;
+	float	y;
+	float	z;
+	float	a;
+	float	b;
+	float	c;
 };
 
 void CRVAFGUIDlg::ReciveDataInterprocess(){
