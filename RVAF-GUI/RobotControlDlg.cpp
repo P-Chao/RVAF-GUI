@@ -100,6 +100,7 @@ BEGIN_MESSAGE_MAP(CRobotControlDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON4, &CRobotControlDlg::OnResetAxisMark)
 	ON_BN_CLICKED(IDC_BUTTON2, &CRobotControlDlg::OnGetCurrentLocation)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CRobotControlDlg::OnComboSelection)
+	ON_BN_CLICKED(IDC_BUTTON20, &CRobotControlDlg::OnBnClickedDebug)
 END_MESSAGE_MAP()
 
 
@@ -340,4 +341,63 @@ BOOL CRobotControlDlg::PreTranslateMessage(MSG* pMsg)
 			m_rbc.StopMove();
 	}
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+float movePoint[4][3] = {	{-30, 0, 0},
+							{0, 30, 0},
+							{30, 0, 0},
+							{0, 0, 30} };
+
+void CRobotControlDlg::OnBnClickedDebug()
+{
+	// TODO: Add your control notification handler code here
+	float base_hight = 30;
+
+	m_ABase = 0;
+	m_BBase = 0;
+	m_CBase = 0;
+
+
+	// Move to P[0]
+	m_XBase = movePoint[0][0];
+	m_YBase = movePoint[0][1];
+	m_ZBase = movePoint[0][2];
+	UpdateData(false);
+	m_rbc.MoveToBaseMark();
+	Sleep(1000);
+
+	// Move to P[1]
+	m_XBase = movePoint[1][0];
+	m_YBase = movePoint[1][1];
+	m_ZBase = movePoint[1][2];
+	UpdateData(false);
+	m_rbc.MoveToBaseMark();
+	Sleep(1000);
+
+	// Move to P[2]
+	m_XBase = movePoint[2][0];
+	m_YBase = movePoint[2][1];
+	m_ZBase = movePoint[2][2];
+	UpdateData(false);
+	m_rbc.MoveToBaseMark();
+	Sleep(1000);
+
+	// Move to P[3]
+	m_XBase = movePoint[2][0];
+	m_YBase = movePoint[2][1];
+	m_ZBase = movePoint[2][2];
+	UpdateData(false);
+	m_rbc.MoveToBaseMark();
+	Sleep(1000);
+
+	// Move to P[0]
+	m_XBase = movePoint[0][0];
+	m_YBase = movePoint[0][1];
+	m_ZBase = movePoint[0][2];
+	UpdateData(false);
+	m_rbc.MoveToBaseMark();
+	Sleep(1000);
+
+	// End
+	MessageBox(L"Move Finished!");
 }
