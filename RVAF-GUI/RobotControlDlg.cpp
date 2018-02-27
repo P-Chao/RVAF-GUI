@@ -220,7 +220,7 @@ void CRobotControlDlg::OnLink()
 	UpdateData(true);
 	m_rbc.SetPort(m_port);
 	if (m_rbc.Link()){
-		//UiConnectedLock(true);
+		UiConnectedLock(true);
 		CWnd *p = GetDlgItem(IDC_BUTTON1);
 		p->EnableWindow(false);
 	} else{
@@ -343,20 +343,18 @@ BOOL CRobotControlDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-float movePoint[4][3] = {	{-30, 0, 0},
-							{0, 30, 0},
-							{30, 0, 0},
-							{0, 0, 30} };
+float movePoint[4][3] = { { 600, -40, 410 }, { 690, 0, 410 },
+							
+							{600, -40, 330},
+							{600, 50, 330} };
 
 void CRobotControlDlg::OnBnClickedDebug()
 {
 	// TODO: Add your control notification handler code here
-	float base_hight = 30;
 
-	m_ABase = 0;
-	m_BBase = 0;
-	m_CBase = 0;
-
+	m_ABase = 180;
+	m_BBase = 90;
+	m_CBase = 180;
 
 	// Move to P[0]
 	m_XBase = movePoint[0][0];
@@ -364,6 +362,7 @@ void CRobotControlDlg::OnBnClickedDebug()
 	m_ZBase = movePoint[0][2];
 	UpdateData(false);
 	m_rbc.MoveToBaseMark();
+	MessageBox(L"Wait For Point 0");
 	Sleep(1000);
 
 	// Move to P[1]
@@ -372,6 +371,7 @@ void CRobotControlDlg::OnBnClickedDebug()
 	m_ZBase = movePoint[1][2];
 	UpdateData(false);
 	m_rbc.MoveToBaseMark();
+	MessageBox(L"Wait For Point 1");
 	Sleep(1000);
 
 	// Move to P[2]
@@ -380,6 +380,7 @@ void CRobotControlDlg::OnBnClickedDebug()
 	m_ZBase = movePoint[2][2];
 	UpdateData(false);
 	m_rbc.MoveToBaseMark();
+	MessageBox(L"Wait For Point 2");
 	Sleep(1000);
 
 	// Move to P[3]
@@ -388,6 +389,7 @@ void CRobotControlDlg::OnBnClickedDebug()
 	m_ZBase = movePoint[2][2];
 	UpdateData(false);
 	m_rbc.MoveToBaseMark();
+	MessageBox(L"Wait For Point 3");
 	Sleep(1000);
 
 	// Move to P[0]
@@ -396,6 +398,7 @@ void CRobotControlDlg::OnBnClickedDebug()
 	m_ZBase = movePoint[0][2];
 	UpdateData(false);
 	m_rbc.MoveToBaseMark();
+	MessageBox(L"Wait For Point 0");
 	Sleep(1000);
 
 	// End
