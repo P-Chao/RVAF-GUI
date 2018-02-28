@@ -343,18 +343,34 @@ BOOL CRobotControlDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialogEx::PreTranslateMessage(pMsg);
 }
 
-float movePoint[4][3] = { { 600, -40, 410 }, { 690, 0, 410 },
-							
-							{600, -40, 330},
-							{600, 50, 330} };
+float movePoint[8][3] = { {600, 0, 550},
+							{ 690, 0, 550 }, 
+							{ 690, 0, 450 },
+							{ 690, 0, 350},	
+							{ 690, 20, 550 },
+							{ 690, -20, 550 },
+							{ 800, 25, 50},
+							{ 800, -25, 50}
+};
 
 void CRobotControlDlg::OnBnClickedDebug()
 {
 	// TODO: Add your control notification handler code here
-
 	m_ABase = 180;
-	m_BBase = 90;
+	m_BBase = 0;
 	m_CBase = 180;
+
+	int movePointCount = 8;
+	for (int i = 0; i < movePointCount; ++i){
+		m_XBase = movePoint[i][0];
+		m_YBase = movePoint[i][1];
+		m_ZBase = movePoint[i][2];
+		UpdateData(false);
+		m_rbc.MoveToBaseMark();
+		MessageBox(L"Move Command Confirm.");
+		Sleep(1000);
+	}
+	return;
 
 	// Move to P[0]
 	m_XBase = movePoint[0][0];
