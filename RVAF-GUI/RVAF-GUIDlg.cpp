@@ -240,6 +240,7 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	m_toolTip.AddTool(GetDlgItem(IDC_BUTTON15), _T("Help"));
 
 	// TODO: Add extra initialization here
+	CloseProgram(_T("SVAF.exe"));
 	m_pMsgCtrl = &m_editMsg;
 	
 	
@@ -429,6 +430,7 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			y = pBucket->y;
 			z = pBucket->z;
 			RobotFetch(x, y, z, a, b, c);
+			CloseProgram(_T("SVAF.exe"));
 		}
 
 		SendMessage(WM_PAINT);
@@ -3187,7 +3189,7 @@ void CRVAFGUIDlg::RobotFetch(float x, float y, float z, float a, float b, float 
 			AppendMessage(cs);
 			MessageBox(cs);
 			MessageBox(L"Fetch Confirm Stage1");
-			RobotMove(x, y, z + 15, a, b, c);
+			RobotMove(x, y, z + 25, a, b, c);
 			MessageBox(L"Fetch Confirm Stage2");
 			RobotMove(x, y, z, a, b, c);
 		} else{
