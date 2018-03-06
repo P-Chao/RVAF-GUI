@@ -3166,15 +3166,30 @@ void CRVAFGUIDlg::SetRuningStatus(bool running){
 }
 
 void CRVAFGUIDlg::RobotFetch(float x, float y, float z, float a, float b, float c){
+	if (y < -25){
+		y = -25;
+	}
+	if (y > 25){
+		y = 25;
+	}
+	if (z < 50){
+		z = 50;
+	}
+	a = 180;
+	b = 0;
+	c = 180;
+
 	if (RobotRestriction(x, y, z+5, a, b, c) && RobotRestriction(x, y, z+15, a, b, c)){
-		if (RobotIsOpen()){
+		//if (RobotIsOpen()){
+		if (true){
 			CString cs;
 			cs.Format(L"Fetch command x:%7.2f, y:%7.2f, z:%7.2f", x, y, z);
 			AppendMessage(cs);
+			MessageBox(cs);
 			MessageBox(L"Fetch Confirm Stage1");
 			RobotMove(x, y, z + 15, a, b, c);
 			MessageBox(L"Fetch Confirm Stage2");
-			RobotMove(x, y, z + 5, a, b, c);
+			RobotMove(x, y, z, a, b, c);
 		} else{
 			MessageBox(L"Robot Closed");
 		}
@@ -3195,13 +3210,13 @@ void CRVAFGUIDlg::RobotMove(float x, float y, float z, float a, float b, float c
 }
 
 bool CRVAFGUIDlg::RobotRestriction(float x, float y, float z, float a, float b, float c){
-	if (x < -1000 || x > 1000){
+	if (x < 0 || x > 950){
 		return false;
 	}
-	if (y < 0 || y > 1000){
+	if (y < -25 || y > 25){
 		return false;
 	}
-	if (z < 0 || z > 1000){
+	if (z < 40 || z > 400){
 		return false;
 	}
 	return true;
