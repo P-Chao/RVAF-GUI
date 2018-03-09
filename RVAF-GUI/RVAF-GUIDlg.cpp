@@ -3192,6 +3192,8 @@ void CRVAFGUIDlg::RobotFetch(float x, float y, float z, float a, float b, float 
 			RobotMove(x, y, z + 25, a, b, c);
 			MessageBox(L"Fetch Confirm Stage2");
 			RobotMove(x, y, z, a, b, c);
+			MessageBox(L"Return Wait Location");
+			RobotMove(625, 0, 200, a, b, c);
 		} else{
 			MessageBox(L"Robot Closed");
 		}

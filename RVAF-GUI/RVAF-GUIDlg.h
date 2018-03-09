@@ -169,8 +169,8 @@ protected:
 protected:
 	HICON m_hIcon;
 
-	void RobotFetch(float x, float y, float z, float a = 0.0f, float b = 0.0f, float c = 0.0f);
-	void RobotMove(float x, float y, float z, float a = 0.0f, float b = 0.0f, float c = 0.0f);
+	void RobotFetch(float x, float y, float z, float a = 180.0f, float b = 0.0f, float c = 180.0f);
+	void RobotMove(float x, float y, float z, float a = 180.0f, float b = 0.0f, float c = 180.0f);
 	bool RobotRestriction(float x, float y, float z, float a = 0.0f, float b = 0.0f, float c = 0.0f);
 	void RobotReset();
 	bool RobotIsOpen();
