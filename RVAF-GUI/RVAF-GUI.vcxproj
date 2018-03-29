@@ -185,6 +185,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CleanDlg.h" />
+    <ClInclude Include="DrawlineDlg.h" />
     <ClInclude Include="io.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RobotControl.h" />
@@ -198,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CleanDlg.cpp" />
+    <ClCompile Include="DrawlineDlg.cpp" />
     <ClCompile Include="io.cpp" />
     <ClCompile Include="RobotControl.cpp" />
     <ClCompile Include="RobotControlDlg.cpp" />
@@ -242,7 +244,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="RVAF-GUI.rc" />
+      <UserProperties RESOURCE_FILE="RVAF-GUI.rc" _x007B_B6C10489-FB89-11D4-93C9-006008A7EED4_x007D_="CTchart1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>

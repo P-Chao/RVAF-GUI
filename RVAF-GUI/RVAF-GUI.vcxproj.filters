@@ -54,6 +54,9 @@
     <ClInclude Include="CleanDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DrawlineDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RVAF-GUI.cpp">
@@ -81,6 +84,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CleanDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawlineDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

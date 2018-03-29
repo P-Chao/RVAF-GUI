@@ -117,6 +117,7 @@ BEGIN_MESSAGE_MAP(CRVAFGUIDlg, CDialogEx)
 ON_BN_CLICKED(IDC_BUTTON8, &CRVAFGUIDlg::SettingAlgorithm)
 ON_BN_CLICKED(IDC_BUTTON9, &CRVAFGUIDlg::OpenLog)
 ON_BN_CLICKED(IDC_BUTTON10, &CRVAFGUIDlg::ShowResultFiles)
+ON_BN_CLICKED(IDC_BUTTON14, &CRVAFGUIDlg::OnBnClickedDrawLine)
 END_MESSAGE_MAP()
 
 
@@ -139,6 +140,9 @@ void CRVAFGUIDlg::OnDestroy()
 
 	delete pRobotCtrlDlg;
 	pRobotCtrlDlg = NULL;
+
+	delete pDrawLineDlg;
+	pDrawLineDlg = NULL;
 }
 
 BOOL CRVAFGUIDlg::OnInitDialog()
@@ -246,8 +250,12 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	
 	InitInterprocess();
 
+	// 非模拟态对话框初始化
 	pRobotCtrlDlg = new CRobotControlDlg();
 	pRobotCtrlDlg->Create(IDD_ROBOT_DIALOG);
+
+	pDrawLineDlg = new DrawlineDlg();
+	pDrawLineDlg->Create(IDD_DRAWLINE_DIALOG);
 
 	d_hThread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)ThreadReciveData, this, CREATE_SUSPENDED, &d_ThreadID);
 	ResumeThread(d_hThread);
@@ -3232,4 +3240,10 @@ void CRVAFGUIDlg::RobotReset(){
 
 bool CRVAFGUIDlg::RobotIsOpen(){
 	return pRobotCtrlDlg->m_rbc.IsLinked;
+}
+
+void CRVAFGUIDlg::OnBnClickedDrawLine()
+{
+	// TODO: Add your control notification handler code here
+	pDrawLineDlg->ShowWindow(SW_SHOW);
 }

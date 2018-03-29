@@ -12,6 +12,7 @@
 #include <opencv2\opencv.hpp>
 #include "VtkViewer.h"
 #include "RobotControlDlg.h"
+#include "DrawlineDlg.h"
 #include "CleanDlg.h"
 
 namespace svaf{
@@ -129,6 +130,7 @@ public:
 
 	CToolTipCtrl m_toolTip;
 	CRobotControlDlg * pRobotCtrlDlg;
+	DrawlineDlg* pDrawLineDlg;
 
 	svaf::SvafTask m_svaftask;
 	hash_map<std::string, svaf::LayerParameter*> layers;
@@ -211,4 +213,5 @@ public:
 	afx_msg void OpenLog();
 	afx_msg void ShowResultFiles();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnBnClickedDrawLine();
 };
