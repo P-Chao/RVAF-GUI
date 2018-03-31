@@ -28,6 +28,7 @@ void DrawlineDlg::DoDataExchange(CDataExchange* pDX)
 
 
 BEGIN_MESSAGE_MAP(DrawlineDlg, CDialogEx)
+	ON_WM_TIMER()
 END_MESSAGE_MAP()
 
 
@@ -39,9 +40,20 @@ BOOL DrawlineDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// TODO:  Add extra initialization here
-	
+	SetTimer(1, 100, NULL);
 
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 	// EXCEPTION: OCX Property Pages should return FALSE
+}
+
+
+
+void DrawlineDlg::OnTimer(UINT_PTR nIDEvent)
+{
+	// TODO: Add your message handler code here and/or call default
+	if (nIDEvent = 1){
+		
+	}
+	CDialogEx::OnTimer(nIDEvent);
 }

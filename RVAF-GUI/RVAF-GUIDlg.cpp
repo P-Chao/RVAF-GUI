@@ -293,7 +293,7 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	ScreenToClient(rc);
 	int toolbtnsize = rc.right - rc.left;
 	int totallength = rc.bottom - rc.top;
-	int steplength = totallength / toolid.size();
+	int steplength = (int)totallength / (int)toolid.size();
 	while (steplength <= toolbtnsize){
 		toolbtnsize--;
 	}
@@ -3245,5 +3245,7 @@ bool CRVAFGUIDlg::RobotIsOpen(){
 void CRVAFGUIDlg::OnBnClickedDrawLine()
 {
 	// TODO: Add your control notification handler code here
-	pDrawLineDlg->ShowWindow(SW_SHOW);
+	// pDrawLineDlg->ShowWindow(SW_SHOW);
+	DrawlineDlg dlg;
+	dlg.DoModal();
 }

@@ -244,7 +244,7 @@
   </ImportGroup>
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties RESOURCE_FILE="RVAF-GUI.rc" _x007B_B6C10489-FB89-11D4-93C9-006008A7EED4_x007D_="CTchart1" />
+      <UserProperties _x007B_BDEB0088-66F9-4A55-ABD2-0BF8DEEC1196_x007D_="CTchart1" RESOURCE_FILE="RVAF-GUI.rc" _x007B_B6C10489-FB89-11D4-93C9-006008A7EED4_x007D_="CTchart1" />
     </VisualStudio>
   </ProjectExtensions>
 </Project>
