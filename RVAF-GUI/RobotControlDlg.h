@@ -67,4 +67,5 @@ public:
 	afx_msg void OnComboSelection();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnBnClickedDebug();
+	CButton m_checkEnable;
 };

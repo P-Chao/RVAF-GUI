@@ -437,6 +437,7 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			x = pBucket->x;
 			y = pBucket->y;
 			z = pBucket->z;
+			pDrawLineDlg->AddPoint(x, y, z);
 			RobotFetch(x, y, z, a, b, c);
 			CloseProgram(_T("SVAF.exe"));
 		}
@@ -2921,6 +2922,7 @@ void CRVAFGUIDlg::OnRunSvafTask()
 {
 	// TODO: Add your control notification handler code here
 	// close svaf.exe
+	pDrawLineDlg->ClearPoint();
 	CloseProgram(_T("SVAF.exe"));
 
 	//svaf::WriteProtoToBinaryFile(m_svaftask, "cache");
@@ -3176,6 +3178,9 @@ void CRVAFGUIDlg::SetRuningStatus(bool running){
 }
 
 void CRVAFGUIDlg::RobotFetch(float x, float y, float z, float a, float b, float c){
+	if (!pRobotCtrlDlg->m_checkEnable.GetCheck()){
+		return;
+	}
 	if (y < -25){
 		y = -25;
 	}

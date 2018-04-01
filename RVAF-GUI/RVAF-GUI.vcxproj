@@ -188,14 +188,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CAspect.h" />
-    <ClInclude Include="CAxes.h" />
-    <ClInclude Include="CAxis.h" />
     <ClInclude Include="CleanDlg.h" />
-    <ClInclude Include="CLegend.h" />
-    <ClInclude Include="CPoint3DSeries.h" />
-    <ClInclude Include="CSeries.h" />
-    <ClInclude Include="CTChart.h" />
     <ClInclude Include="DrawlineDlg.h" />
     <ClInclude Include="io.hpp" />
     <ClInclude Include="Resource.h" />
@@ -206,7 +199,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="svaf.pb.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="tchart1.h" />
     <ClInclude Include="teechart\adxfunction.h" />
     <ClInclude Include="teechart\amountfilter.h" />
     <ClInclude Include="teechart\annotationcallout.h" />
@@ -516,7 +508,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="svaf.pb.cc" />
-    <ClCompile Include="tchart1.cpp" />
     <ClCompile Include="teechart\adxfunction.cpp" />
     <ClCompile Include="teechart\amountfilter.cpp" />
     <ClCompile Include="teechart\annotationcallout.cpp" />

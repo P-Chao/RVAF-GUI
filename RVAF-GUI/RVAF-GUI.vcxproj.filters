@@ -60,30 +60,6 @@
     <ClInclude Include="DrawlineDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CTChart.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="tchart1.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CSeries.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CPoint3DSeries.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CAxes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CAxis.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CAspect.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CLegend.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="teechart\adxfunction.h">
       <Filter>TeeChart</Filter>
     </ClInclude>
@@ -990,9 +966,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DrawlineDlg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="tchart1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="teechart\adxfunction.cpp">

@@ -87,6 +87,7 @@ void CRobotControlDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT24, m_A5axis);
 	DDX_Text(pDX, IDC_EDIT25, m_A6axis);
 	DDX_Control(pDX, IDC_COMBO1, m_combo);
+	DDX_Control(pDX, IDC_CHECK1, m_checkEnable);
 }
 
 
@@ -121,6 +122,8 @@ BOOL CRobotControlDlg::OnInitDialog()
 	// TODO:  Add extra initialization here
 	m_rbc.Create(this);
 	UiConnectedLock(false);
+
+	m_checkEnable.SetCheck(FALSE);
 
 	m_combo.AddString(_T("Axis"));
 	m_combo.AddString(_T("Base"));
