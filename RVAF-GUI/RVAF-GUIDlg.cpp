@@ -438,8 +438,11 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			y = pBucket->y;
 			z = pBucket->z;
 			pDrawLineDlg->AddPoint(x, y, z);
-			RobotFetch(x, y, z, a, b, c);
-			CloseProgram(_T("SVAF.exe"));
+			if (pRobotCtrlDlg->m_checkEnable.GetCheck()){ // 如果勾选了控制机器人抓取
+				RobotFetch(x, y, z, a, b, c);
+				CloseProgram(_T("SVAF.exe"));
+			}
+			
 		}
 
 		SendMessage(WM_PAINT);
