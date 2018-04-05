@@ -42,6 +42,7 @@ CRobotControlDlg::CRobotControlDlg(CWnd* pParent /*=NULL*/)
 	, m_A4axis(0)
 	, m_A5axis(0)
 	, m_A6axis(0)
+	, active(false)
 {
 
 }
@@ -226,8 +227,10 @@ void CRobotControlDlg::OnLink()
 		UiConnectedLock(true);
 		CWnd *p = GetDlgItem(IDC_BUTTON1);
 		p->EnableWindow(false);
+		active = true;
 	} else{
 		UiConnectedLock(false);
+		active = false;
 		MessageBox(L"¡¨Ω” ß∞‹");
 	}
 }
@@ -236,6 +239,7 @@ void CRobotControlDlg::OnLink()
 void CRobotControlDlg::OnLinkOff()
 {
 	// TODO: Add your control notification handler code here
+	active = false;
 	m_rbc.LinkOff();
 	UiConnectedLock(false);
 }

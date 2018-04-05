@@ -615,15 +615,24 @@ void CRobotControl::ResetAxisMark(){
 }
 
 void CRobotControl::ResetBaseMark(){
-	ABase = 0;
+	/*ABase = 0;
 	BBase = 0;
 	CBase = 0;
 	XBase = 0;
 	YBase = 0;
 	ZBase = 0;
 	AccBase = 0.5;
-	VelBase = 0.1;
+	VelBase = 0.1;*/
 	if (pDlg){
+		ABase = pDlg->m_Astatus;
+		BBase = pDlg->m_Bstatus;
+		CBase = pDlg->m_Cstatus;
+		XBase = pDlg->m_Xstatus;
+		YBase = pDlg->m_Ystatus;
+		ZBase = pDlg->m_Zstatus;
+		AccBase = 0.5;
+		VelBase = 0.1;
+
 		pDlg->m_acc = AccBase;
 		pDlg->m_vec = VelBase;
 		pDlg->m_ABase = ABase;

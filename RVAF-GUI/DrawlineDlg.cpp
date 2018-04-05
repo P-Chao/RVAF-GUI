@@ -27,6 +27,12 @@ void DrawlineDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TCHART1, m_chart);
+	DDX_Control(pDX, IDC_POS_OBJ, m_posObj);
+	DDX_Control(pDX, IDC_POS_RBT, m_posRbt);
+	DDX_Control(pDX, IDC_POS_ERR, m_posErr);
+	DDX_Control(pDX, IDC_ANG_OBJ, m_angObj);
+	DDX_Control(pDX, IDC_ANG_RBT, m_angRbt);
+	DDX_Control(pDX, IDC_ANG_ERR, m_angErr);
 }
 
 
@@ -50,6 +56,7 @@ BOOL DrawlineDlg::OnInitDialog()
 	lineSeries.Clear();*/
 	SetTimer(1, 1000, NULL);
 	points.clear();
+	pointsRef.clear();
 	m_chart.GetAspect().SetView3D(TRUE);
 	
 	//const double pi = 3.14;
@@ -67,6 +74,7 @@ void DrawlineDlg::SetPointCount(int pointcount){
 }
 
 void DrawlineDlg::AddPoint(double x, double y, double z){
+	// set graph
 	points.push_back({ x, y, z });
 	if (points.size() > m_pointCount){
 		points.pop_front();
@@ -81,12 +89,56 @@ void DrawlineDlg::AddPoint(double x, double y, double z){
 			m_chart.Series(0).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(0, 255 - 10 * i, 255));
 		}
 	}
+	// set text
+	CString cs;
+	cs.Format(L"(%.2f, %.2f, %.2f)", x, y, z);
+	m_posObj.SetWindowTextW(cs);
+}
+
+void DrawlineDlg::AddPointRef(double x, double y, double z){
+	pointsRef.push_back({ x, y, z });
+	if (pointsRef.size() > m_pointCount){
+		pointsRef.pop_front();
+	}
+	m_chart.Series(1).Clear();
+	int i = 0;
+	for (auto it = pointsRef.begin(); it != pointsRef.end(); it++, ++i){
+		m_chart.Series(1).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(255 - 10 * i, 255 - 10 * i, 255 - 10 * i));
+	}
+	// set text
+	CString cs;
+	cs.Format(L"(%.2f, %.2f, %.2f)", x, y, z);
+	m_posRbt.SetWindowTextW(cs);
+}
+
+void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b, double c,
+	double rx, double ry, double rz, double ra, double rb, double rc, double arm){
+	double poserr = (rx - x) * (rx - x) + (ry - y) * (ry - y) + (rz - z) * (rz - z);
+	poserr = sqrt(poserr);
+	SetPosError(poserr);
+	// angle = = = rad
+	double angerr = acos(cos(a) * cos(ra) + cos(b) * cos(rb) + cos(c) * cos(rc));
+	SetAngError(angerr);
+}
+
+void DrawlineDlg::SetPosError(double err){
+	CString cs;
+	cs.Format(L"%.2f", err);
+	m_posErr.SetWindowTextW(cs);
+}
+
+void DrawlineDlg::SetAngError(double err){
+	CString cs;
+	cs.Format(L"%.2f", err);
+	m_angErr.SetWindowTextW(cs);
 }
 
 void DrawlineDlg::ClearPoint(){
 	KillTimer(1);
 	points.clear();
+	pointsRef.clear();
 	m_chart.Series(0).Clear();
+	m_chart.Series(1).Clear();
 }
 
 void DrawlineDlg::OnTimer(UINT_PTR nIDEvent)
@@ -94,7 +146,8 @@ void DrawlineDlg::OnTimer(UINT_PTR nIDEvent)
 	// TODO: Add your message handler code here and/or call default
 	if (nIDEvent == 1){
 		m_time = m_time + 1;
-		AddPoint((double)m_time, cos((double)m_time / 20.0), sin((double)m_time / 20.0));
+		AddPoint((double)m_time + 800, cos((double)m_time / 20.0), sin((double)m_time / 20.0));
+		AddPointRef((double)m_time + 800, cos((double)m_time / 10.0), sin((double)m_time / 10.0));
 	}
 	CDialogEx::OnTimer(nIDEvent);
 }

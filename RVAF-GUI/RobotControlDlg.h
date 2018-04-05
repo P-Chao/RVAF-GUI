@@ -27,6 +27,7 @@ public:
 	afx_msg void OnDestroy();
 	virtual BOOL OnInitDialog();
 	void UiConnectedLock(bool);
+	bool active;
 	int m_port;
 	float m_A1status;
 	float m_A2status;
