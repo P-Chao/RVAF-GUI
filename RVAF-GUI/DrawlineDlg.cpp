@@ -113,7 +113,7 @@ void DrawlineDlg::AddPointRef(double x, double y, double z){
 
 void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b, double c,
 	double rx, double ry, double rz, double ra, double rb, double rc, double arm){
-	double poserr = (rx - x) * (rx - x) + (ry - y) * (ry - y) + (rz - z) * (rz - z);
+	double poserr = (rx + arm - x) * (rx + arm - x) + (ry - y) * (ry - y) + (rz - z) * (rz - z);
 	poserr = sqrt(poserr);
 	SetPosError(poserr);
 	// angle = = = rad
