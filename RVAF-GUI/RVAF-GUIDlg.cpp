@@ -439,11 +439,11 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 			z = pBucket->z;
 			
 			if (pRobotCtrlDlg->active){ // 如果机器人准备或已经连接
-				pDrawLineDlg->AddPoint(x, y, z);
-				pDrawLineDlg->AddPointRef(pRobotCtrlDlg->m_Xstatus, pRobotCtrlDlg->m_Ystatus, pRobotCtrlDlg->m_Zstatus);
+				//pDrawLineDlg->AddPoint(x, y, z);
+				//pDrawLineDlg->AddPointRef(pRobotCtrlDlg->m_Xstatus, pRobotCtrlDlg->m_Ystatus, pRobotCtrlDlg->m_Zstatus);
 				pDrawLineDlg->ComputeError(x, y, z, a, b, c,
 					pRobotCtrlDlg->m_Xstatus, pRobotCtrlDlg->m_Ystatus, pRobotCtrlDlg->m_Zstatus,
-					pRobotCtrlDlg->m_Astatus, pRobotCtrlDlg->m_Bstatus, pRobotCtrlDlg->m_Cstatus, 0);
+					pRobotCtrlDlg->m_Astatus, pRobotCtrlDlg->m_Bstatus, pRobotCtrlDlg->m_Cstatus, 102.6);
 			} else{
 				pDrawLineDlg->AddPoint(x, y, z);
 			}
