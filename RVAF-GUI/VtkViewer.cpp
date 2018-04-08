@@ -16,6 +16,9 @@ CVtkViewer::~CVtkViewer()
 }
 
 void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
+	vtkMydProp *mydprop;
+	mydprop = vtkMydProp::New();
+	
 	int n = pointcloud.size();
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
 	points->SetNumberOfPoints(n);
@@ -47,6 +50,15 @@ void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
 	mapper->SetScalarRange(0, n-1);
 	mapper->SetLookupTable(lut);
 
+	//
+	m_Renderer->RemoveViewProp(mydprop);
+	m_Renderer->AddViewProp(mydprop);
+	m_Renderer->SetBackground(0, 0, 0);
+	m_Renderer->SetActiveCamera(mydprop->RtCamera);
+	//m_Renderer->ResetCamera();
+	m_RenderWindow->Render();
+
+	return;
 	m_Renderer->RemoveActor(actor);
 	actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);

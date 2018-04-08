@@ -936,6 +936,9 @@
     <ClInclude Include="teechart\zoomfilter.h">
       <Filter>TeeChart</Filter>
     </ClInclude>
+    <ClInclude Include="vtkMydProp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RVAF-GUI.cpp">
@@ -1837,6 +1840,9 @@
     </ClCompile>
     <ClCompile Include="teechart\zoomfilter.cpp">
       <Filter>TeeChart</Filter>
+    </ClCompile>
+    <ClCompile Include="vtkMydProp.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

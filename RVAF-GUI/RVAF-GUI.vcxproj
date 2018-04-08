@@ -491,6 +491,7 @@
     <ClInclude Include="teechart\xmlexport.h" />
     <ClInclude Include="teechart\zoom.h" />
     <ClInclude Include="teechart\zoomfilter.h" />
+    <ClInclude Include="vtkMydProp.h" />
     <ClInclude Include="VtkViewer.h" />
   </ItemGroup>
   <ItemGroup>
@@ -798,6 +799,7 @@
     <ClCompile Include="teechart\xmlexport.cpp" />
     <ClCompile Include="teechart\zoom.cpp" />
     <ClCompile Include="teechart\zoomfilter.cpp" />
+    <ClCompile Include="vtkMydProp.cpp" />
     <ClCompile Include="VtkViewer.cpp" />
   </ItemGroup>
   <ItemGroup>

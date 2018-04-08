@@ -1,6 +1,8 @@
 #pragma once
 #include "afxwin.h"
 
+#include "vtkMydProp.h"
+
 #include <vtkResliceCursor.h>  
 #include <vtkResliceCursorWidget.h>  
 
@@ -79,6 +81,8 @@ private:
 	vtkSmartPointer<vtkRenderer>         m_Renderer;
 	vtkSmartPointer<vtkRenderWindow> m_RenderWindow;
 	vtkSmartPointer<vtkImageData>       m_ImageData;
+
+	
 
 	//m_Direction为方向标志，取值分别为0,1和2，分别代表X轴，Y轴和Z轴方向，  
 	int m_Direction;
