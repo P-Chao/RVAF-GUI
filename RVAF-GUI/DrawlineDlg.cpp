@@ -111,13 +111,20 @@ void DrawlineDlg::AddPointRef(double x, double y, double z){
 	m_posRbt.SetWindowTextW(cs);
 }
 
+#define RAD(x) ((x)*3.1415925/180.0)
+
 void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b, double c,
 	double rx, double ry, double rz, double ra, double rb, double rc, double arm){
-	double poserr = (rx + arm - x) * (rx + arm - x) + (ry - y) * (ry - y) + (rz - z) * (rz - z);
+
+	double dx = rx + arm * cos(RAD(ra-180));
+	double dy = ry + arm * sin(RAD(ra-180));
+	double dz = rz;
+
+	double poserr = (dx - x) * (dx - x) + (dy - y) * (dy - y) + (dz - z) * (dz - z);
 	poserr = sqrt(poserr);
 	SetPosError(poserr);
 	// angle = = = rad
-	double angerr = acos(cos(a) * cos(ra) + cos(b) * cos(rb) + cos(c) * cos(rc));
+	double angerr = acos(cos(RAD(a)) * cos(RAD(ra)) + cos(RAD(b)) * cos(RAD(rb)) + cos(RAD(c)) * cos(RAD(rc)));
 	SetAngError(angerr);
 }
 
