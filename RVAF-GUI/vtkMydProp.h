@@ -56,6 +56,12 @@ public:
 	//vtkCloud * pCloud;
 	vtkCamera * RtCamera;
 
+	void ReadEularAngle(float a, float b, float c); // a 对应机器人 C角， b对应机器人的 B角
+protected:
+	float alpha;
+	float beta;
+	float gama;
+
 private:
 	vtkMydProp(const vtkMydProp&);  // Not implemented.     
 	void operator=(const vtkMydProp&);  // Not implemented.

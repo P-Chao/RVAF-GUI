@@ -3,6 +3,7 @@
 
 IMPLEMENT_DYNAMIC(CVtkViewer, CStatic)
 
+
 CVtkViewer::CVtkViewer()
 {
 	//在实例化时需要注意，该视图类在默认情况下渲染的是vtkResliceCursorWidget对象的输出，  

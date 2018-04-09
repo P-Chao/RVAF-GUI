@@ -111,7 +111,9 @@ void DrawlineDlg::AddPointRef(double x, double y, double z){
 	m_posRbt.SetWindowTextW(cs);
 }
 
+#ifndef RAD
 #define RAD(x) ((x)*3.1415925/180.0)
+#endif
 
 void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b, double c,
 	double rx, double ry, double rz, double ra, double rb, double rc, double arm){
