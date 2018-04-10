@@ -16,9 +16,23 @@ CVtkViewer::~CVtkViewer()
 {
 }
 
-void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
+void CVtkViewer::ReadEularAngle(float c, float b, float a){
 	vtkMydProp *mydprop;
 	mydprop = vtkMydProp::New();
+	mydprop->ReadEularAngle(c, b, a);
+
+	// m_Renderer->RemoveActor(actor);
+	m_Renderer->RemoveViewProp(mydprop);
+	m_Renderer->AddViewProp(mydprop);
+	m_Renderer->SetBackground(0, 0, 0);
+	m_Renderer->SetActiveCamera(mydprop->RtCamera);
+	//m_Renderer->ResetCamera();
+	m_RenderWindow->Render();
+
+	return;
+}
+
+void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
 	
 	int n = pointcloud.size();
 	vtkSmartPointer<vtkPoints> points = vtkSmartPointer<vtkPoints>::New();
@@ -50,16 +64,9 @@ void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
 	mapper->ScalarVisibilityOn();
 	mapper->SetScalarRange(0, n-1);
 	mapper->SetLookupTable(lut);
+	
+	
 
-	//
-	m_Renderer->RemoveViewProp(mydprop);
-	m_Renderer->AddViewProp(mydprop);
-	m_Renderer->SetBackground(0, 0, 0);
-	m_Renderer->SetActiveCamera(mydprop->RtCamera);
-	//m_Renderer->ResetCamera();
-	m_RenderWindow->Render();
-
-	return;
 	m_Renderer->RemoveActor(actor);
 	actor = vtkSmartPointer<vtkActor>::New();
 	actor->SetMapper(mapper);
@@ -70,6 +77,8 @@ void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
 	m_Renderer->SetBackground(0, 0, 0);
 	m_Renderer->ResetCamera();
 	m_RenderWindow->Render();
+
+	return;
 
 	// 点云全部显示同样的颜色
 /*	vtkPoints * points = vtkPoints::New();
