@@ -146,7 +146,6 @@ void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b,
 	poserr = sqrt(poserr);
 	SetPosError(poserr);
 	
-	b = b / 5.0f;
 	// show angle
 	CString cs;
 	cs.Format(L"(%.2f, %.2f, %.2f)", a, b, c);

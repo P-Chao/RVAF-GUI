@@ -95,6 +95,8 @@ public:
 
 	vector<vector<Pointf>> pointclouds;
 
+	float cube_a, cube_b, cube_c;
+	bool showcube; // 展示立方体
 	bool isExpan; // 界面是否处于展开状态
 	bool isPause; // 是否处于暂停状态
 	bool isRunning; // svaf 是否在运行

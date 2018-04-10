@@ -61,7 +61,7 @@ public:
 
 	vtkSmartPointer<vtkActor> actor;
 	void ReadPointCloud(std::vector<Pointf>&);
-	void ReadEularAngle(float c, float b, float a);
+	void ReadEularAngle(float a, float b, float c);
 
 public:
 	//3.2 重载CvtkView类PreSubclassWindow（）函数和OnPaint()函数  

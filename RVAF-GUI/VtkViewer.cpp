@@ -16,12 +16,12 @@ CVtkViewer::~CVtkViewer()
 {
 }
 
-void CVtkViewer::ReadEularAngle(float c, float b, float a){
+void CVtkViewer::ReadEularAngle(float a, float b, float c){
 	vtkMydProp *mydprop;
 	mydprop = vtkMydProp::New();
-	mydprop->ReadEularAngle(c, b, a);
+	mydprop->ReadEularAngle(a, b, c);
 
-	// m_Renderer->RemoveActor(actor);
+	m_Renderer->RemoveActor(actor);
 	m_Renderer->RemoveViewProp(mydprop);
 	m_Renderer->AddViewProp(mydprop);
 	m_Renderer->SetBackground(0, 0, 0);
@@ -64,8 +64,6 @@ void CVtkViewer::ReadPointCloud(std::vector<Pointf>& pointcloud){
 	mapper->ScalarVisibilityOn();
 	mapper->SetScalarRange(0, n-1);
 	mapper->SetLookupTable(lut);
-	
-	
 
 	m_Renderer->RemoveActor(actor);
 	actor = vtkSmartPointer<vtkActor>::New();
