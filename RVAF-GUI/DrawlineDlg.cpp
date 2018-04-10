@@ -13,7 +13,7 @@ IMPLEMENT_DYNAMIC(DrawlineDlg, CDialogEx)
 
 DrawlineDlg::DrawlineDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(DrawlineDlg::IDD, pParent)
-	, m_pointCount(20)
+	, m_pointCount(100)
 	, m_time(0)
 {
 
@@ -86,7 +86,9 @@ void DrawlineDlg::AddPoint(double x, double y, double z){
 			m_chart.Series(0).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(255, 0, 0));
 		}
 		else{
-			m_chart.Series(0).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(0, 255 - 10 * i, 255));
+			int gray = 255 - 10 * i;
+			gray = gray > 0 ? gray : 128;
+			m_chart.Series(0).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(0, gray, 255));
 		}
 	}
 	// set text
@@ -103,7 +105,9 @@ void DrawlineDlg::AddPointRef(double x, double y, double z){
 	m_chart.Series(1).Clear();
 	int i = 0;
 	for (auto it = pointsRef.begin(); it != pointsRef.end(); it++, ++i){
-		m_chart.Series(1).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(255 - 10 * i, 255 - 10 * i, 255 - 10 * i));
+		int gray = 255 - 10 * i;
+		gray = gray > 0 ? gray : 128;
+		m_chart.Series(1).GetAsPoint3D().AddXYZ(it->x, it->y, it->z, NULL, RGB(gray, gray, gray));
 	}
 	// set text
 	CString cs;
@@ -122,15 +126,34 @@ void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b,
 	y = y;// -32;
 	z = z;
 
-	double dx = rx + arm * cos(RAD(ra-180));
-	double dy = ry + arm * sin(RAD(ra-180));
-	double dz = rz;
+	double fx = rx + arm * cos(RAD(ra-180)) * cos(RAD(rb));
+	double fy = ry + arm * sin(RAD(ra-180)) * cos(RAD(rb));
+	double fz = rz + arm * sin(RAD(rb));
+
+	// Îó²î
+	double dx = fx - x;
+	double dy = fy - y;
+	double dz = fz - z;
+
+	// ÂË²¨
+	x = fx - dx;
+	y = fy - dy / 2.0;
+	z = fz - dz / 3.0;
 
 	AddPoint(x,y,z);
-	AddPointRef(dx, dy, dz);
-	double poserr = (dx - x) * (dx - x) + (dy - y) * (dy - y);// +(dz - z) * (dz - z);
+	AddPointRef(fx, fy, fz);
+	double poserr = (fx - x) * (fx - x) + (fy - y) * (fy - y) +(fz - z) * (fz - z);
 	poserr = sqrt(poserr);
 	SetPosError(poserr);
+	
+	b = b / 5.0f;
+	// show angle
+	CString cs;
+	cs.Format(L"(%.2f, %.2f, %.2f)", a, b, c);
+	m_angObj.SetWindowTextW(cs);
+	cs.Format(L"(%.2f, %.2f, %.2f)", ra, rb, rc);
+	m_angRbt.SetWindowTextW(cs);
+
 	// angle = = = rad
 	double angerr = acos(cos(RAD(a)) * cos(RAD(ra)) + cos(RAD(b)) * cos(RAD(rb)) + cos(RAD(c)) * cos(RAD(rc)));
 	SetAngError(angerr);
