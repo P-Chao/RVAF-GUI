@@ -38,6 +38,7 @@ void DrawlineDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(DrawlineDlg, CDialogEx)
 	ON_WM_TIMER()
+	ON_BN_CLICKED(IDC_BUTTON1, &DrawlineDlg::OnClickedSaveResult)
 END_MESSAGE_MAP()
 
 
@@ -146,6 +147,20 @@ void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b,
 	poserr = sqrt(poserr);
 	SetPosError(poserr);
 	
+	// log result
+	m_x = x;
+	m_y = y;
+	m_z = z;
+	m_rx = fx;
+	m_ry = fy;
+	m_rz = fz;
+	m_a = a;
+	m_b = b;
+	m_c = c;
+	m_ra = ra;
+	m_rb = rb;
+	m_rc = rc;
+
 	// show angle
 	CString cs;
 	cs.Format(L"(%.2f, %.2f, %.2f)", a, b, c);
@@ -154,8 +169,8 @@ void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b,
 	m_angRbt.SetWindowTextW(cs);
 
 	// angle = = = rad
-	double angerr = acos(cos(RAD(a)) * cos(RAD(ra)) + cos(RAD(b)) * cos(RAD(rb)) + cos(RAD(c)) * cos(RAD(rc)));
-	SetAngError(angerr);
+	//double angerr = acos(cos(RAD(a)) * cos(RAD(ra)) + cos(RAD(b)) * cos(RAD(rb)) + cos(RAD(c)) * cos(RAD(rc)));
+	//SetAngError(angerr);
 }
 
 void DrawlineDlg::SetPosError(double err){
@@ -187,4 +202,17 @@ void DrawlineDlg::OnTimer(UINT_PTR nIDEvent)
 		AddPointRef((double)m_time + 800, cos((double)m_time / 10.0), sin((double)m_time / 10.0));
 	}
 	CDialogEx::OnTimer(nIDEvent);
+}
+
+
+void DrawlineDlg::OnClickedSaveResult()
+{
+	// TODO: Add your control notification handler code here
+	//char buf[256];
+	//sprintf(buf, "%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t\n",
+	//	m_x, m_y, m_z, m_rx, m_ry, m_rz, m_a, m_b, m_c, m_ra, m_rb, m_rc);
+	FILE *fid = fopen("tmp/results.txt", "a+");
+	fprintf(fid, "%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t%.2f\t\n",
+		m_x, m_y, m_z, m_rx, m_ry, m_rz, m_a, m_b, m_c, m_ra, m_rb, m_rc);
+	fclose(fid);
 }

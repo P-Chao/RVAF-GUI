@@ -51,6 +51,9 @@ protected:
 	std::list<Point> points;
 	std::list<Point> pointsRef;
 
+	double m_a, m_b, m_c, m_x, m_y, m_z;
+	double m_ra, m_rb, m_rc, m_rx, m_ry, m_rz;
+
 public:
 	void SetPointCount(int pointcount);
 	void AddPoint(double x, double y, double z);
@@ -67,4 +70,5 @@ public:
 	CStatic m_angObj;
 	CStatic m_angRbt;
 	CStatic m_angErr;
+	afx_msg void OnClickedSaveResult();
 };
