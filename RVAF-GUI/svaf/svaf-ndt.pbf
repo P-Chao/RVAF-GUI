@@ -24,7 +24,7 @@ layer{
 	type:	ADABOOST
 	top:	"eadp"
 	adaboost_param{
-		detector:	"C:/svaf/data/boost/detector_workpiece_180409.dat"
+		detector:	"C:/svaf/data/boost/detector_workpiece_180503.dat"
 		#detector:	"F:/svaf/data/boost/detector_workpiece_180409.dat"
 		sync_frame:	true
 		#sync_video:	true

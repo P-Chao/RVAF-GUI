@@ -125,7 +125,7 @@ void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b,
 
 	x = x - 12.5;// -30;
 	y = y;// -32;
-	z = z;
+	z = z - 20.0;
 
 	double fx = rx + arm * cos(RAD(ra-180)) * cos(RAD(rb));
 	double fy = ry + arm * sin(RAD(ra-180)) * cos(RAD(rb));
