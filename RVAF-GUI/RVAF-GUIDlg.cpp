@@ -58,13 +58,13 @@ END_MESSAGE_MAP()
 
 
 // Work Thread
-
+// 接收数据工作线程
 UINT ThreadReciveData(LPVOID lpParam){
 	CRVAFGUIDlg *maindlg = (CRVAFGUIDlg*)lpParam;
 	maindlg->ReciveDataInterprocess();
 	return 0;
 }
-
+// 接收信息工作线程
 UINT ThreadReciveInfo(LPVOID lpParam){
 	CRVAFGUIDlg *maindlg = (CRVAFGUIDlg*)lpParam;
 	maindlg->ReciveInfoInterprocess();
@@ -145,6 +145,7 @@ void CRVAFGUIDlg::OnDestroy()
 	pDrawLineDlg = NULL;
 }
 
+// 窗口初始化
 BOOL CRVAFGUIDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -322,6 +323,8 @@ BOOL CRVAFGUIDlg::OnInitDialog()
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
+
+// 进程间通信初始化
 void CRVAFGUIDlg::InitInterprocess(){
 	// run process
 	memset(&m_pInfo, 0, sizeof(m_pInfo));
@@ -355,33 +358,35 @@ void CRVAFGUIDlg::InitInterprocess(){
 
 }
 
+// 通过进程间通信发送控制命令
 void CRVAFGUIDlg::SendInterprocess(){
 	LPTSTR p = c_pMsg;
 	((int*)p)[0] = 0;
 	//SetEvent(m_hMutex);
 }
 
-
+// 设置控制命令
 void CRVAFGUIDlg::SendCommand(int cmd){
 	LPTSTR p = c_pMsg;
 	((int*)p)[0] = cmd;
 	//SetEvent(m_hMutex);
 }
 
+// 数据交互协议包
 using Bucket = struct{
-	char	head[4];
-	int		msgCount;
-	int		imgCount;
-	int		cols[8];
-	int		rows[8];
-	int		chns[8];
-	int		offs[8];
-	int		PointSize[4];
-	int		PointChns[4];// xyz(3) or xyzrgb(6)
-	int		PointOffs[4];
-	int		pclCount;
+	char	head[4];  // 头文件
+	int		msgCount; // 数据包中有效信息的数量
+	int		imgCount; // 数据包中图片的数量
+	int		cols[8];  // 每幅图片的宽度
+	int		rows[8];  // 每幅图片的高度
+	int		chns[8];  // 每幅图片的通道数
+	int		offs[8];  // 每幅图片的字节偏移
+	int		PointSize[4]; // 点云的规模
+	int		PointChns[4]; // xyz(3) or xyzrgb(6)
+	int		PointOffs[4]; // 点云数据的字节偏移
+	int		pclCount;   // 点云个数
 	int		fetchtype; // 0 dont fetch, 1 world coord
-	float	x;
+	float	x; // 引导点坐标
 	float	y;
 	float	z;
 	float	a;
@@ -389,18 +394,19 @@ using Bucket = struct{
 	float	c;
 };
 
+// 接收数据线程
 void CRVAFGUIDlg::ReciveDataInterprocess(){
 
 	while (true){
-		WaitForSingleObject(d_hMutex, INFINITE);
+		WaitForSingleObject(d_hMutex, INFINITE); // 阻塞等待数据
 		m_imgs.clear();
 		pointclouds.clear();
 		LPTSTR p = d_pMsg;
-		Bucket* pBucket = (Bucket*)d_pMsg;
+		Bucket* pBucket = (Bucket*)d_pMsg; 
 		char *pBuf = (char *)p;
-		int offset = sizeof(Bucket);
+		int offset = sizeof(Bucket); // 协议解析
 		int frameCount = pBucket->imgCount;
-		int pointCount = pBucket->pclCount;
+		int pointCount = pBucket->pclCount; 
 		for (int i = 0; i < frameCount; ++i){
 			int type = (pBucket->chns[i] == 1) ? CV_8UC1 : CV_8UC3;
 			cv::Mat img(pBucket->rows[i], pBucket->cols[i], type, pBuf + pBucket->offs[i]);
@@ -473,11 +479,12 @@ void CRVAFGUIDlg::ReciveDataInterprocess(){
 	return;
 }
 
+// 接收信息进程
 void CRVAFGUIDlg::ReciveInfoInterprocess(){
 
 	CString cs;
 	while (true){
-		WaitForSingleObject(i_hMutex, INFINITE);
+		WaitForSingleObject(i_hMutex, INFINITE); // 阻塞等待数据
 		cs = (char *)i_pMsg;
 		cs += _T("\n");
 		AppendMessage(_T("SVAF"), cs);
@@ -567,6 +574,7 @@ void CRVAFGUIDlg::OnPaint()
 			
 			CI.StretchBlt(pDC->m_hDC, rect, SRCCOPY);
 // add for exp
+			// 显示立方体还是点云
 			if (showcube){
 				hide_vtk = false;
 				CRect rect;
@@ -636,6 +644,7 @@ void CRVAFGUIDlg::AppendMessage(LPCTSTR user, LPCTSTR strText){
 	m_pMsgCtrl->LineScroll(1);
 }
 
+// 在消息窗显示信息
 void CRVAFGUIDlg::AppendMessage(LPCTSTR strText){
 	if (NULL == m_pMsgCtrl){
 		return;
@@ -681,7 +690,7 @@ bool CRVAFGUIDlg::ReadCheckProtoFile(std::string filename){
 }
 #undef REC_VERSION
 
-
+// 打开Proto文件
 void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 	// Clear previour object
 	ready_proto = false;
@@ -743,6 +752,7 @@ void CRVAFGUIDlg::OpenProtoFile(std::string filename){
 	ready_proto = true;
 }
 
+// 生成属性表
 void CRVAFGUIDlg::GenerateProperties(){
 	m_properaty.RemoveAll();
 	idtable.clear();

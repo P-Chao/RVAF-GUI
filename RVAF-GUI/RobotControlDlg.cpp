@@ -11,6 +11,7 @@
 
 IMPLEMENT_DYNAMIC(CRobotControlDlg, CDialogEx)
 
+// 构造函数
 CRobotControlDlg::CRobotControlDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CRobotControlDlg::IDD, pParent)
 	, m_port(6006)
@@ -47,6 +48,7 @@ CRobotControlDlg::CRobotControlDlg(CWnd* pParent /*=NULL*/)
 
 }
 
+// 析构函数
 CRobotControlDlg::~CRobotControlDlg()
 {
 }
@@ -115,7 +117,7 @@ void CRobotControlDlg::OnDestroy()
 	// TODO: Add your message handler code here
 }
 
-
+// 初始化窗口
 BOOL CRobotControlDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -136,6 +138,7 @@ BOOL CRobotControlDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
+// 无效化按钮
 void CRobotControlDlg::UiConnectedLock(bool linked){
 	if (linked){
 		CWnd *p = GetDlgItem(IDC_BUTTON1);
@@ -218,6 +221,7 @@ void CRobotControlDlg::UiConnectedLock(bool linked){
 	}
 }
 
+// 点击连接
 void CRobotControlDlg::OnLink()
 {
 	// TODO: Add your control notification handler code here
@@ -235,7 +239,7 @@ void CRobotControlDlg::OnLink()
 	}
 }
 
-
+// 断开连接
 void CRobotControlDlg::OnLinkOff()
 {
 	// TODO: Add your control notification handler code here

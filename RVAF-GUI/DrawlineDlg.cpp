@@ -44,7 +44,7 @@ END_MESSAGE_MAP()
 
 // DrawlineDlg message handlers
 
-
+// 对话框初始化
 BOOL DrawlineDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
@@ -70,10 +70,12 @@ BOOL DrawlineDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
+// 设置点云数量
 void DrawlineDlg::SetPointCount(int pointcount){
 	m_pointCount = pointcount > 0 ? pointcount : 0;
 }
 
+// 添加点云
 void DrawlineDlg::AddPoint(double x, double y, double z){
 	// set graph
 	points.push_back({ x, y, z });
@@ -98,6 +100,7 @@ void DrawlineDlg::AddPoint(double x, double y, double z){
 	m_posObj.SetWindowTextW(cs);
 }
 
+// 添加参考点云
 void DrawlineDlg::AddPointRef(double x, double y, double z){
 	pointsRef.push_back({ x, y, z });
 	if (pointsRef.size() > m_pointCount){
@@ -173,6 +176,7 @@ void DrawlineDlg::ComputeError(double x, double y, double z, double a, double b,
 	//SetAngError(angerr);
 }
 
+// 设置误差文字
 void DrawlineDlg::SetPosError(double err){
 	CString cs;
 	cs.Format(L"%.2f", err);
@@ -185,6 +189,7 @@ void DrawlineDlg::SetAngError(double err){
 	m_angErr.SetWindowTextW(cs);
 }
 
+// 清除点
 void DrawlineDlg::ClearPoint(){
 	KillTimer(1);
 	points.clear();
@@ -193,6 +198,7 @@ void DrawlineDlg::ClearPoint(){
 	m_chart.Series(1).Clear();
 }
 
+// 定时器
 void DrawlineDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default

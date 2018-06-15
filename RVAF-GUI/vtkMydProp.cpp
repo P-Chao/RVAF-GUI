@@ -37,6 +37,7 @@ void vtkMydProp::PrintSelf(ostream& os, vtkIndent indent){
 #define RAD(x) ((x)*3.1415925/180.0)
 #endif
 
+// 根据欧拉角计算顶点坐标
 void vtkMydProp::ReadEularAngle(float a, float b, float c){
 	float M[3][3];
 	alpha = a;
@@ -83,6 +84,7 @@ void vtkMydProp::ReadEularAngle(float a, float b, float c){
 
 #undef RAD
 
+// vtk中进行opengl显示
 int vtkMydProp::RenderVolumetricGeometry(vtkViewport *){
 	//glLoadIdentity();
 	//glTranslatef(0.0f, 0.0f, -10.0f);
